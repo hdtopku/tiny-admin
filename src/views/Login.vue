@@ -1,10 +1,24 @@
 <script lang="ts" setup>
 import DarkToggle from "@/components/DarkToggle.vue";
+import {login} from "@/api/auth";
+import router from "@/router";
 
 const loginForm = ref({
   username: "",
   password: "",
 });
+
+const loginLoading = ref(false);
+const handleLogin = () => {
+  loginLoading.value = true;
+  login(loginForm.value).then((res) => {
+    console.log(res)
+    router.push("/");
+  }).catch(() => {
+  }).finally(() => {
+    loginLoading.value = false;
+  });
+}
 </script>
 
 <template>
@@ -21,7 +35,7 @@ const loginForm = ref({
           <a-input v-model="loginForm.password" type="password"/>
         </a-form-item>
         <a-form-item class="w-full max-sm:mt-4 sm:w-10/12 ml-auto">
-          <a-button block type="primary" @click="handleSubmit">登录</a-button>
+          <a-button :loading="loginLoading" block type="primary" @click="handleLogin">登录</a-button>
         </a-form-item>
       </a-form>
     </div>

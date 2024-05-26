@@ -8,10 +8,5 @@ useTitle(() => isDark.value ? '🌙 Good evening!' : '☀️ Good morning!')
 </script>
 
 <template>
-  <h1 class="text-4xl font-bold text-center">你好，Welcome to my website!</h1>
-  <a-button type="primary">Primary Button</a-button>
+  <h1 class="text-4xl font-bold text-center">Welcome to Tiny Admin!</h1>
 </template>
-
-<style scoped>
-
-</style>

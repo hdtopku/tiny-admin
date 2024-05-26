@@ -6,17 +6,17 @@ const isDark = useDark()
 </script>
 
 <template>
-  <transition mode="out-in" name="fade">
-    <a-config-provider
-        :theme="{
+  <a-config-provider
+      :theme="{
       algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
     }"
-    >
-      <router-view/>
-    </a-config-provider>
-  </transition>
+  >
+    <router-view v-slot="{ Component, route }">
+      <transition mode="out-in" name="fade">
+        <div :key="route.path">
+          <component :is="Component"></component>
+        </div>
+      </transition>
+    </router-view>
+  </a-config-provider>
 </template>
-
-<style scoped>
-
-</style>
