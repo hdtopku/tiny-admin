@@ -9,6 +9,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vueuse/core": "^10.9.0",
+    "animate.css": "^4.1.1",
     "ant-design-vue": "4.x",
     "vue": "^3.4.21",
     "vue-router": "4"
