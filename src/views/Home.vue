@@ -1,10 +1,9 @@
 <script lang="ts" setup>
 
-import {useDark, useTitle} from "@vueuse/core";
+import {useDark} from "@vueuse/core";
 
 const isDark = useDark()
 
-useTitle(() => isDark.value ? '🌙 Good evening!' : '☀️ Good morning!')
 </script>
 
 <template>

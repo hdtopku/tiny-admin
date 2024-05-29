@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {useDark, useToggle} from '@vueuse/core'
+import {useDark, useTitle, useToggle} from '@vueuse/core'
 
 const isDark = useDark()
 const toggleDark = () => {
@@ -8,6 +8,9 @@ const toggleDark = () => {
     useToggle(isDark)()
   }, 300)
 }
+watch(isDark, () => {
+  useTitle(() => isDark.value ? `🌙Tiny Admin` : `☀️Tiny Admin`)
+}, {immediate: true})
 
 </script>
 

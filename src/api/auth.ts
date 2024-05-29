@@ -1,9 +1,9 @@
-import axios from "axios";
+import http from "@/utils/http.ts";
+import {userType} from "@/store/user.ts";
 
 // 这里定义返回值类型，使接口拥有良好的类型推导
 export type UserResult = {
-    /** 是否请求成功 */
-    success: boolean;
+    code: number,
     data: {
         /** 用户名 */
         username: string;
@@ -19,10 +19,11 @@ export type UserResult = {
 };
 
 /** 登录接口 */
-export const login = (data?: object) => {
-    return new Promise<UserResult>((resolve) => {
-        setTimeout(() => {
-            resolve(axios.post("/api/login", data))
+export const postLogin = (data?: object) => {
+    return new Promise<userType>((resolve) => {
+        setTimeout(async () => {
+            let res: userType = await http.post("/login", data)
+            resolve(res)
         }, 1000)
     })
 };
