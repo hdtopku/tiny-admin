@@ -14,6 +14,7 @@
         <module>tiny-boot-core</module>
         <module>tiny-boot-starter</module>
         <module>tiny-boot-admin</module>
+        <module>tiny-boot-auth</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -22,7 +23,13 @@
     </parent>
 
     <properties>
-
+        <maven.compiler.source>22</maven.compiler.source>
+        <maven.compiler.target>22</maven.compiler.target>
+        <hutool.version>5.8.27</hutool.version>
+        <lombock.version>1.18.32</lombock.version>
+        <redis.version>3.1.0</redis.version>
+        <fastjson.version>2.0.50</fastjson.version>
+        <devtools.version>3.2.5</devtools.version>
     </properties>
 
     <dependencyManagement>
@@ -36,6 +43,31 @@
                 <groupId>com.tiny</groupId>
                 <artifactId>tiny-boot-admin</artifactId>
                 <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tiny</groupId>
+                <artifactId>tiny-boot-auth</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombock.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-devtools</artifactId>
+                <version>${devtools.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

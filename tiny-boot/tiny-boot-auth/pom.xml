@@ -9,17 +9,16 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>tiny-boot-admin</artifactId>
+    <artifactId>tiny-boot-auth</artifactId>
+
     <dependencies>
         <dependency>
-            <groupId>com.tiny</groupId>
-            <artifactId>tiny-boot-auth</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-            <optional>true</optional> <!-- 可以防止将devtools依赖传递到其他模块中 -->
+            <groupId>com.tiny</groupId>
+            <artifactId>tiny-boot-core</artifactId>
         </dependency>
     </dependencies>
-
 </project>
