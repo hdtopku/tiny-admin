@@ -11,10 +11,8 @@
     <name>tiny-boot</name>
     <description>A tiny Spring Boot project</description>
     <modules>
-        <module>tiny-boot-core</module>
-        <module>tiny-boot-starter</module>
-        <module>tiny-boot-admin</module>
-        <module>tiny-boot-auth</module>
+        <module>tiny-core</module>
+        <module>tiny-admin</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -30,23 +28,23 @@
         <redis.version>3.1.0</redis.version>
         <fastjson.version>2.0.50</fastjson.version>
         <devtools.version>3.2.5</devtools.version>
+        <mybatis-plus.version>3.5.6</mybatis-plus.version>
+        <mybatis-plus-generator.version>3.5.6</mybatis-plus-generator.version>
+        <mysql-connector-j.version>8.4.0</mysql-connector-j.version>
+        <swagger.version>3.0.0</swagger.version>
+        <mybatis-spring.version>3.0.3</mybatis-spring.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>com.tiny</groupId>
-                <artifactId>tiny-boot-core</artifactId>
+                <artifactId>tiny-core</artifactId>
                 <version>1.0.0</version>
             </dependency>
             <dependency>
                 <groupId>com.tiny</groupId>
-                <artifactId>tiny-boot-admin</artifactId>
-                <version>1.0.0</version>
-            </dependency>
-            <dependency>
-                <groupId>com.tiny</groupId>
-                <artifactId>tiny-boot-auth</artifactId>
+                <artifactId>tiny-admin</artifactId>
                 <version>1.0.0</version>
             </dependency>
             <dependency>
@@ -68,6 +66,37 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-devtools</artifactId>
                 <version>${devtools.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.mybatis</groupId>
+                        <artifactId>mybatis-spring</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis-spring</artifactId>
+                <version>${mybatis-spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-generator</artifactId>
+                <version>${mybatis-plus-generator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>${mysql-connector-j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${swagger.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
