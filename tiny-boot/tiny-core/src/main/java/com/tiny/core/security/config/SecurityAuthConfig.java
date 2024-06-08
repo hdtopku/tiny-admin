@@ -4,7 +4,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -34,12 +33,13 @@ public abstract class SecurityAuthConfig implements UserDetailsService {
         http.csrf(AbstractHttpConfigurer::disable);
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/login").permitAll()
-                                .anyRequest().access((authentication, object) -> {
-                                    String requestURI = object.getRequest().getRequestURI();
-                                    authentication.get().getAuthorities().stream().map(Object::toString).forEach(System.out::println);
-                                    return new AuthorizationDecision(true);
-                                })
+                                .anyRequest().permitAll()
+//                        .requestMatchers("/login").permitAll()
+//                                .anyRequest().access((authentication, object) -> {
+//                                    String requestURI = object.getRequest().getRequestURI();
+//                                    authentication.get().getAuthorities().stream().map(Object::toString).forEach(System.out::println);
+//                                    return new AuthorizationDecision(true);
+//                                })
 //                                .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())

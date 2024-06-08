@@ -17,8 +17,8 @@ spring:
           min-idle: 0
           max-wait: -1ms
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST}:3306/${MYSQL_DATABASE}?useUnicode=true&characterEncoding=UTF-8&useSSL=false
-    username: ${MYSQL_USER}
+    url: jdbc:mysql://${MYSQL_URL}?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: ${MYSQL_USERNAME}
     password: ${MYSQL_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:

@@ -3,8 +3,7 @@ package com.tiny.admin.biz.system.entity;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,51 +15,51 @@ import java.time.LocalDateTime;
  * 用户表
  * </p>
  *
- * @author baomidou
- * @since 2024-06-06
+ * @author lxh
+ * @since 2024-06-07
  */
 @Getter
 @Setter
 @TableName("sys_user")
-@ApiModel(value = "SysUser对象", description = "用户表")
+@Schema(name = "SysUser", description = "用户表")
 public class SysUser implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty("主键id")
+    @Schema(description = "主键id")
     private String id;
 
-    @ApiModelProperty("用户名")
+    @Schema(description = "用户名")
     private String username;
 
-    @ApiModelProperty("昵称")
+    @Schema(description = "昵称")
     private String nickname;
 
-    @ApiModelProperty("密码")
+    @Schema(description = "密码")
     private String password;
 
-    @ApiModelProperty("电子邮件")
+    @Schema(description = "电子邮件")
     private String email;
 
-    @ApiModelProperty("电话")
+    @Schema(description = "电话")
     private String phone;
 
-    @ApiModelProperty("状态(0:正常;1:冻结)")
+    @Schema(description = "状态(0:正常;1:冻结)")
     private Boolean status;
 
-    @ApiModelProperty("删除状态(0:正常;1:已删除)")
+    @Schema(description = "删除状态(0:正常;1:已删除)")
     private Boolean delFlag;
 
-    @ApiModelProperty("创建人")
+    @Schema(description = "创建人")
     private String createBy;
 
-    @ApiModelProperty("创建时间")
+    @Schema(description = "创建时间")
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
-    @ApiModelProperty("更新人")
+    @Schema(description = "更新人")
     private String updateBy;
 
-    @ApiModelProperty("更新时间")
+    @Schema(description = "更新时间")
     private LocalDateTime updateTime;
 }

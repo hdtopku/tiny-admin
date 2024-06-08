@@ -8,8 +8,8 @@ import com.tiny.admin.biz.system.entity.SysUserRoleRel;
  * 用户角色关系表 服务类
  * </p>
  *
- * @author baomidou
- * @since 2024-06-06
+ * @author lxh
+ * @since 2024-06-07
  */
 public interface ISysUserRoleRelService extends IService<SysUserRoleRel> {
 

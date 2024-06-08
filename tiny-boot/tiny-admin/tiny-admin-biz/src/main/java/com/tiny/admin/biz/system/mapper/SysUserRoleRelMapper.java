@@ -1,6 +1,6 @@
 package com.tiny.admin.biz.system.mapper;
 
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.github.yulichang.base.MPJBaseMapper;
 import com.tiny.admin.biz.system.entity.SysUserRoleRel;
 
 /**
@@ -8,9 +8,9 @@ import com.tiny.admin.biz.system.entity.SysUserRoleRel;
  * 用户角色关系表 Mapper 接口
  * </p>
  *
- * @author baomidou
- * @since 2024-06-06
+ * @author lxh
+ * @since 2024-06-07
  */
-public interface SysUserRoleRelMapper extends BaseMapper<SysUserRoleRel> {
+public interface SysUserRoleRelMapper extends MPJBaseMapper<SysUserRoleRel> {
 
 }

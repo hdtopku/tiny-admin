@@ -1,8 +1,7 @@
 package com.tiny.admin.biz.system.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,23 +12,23 @@ import java.io.Serializable;
  * 用户角色关系表
  * </p>
  *
- * @author baomidou
- * @since 2024-06-06
+ * @author lxh
+ * @since 2024-06-07
  */
 @Getter
 @Setter
 @TableName("sys_user_role_rel")
-@ApiModel(value = "SysUserRoleRel对象", description = "用户角色关系表")
+@Schema(name = "SysUserRoleRel", description = "用户角色关系表")
 public class SysUserRoleRel implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty("主键ID")
+    @Schema(description = "主键ID")
     private String id;
 
-    @ApiModelProperty("用户ID")
+    @Schema(description = "用户ID")
     private String userId;
 
-    @ApiModelProperty("角色ID")
+    @Schema(description = "角色ID")
     private String roleId;
 }

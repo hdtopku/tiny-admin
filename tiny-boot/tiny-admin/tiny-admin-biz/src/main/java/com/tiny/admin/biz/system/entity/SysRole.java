@@ -3,8 +3,7 @@ package com.tiny.admin.biz.system.entity;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,36 +15,36 @@ import java.time.LocalDateTime;
  * 角色表
  * </p>
  *
- * @author baomidou
- * @since 2024-06-06
+ * @author lxh
+ * @since 2024-06-07
  */
 @Getter
 @Setter
 @TableName("sys_role")
-@ApiModel(value = "SysRole对象", description = "角色表")
+@Schema(name = "SysRole", description = "角色表")
 public class SysRole implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty("主键ID")
+    @Schema(description = "主键ID")
     private String id;
 
-    @ApiModelProperty("角色名称")
+    @Schema(description = "角色名称")
     private String roleName;
 
-    @ApiModelProperty("描述")
+    @Schema(description = "描述")
     private String description;
 
-    @ApiModelProperty("创建人")
+    @Schema(description = "创建人")
     private String createBy;
 
-    @ApiModelProperty("创建时间")
+    @Schema(description = "创建时间")
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
-    @ApiModelProperty("更新人")
+    @Schema(description = "更新人")
     private String updateBy;
 
-    @ApiModelProperty("更新时间")
+    @Schema(description = "更新时间")
     private LocalDateTime updateTime;
 }

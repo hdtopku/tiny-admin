@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
  * 角色菜单表 服务实现类
  * </p>
  *
- * @author baomidou
- * @since 2024-06-06
+ * @author lxh
+ * @since 2024-06-07
  */
 @Service
 public class SysRoleMenuRelServiceImpl extends ServiceImpl<SysRoleMenuRelMapper, SysRoleMenuRel> implements ISysRoleMenuRelService {
