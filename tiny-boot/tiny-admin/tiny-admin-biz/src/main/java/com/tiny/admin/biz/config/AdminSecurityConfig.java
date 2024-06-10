@@ -1,8 +1,12 @@
 package com.tiny.admin.biz.config;
 
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
+import com.tiny.admin.biz.system.dto.SysUserDetails;
+import com.tiny.admin.biz.system.entity.*;
+import com.tiny.admin.biz.system.mapper.SysUserMapper;
 import com.tiny.core.security.config.SecurityAuthConfig;
+import jakarta.annotation.Resource;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
@@ -11,11 +15,21 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
  */
 @Configuration
 public class AdminSecurityConfig extends SecurityAuthConfig {
+    @Resource
+    private SysUserMapper sysUserMapper;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return User.withUsername("admin")
-                .password(super.passwordEncoder.encode("123456"))
-                .roles("ADMIN", "USER")
-                .build();
+        MPJLambdaWrapper<SysUser> wrapper = new MPJLambdaWrapper<>();
+        wrapper.selectAll(SysUser.class)
+                .selectCollection(SysRole.class, SysUserDetails::getRoles)
+                .selectCollection(SysMenu.class, SysUserDetails::getMenus)
+                .leftJoin(SysUserRoleRel.class, SysUserRoleRel::getUserId, SysUser::getId)
+                .leftJoin(SysRole.class, SysRole::getId, SysUserRoleRel::getRoleId)
+                .leftJoin(SysRoleMenuRel.class, SysRoleMenuRel::getRoleId, SysRole::getId)
+                .leftJoin(SysMenu.class, SysMenu::getId, SysRoleMenuRel::getMenuId)
+                .eq(SysUser::getUsername, username)
+                .eq(SysUser::getDelFlag, 1);
+        return sysUserMapper.selectJoinOne(SysUserDetails.class, wrapper);
     }
 }

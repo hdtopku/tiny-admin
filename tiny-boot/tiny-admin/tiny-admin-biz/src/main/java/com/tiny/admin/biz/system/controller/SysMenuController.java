@@ -21,7 +21,7 @@ import java.util.List;
  * @since 2024-06-07
  */
 @RestController
-@RequestMapping("/system/sysMenu")
+@RequestMapping(value = "system/sysMenu")
 public class SysMenuController extends BaseController<ISysMenuService, SysMenu> {
     @Resource
     private ISysMenuService sysMenuService;

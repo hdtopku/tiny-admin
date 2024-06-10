@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -24,6 +25,7 @@ import java.time.LocalDateTime;
 @Schema(name = "SysUser", description = "用户表")
 public class SysUser implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Schema(description = "主键id")
@@ -44,10 +46,10 @@ public class SysUser implements Serializable {
     @Schema(description = "电话")
     private String phone;
 
-    @Schema(description = "状态(0:正常;1:冻结)")
+    @Schema(description = "状态(0:冻结;1:正常)")
     private Boolean status;
 
-    @Schema(description = "删除状态(0:正常;1:已删除)")
+    @Schema(description = "删除状态(0:已删除;1:正常)")
     private Boolean delFlag;
 
     @Schema(description = "创建人")
