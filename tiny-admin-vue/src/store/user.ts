@@ -13,10 +13,13 @@ export type userType = {
 export const useUserStore = defineStore('user', () => {
     const userInfo = ref<userType>({})
     const login = (data: { username: string, password: string }) => {
-        return new Promise((resolve) => {
-            postLogin(data).then(({token = ''}) => {
+        console.log(data)
+        return new Promise((resolve, reject) => {
+            postLogin(data).then((token) => {
                 setToken(token)
                 resolve(router.push('/'))
+            }).catch((err) => {
+                reject(new Error(err))
             })
         })
     }

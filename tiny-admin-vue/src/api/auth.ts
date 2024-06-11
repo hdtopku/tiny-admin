@@ -1,5 +1,4 @@
 import http from "@/utils/http.ts";
-import {userType} from "@/store/user.ts";
 
 // 这里定义返回值类型，使接口拥有良好的类型推导
 export type UserResult = {
@@ -19,11 +18,16 @@ export type UserResult = {
 };
 
 /** 登录接口 */
-export const postLogin = (data?: object) => {
-    return new Promise<userType>((resolve) => {
-        setTimeout(async () => {
-            let res: userType = await http.post("/login", data)
-            resolve(res)
-        }, 1000)
-    })
+// export const postLogin = (data?: object) => {
+//     return new Promise<userType>((resolve) => {
+//         setTimeout(async () => {
+//             let res: userType = await http.post("/login", data)
+//             resolve(res)
+//         }, 1000)
+//     })
+// };
+
+/** 登录接口 */
+export const postLogin = (data?: object): Promise<string> => {
+    return http.post("/login", data)
 };

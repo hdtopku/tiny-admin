@@ -1,11 +1,12 @@
 package com.tiny.admin.biz.system.controller;
 
+import com.tiny.admin.biz.system.dto.LoginForm;
 import com.tiny.admin.biz.system.service.LoginService;
 import com.tiny.core.web.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -16,9 +17,9 @@ public class LoginController {
     @Resource
     private LoginService loginService;
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     @Operation(summary = "登录接口")
-    public Result<String> login(@RequestParam(name = "username") String username, @RequestParam(name = "password") String password) {
-        return Result.success(loginService.login(username, password));
+    public Result<String> login(@RequestBody LoginForm loginForm) {
+        return Result.success(loginService.login(loginForm.getUsername(), loginForm.getPassword()));
     }
 }
