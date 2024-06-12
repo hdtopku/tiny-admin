@@ -3,24 +3,20 @@ import {postLogin} from "@/api/auth.ts";
 import router from "@/router";
 import {setToken} from "@/utils/auth.ts";
 
-export type userType = {
+export type UserType = {
     avatar?: string,
     username?: string,
     nickname?: string,
-    role?: Array<string>,
-    token?: string,
+    menuTree?: Array<string>,
 }
 export const useUserStore = defineStore('user', () => {
-    const userInfo = ref<userType>({})
-    const login = (data: { username: string, password: string }) => {
-        console.log(data)
-        return new Promise((resolve, reject) => {
-            postLogin(data).then((token) => {
-                setToken(token)
-                resolve(router.push('/'))
-            }).catch((err) => {
-                reject(new Error(err))
-            })
+    const userInfo = ref<UserType>({})
+    const login = async (data: { username: string, password: string }) => {
+        return postLogin(data).then((res) => {
+            setToken(res.token)
+            userInfo.value = res.userInfo
+            router.push('/')
+            return res
         })
     }
     return {
@@ -31,8 +27,7 @@ export const useUserStore = defineStore('user', () => {
                 avatar: '',
                 username: '',
                 nickname: '',
-                role: [],
-                token: '',
+                menuTree: []
             }
         }
     }

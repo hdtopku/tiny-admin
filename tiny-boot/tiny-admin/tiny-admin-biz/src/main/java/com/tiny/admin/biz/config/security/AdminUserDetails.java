@@ -1,4 +1,4 @@
-package com.tiny.admin.biz.system.dto;
+package com.tiny.admin.biz.config.security;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.tiny.admin.biz.system.entity.SysMenu;
@@ -19,16 +19,16 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class SysUserDetails extends SysUser implements UserDetails {
+public class AdminUserDetails extends SysUser implements UserDetails {
 
     @Serial
     private static final long serialVersionUID = 1L;
     private List<SysRole> roles;
-    private List<SysMenu> menus;
+    private List<SysMenu> menuList;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return menus.stream().filter(menu -> StringUtils.isNotBlank(menu.getPerms())).map(menu -> new SimpleGrantedAuthority(menu.getPerms())).toList();
+        return menuList.stream().filter(menu -> StringUtils.isNotBlank(menu.getPerms())).map(menu -> new SimpleGrantedAuthority(menu.getPerms())).toList();
     }
 
     @Override

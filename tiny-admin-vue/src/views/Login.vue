@@ -11,7 +11,6 @@ const loginForm = ref({
 const loginLoading = ref(false);
 const handleLogin = () => {
   loginLoading.value = true;
-  console.log(loginForm.value)
   useUserStore().login(loginForm.value).then(() => {
     message.success("登录成功");
   }).catch((err) => {

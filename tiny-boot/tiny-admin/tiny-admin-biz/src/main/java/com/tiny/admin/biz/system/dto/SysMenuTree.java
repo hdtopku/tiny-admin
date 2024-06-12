@@ -11,6 +11,6 @@ import java.util.List;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class SysMenuDTO extends SysMenu {
-    private List<SysMenuDTO> children;
+public class SysMenuTree extends SysMenu {
+    private List<SysMenuTree> children;
 }

@@ -1,7 +1,7 @@
 package com.tiny.admin.biz.system.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.tiny.admin.biz.system.dto.SysMenuDTO;
+import com.tiny.admin.biz.system.dto.SysMenuTree;
 import com.tiny.admin.biz.system.entity.SysMenu;
 
 import java.util.List;
@@ -16,5 +16,6 @@ import java.util.List;
  */
 public interface ISysMenuService extends IService<SysMenu> {
 
-    List<SysMenuDTO> menuTree();
+    List<SysMenuTree> menuTree();
+
 }

@@ -1,7 +1,6 @@
-package com.tiny.admin.biz.config;
+package com.tiny.admin.biz.config.security;
 
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
-import com.tiny.admin.biz.system.dto.SysUserDetails;
 import com.tiny.admin.biz.system.entity.*;
 import com.tiny.admin.biz.system.mapper.SysUserMapper;
 import com.tiny.core.security.config.SecurityAuthConfig;
@@ -22,14 +21,14 @@ public class AdminSecurityConfig extends SecurityAuthConfig {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         MPJLambdaWrapper<SysUser> wrapper = new MPJLambdaWrapper<>();
         wrapper.selectAll(SysUser.class)
-                .selectCollection(SysRole.class, SysUserDetails::getRoles)
-                .selectCollection(SysMenu.class, SysUserDetails::getMenus)
+                .selectCollection(SysRole.class, AdminUserDetails::getRoles)
+                .selectCollection(SysMenu.class, AdminUserDetails::getMenuList)
                 .leftJoin(SysUserRoleRel.class, SysUserRoleRel::getUserId, SysUser::getId)
                 .leftJoin(SysRole.class, SysRole::getId, SysUserRoleRel::getRoleId)
                 .leftJoin(SysRoleMenuRel.class, SysRoleMenuRel::getRoleId, SysRole::getId)
                 .leftJoin(SysMenu.class, SysMenu::getId, SysRoleMenuRel::getMenuId)
                 .eq(SysUser::getUsername, username)
                 .eq(SysUser::getDelFlag, 1);
-        return sysUserMapper.selectJoinOne(SysUserDetails.class, wrapper);
+        return sysUserMapper.selectJoinOne(AdminUserDetails.class, wrapper);
     }
 }

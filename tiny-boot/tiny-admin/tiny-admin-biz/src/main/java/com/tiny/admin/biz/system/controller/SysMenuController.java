@@ -1,6 +1,6 @@
 package com.tiny.admin.biz.system.controller;
 
-import com.tiny.admin.biz.system.dto.SysMenuDTO;
+import com.tiny.admin.biz.system.dto.SysMenuTree;
 import com.tiny.admin.biz.system.entity.SysMenu;
 import com.tiny.admin.biz.system.service.ISysMenuService;
 import com.tiny.core.web.BaseController;
@@ -27,7 +27,7 @@ public class SysMenuController extends BaseController<ISysMenuService, SysMenu> 
     private ISysMenuService sysMenuService;
 
     @GetMapping("/tree")
-    public Result<List<SysMenuDTO>> menuTree() {
+    public Result<List<SysMenuTree>> menuTree() {
         return Result.success(sysMenuService.menuTree());
     }
 }
