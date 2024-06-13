@@ -12,5 +12,8 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class SysMenuTree extends SysMenu {
+    private String label;
+    private String key;
+    private String icon;
     private List<SysMenuTree> children;
 }
