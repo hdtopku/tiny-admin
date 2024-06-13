@@ -11,5 +11,6 @@ export default {
       'sm': '576px',
     }
   },
-  plugins: [],
+  plugins: [
+  ],
 }

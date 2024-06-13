@@ -1,5 +1,5 @@
 import http from "@/utils/http.ts";
-import {UserType} from "@/store/user.ts";
+import {UserType} from "@/store/userStore.ts";
 
 /** 登录接口 */
 // export const postLogin = (data?: object) => {

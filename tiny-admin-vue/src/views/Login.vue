@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import DarkToggle from "@/components/DarkToggle.vue";
-import {useUserStore} from "@/store/user.ts";
+import {useUserStore} from "@/store";
 import {message} from "ant-design-vue";
 
 const loginForm = ref({

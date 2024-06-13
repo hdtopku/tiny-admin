@@ -1,18 +1,14 @@
 import {createRouter, createWebHistory} from "vue-router";
 import NProgress from "@/utils/NProgress.ts";
+import {useUserStore} from "@/store";
 
 const routes = [{
-    path: '/',
-    name: 'Home',
-    component: () => import('@/views/Home.vue')
-}, {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/Login.vue')
 }, {
-    path: '/test',
-    name: 'Test',
-    component: () => import('@/views/Test.vue')
+    path: '/',
+    component: () => import('@/layout/Index.vue')
 }]
 const router = createRouter({
     history: createWebHistory(),
@@ -20,19 +16,34 @@ const router = createRouter({
 })
 const whiteList = ['/login']
 
-
+let routeList
 router.beforeEach((to, _from, next) => {
     NProgress.start()
     const token = localStorage.getItem('token')
     if (whiteList.includes(to.path)) {
         if (to.path === '/login' && token?.length) {
-            next('/')
+            return next('/')
         }
-        next()
-        return
+        return next()
     }
     if (token?.length) {
-        next()
+        if (!routeList) {
+            routeList = useUserStore().getRouteList()
+            if (routeList?.length) {
+                router.addRoute(
+                    {
+                        component: import('@/layout/Index.vue'),
+                        path: "/",
+                        name: "Layout",
+                        children: routeList
+                    }
+                )
+            }
+            console.log(routeList)
+            return next(to)
+        } else {
+            next()
+        }
     } else {
         next('/login')
     }
