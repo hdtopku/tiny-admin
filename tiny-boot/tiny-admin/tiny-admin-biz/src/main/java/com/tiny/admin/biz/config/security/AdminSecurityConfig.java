@@ -28,7 +28,8 @@ public class AdminSecurityConfig extends SecurityAuthConfig {
                 .leftJoin(SysRoleMenuRel.class, SysRoleMenuRel::getRoleId, SysRole::getId)
                 .leftJoin(SysMenu.class, SysMenu::getId, SysRoleMenuRel::getMenuId)
                 .eq(SysUser::getUsername, username)
-                .eq(SysUser::getDelFlag, 1);
+                .eq(SysUser::getDelFlag, 1)
+                .orderByAsc(SysMenu::getSort);
         return sysUserMapper.selectJoinOne(AdminUserDetails.class, wrapper);
     }
 }

@@ -19,7 +19,7 @@ import java.util.List;
 @SuppressWarnings("all")
 public class BaseController<S extends IService<E>, E> {
     @Autowired
-    private S baseService;
+    public S baseService;
 
     @Operation(summary = "增")
     @PostMapping("/insert")
@@ -31,16 +31,15 @@ public class BaseController<S extends IService<E>, E> {
     @Operation(summary = "删")
     @PostMapping("/deleteById")
     public Result<String> delete(@RequestBody List<Integer> ids) {
-
         baseService.removeByIds(ids);
-        return Result.success("添加成功");
+        return Result.success("删除成功");
     }
 
     @Operation(summary = "改")
     @PostMapping("/updateById")
     public Result<String> updateById(@RequestBody E entity) {
         baseService.updateById(entity);
-        return Result.success("添加成功");
+        return Result.success("更新成功");
     }
 
     @Operation(summary = "查")
@@ -66,20 +65,20 @@ public class BaseController<S extends IService<E>, E> {
     }
 
     @Operation(summary = "page查")
-    @PostMapping("/page")
-    public Result page(@RequestParam(name = "pageNo", defaultValue = "1") Integer pageNo,
+//    @PostMapping("/page")
+    public Result<IPage<E>> page(@RequestParam(name = "pageNum", defaultValue = "1") Integer pageNum,
                        @RequestParam(name = "pageSize", defaultValue = "10") Integer pageSize,
                        @RequestBody(required = false) E entity) {
         //限制条件
-        if (pageNo < 1) {
-            pageNo = 1;
+        if (pageNum < 1) {
+            pageNum = 1;
         }
 
         if (pageSize > 100) {
             pageSize = 100;
         }
         QueryWrapper<E> queryWrapper = ApprenticeUtil.getQueryWrapper(entity);
-        IPage<E> page = new Page<>(pageNo, pageSize);
+        IPage<E> page = new Page<>(pageNum, pageSize);
         IPage<E> result = baseService.page(page, queryWrapper);
         return Result.success(result);
     }

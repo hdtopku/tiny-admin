@@ -12,12 +12,12 @@ public class Result<T> {
     private static final int FAILURE_CODE = 500;
     private static final String FAILURE_MESSAGE = "failure";
     private int code;
-    private String message;
+    private String msg;
     private T data;
 
-    public Result(int code, String message, T data) {
+    public Result(int code, String msg, T data) {
         this.code = code;
-        this.message = message;
+        this.msg = msg;
         this.data = data;
     }
 

@@ -1,6 +1,6 @@
 package com.tiny.admin.biz.system.controller;
 
-import com.tiny.admin.biz.system.dto.LoginForm;
+import com.tiny.admin.biz.system.vo.LoginForm;
 import com.tiny.admin.biz.config.security.AdminUserDetails;
 import com.tiny.admin.biz.system.service.AuthService;
 import com.tiny.core.web.Result;

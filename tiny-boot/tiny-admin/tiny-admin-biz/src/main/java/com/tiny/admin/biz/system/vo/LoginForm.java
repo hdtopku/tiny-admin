@@ -1,4 +1,4 @@
-package com.tiny.admin.biz.system.dto;
+package com.tiny.admin.biz.system.vo;
 
 import lombok.Data;
 
