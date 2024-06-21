@@ -46,7 +46,7 @@ public class SysUser implements Serializable {
     @Schema(description = "电话")
     private String phone;
 
-    @Schema(description = "状态(0:冻结;1:正常)")
+    @Schema(description = "状态(0:禁用;1:正常)")
     private Boolean status;
 
     @Schema(description = "删除状态(0:已删除;1:正常)")

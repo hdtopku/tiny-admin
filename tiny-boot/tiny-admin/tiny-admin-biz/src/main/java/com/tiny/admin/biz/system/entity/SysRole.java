@@ -35,6 +35,9 @@ public class SysRole implements Serializable {
     @Schema(description = "描述")
     private String description;
 
+    @Schema(description = "状态(0:禁用;1:正常)")
+    private Boolean status;
+
     @Schema(description = "创建人")
     private String createBy;
 

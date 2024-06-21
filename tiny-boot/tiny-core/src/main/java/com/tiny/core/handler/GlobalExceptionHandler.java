@@ -1,4 +1,4 @@
-package com.tiny.core.exception.config;
+package com.tiny.core.handler;
 
 import com.tiny.core.web.Result;
 import lombok.extern.slf4j.Slf4j;

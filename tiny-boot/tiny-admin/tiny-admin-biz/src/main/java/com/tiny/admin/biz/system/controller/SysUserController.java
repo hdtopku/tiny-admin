@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.tiny.admin.biz.system.dto.SysUserDto;
 import com.tiny.admin.biz.system.entity.SysUser;
 import com.tiny.admin.biz.system.service.ISysUserService;
-import com.tiny.admin.biz.system.vo.SysUserQueryParam;
+import com.tiny.admin.biz.system.vo.BaseQueryParam;
 import com.tiny.core.web.BaseController;
 import com.tiny.core.web.Result;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 public class SysUserController  extends BaseController<ISysUserService, SysUser> {
 
     @PostMapping("/page")
-    public Result<IPage<SysUserDto>> page(@RequestBody(required = false) SysUserQueryParam param) {
+    public Result<IPage<SysUserDto>> page(@RequestBody(required = false) BaseQueryParam param) {
         LambdaQueryWrapper<SysUser> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByDesc(SysUser::getUpdateTime);
         if(StringUtils.isNotBlank(param.getKeyword())) {

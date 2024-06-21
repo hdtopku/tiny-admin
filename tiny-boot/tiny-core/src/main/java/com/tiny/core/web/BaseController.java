@@ -29,31 +29,23 @@ public class BaseController<S extends IService<E>, E> {
     }
 
     @Operation(summary = "删")
-    @PostMapping("/deleteById")
-    public Result<String> delete(@RequestBody List<Integer> ids) {
+    @PostMapping("/deleteByIds")
+    public Result<String> delete(@RequestBody List<String> ids) {
         baseService.removeByIds(ids);
         return Result.success("删除成功");
     }
 
-    @Operation(summary = "改")
-    @PostMapping("/updateById")
-    public Result<String> updateById(@RequestBody E entity) {
-        baseService.updateById(entity);
-        return Result.success("更新成功");
-    }
-
     @Operation(summary = "查")
     @GetMapping("/getById")
-    public Result<E> getById(@RequestParam Integer id) {
-
+    public Result<E> getById(@RequestParam String id) {
         return Result.success(baseService.getById(id));
     }
 
-    @Operation(summary = "存")
-    @PostMapping("/save")
+    @Operation(summary = "存或改")
+    @PostMapping("/saveOrUpdate")
     public Result<String> save(@RequestBody E entity) {
         baseService.saveOrUpdate(entity);
-        return Result.success("添加成功");
+        return Result.success("操作成功");
     }
 
     @Operation(summary = "list查")

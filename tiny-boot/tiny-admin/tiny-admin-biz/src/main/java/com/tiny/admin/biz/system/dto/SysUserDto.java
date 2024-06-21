@@ -2,6 +2,8 @@ package com.tiny.admin.biz.system.dto;
 
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 /**
 * Created by lxh at 2024-06-14 18:48:07
 */
@@ -13,4 +15,6 @@ public class SysUserDto {
     private String email;
     private String phone;
     private Boolean status;
+    private LocalDateTime createTime;
+    private LocalDateTime updateTime;
 }
