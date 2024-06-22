@@ -1,18 +1,29 @@
 <template>
-  <a-menu v-model:selected-keys="useMenuStore().selectedKeys"
-          v-model:open-keys="useMenuStore().openKeys"
+  <a-menu v-model:collapsed="menuCollapsed" v-model:selected-keys="useMenuStore().selectedKeys"
+          v-model:open-keys="openKeys"
           @click="handleClick" :items="menus" class="overflow-auto h-full "
           theme="dark" mode="inline">
-
   </a-menu>
 </template>
 <script lang="ts" setup>
 import {useMenuStore, useUserStore} from "@/store/index.ts";
+import { storeToRefs } from 'pinia'
+
 import router from "@/router";
 const menus = useUserStore().getSidebar()
 const handleClick = ({key}) => {
   router.push(key)
 }
+const {openKeys, menuCollapsed}=storeToRefs(useMenuStore())
+
+let preOpenKeys
+watch(openKeys, (_val, oldVal) => {
+      preOpenKeys = oldVal;
+},)
+watch(menuCollapsed, (val) => {
+      if (!val) openKeys.value = preOpenKeys
+},)
+
 </script>
 <style scoped>
 #components-layout-demo-side .logo {

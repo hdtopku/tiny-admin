@@ -26,7 +26,7 @@ export const userStore = defineStore('user', () => {
     const getSidebar = (): ItemType[] => {
         const dfs = (menuTree: any[] | undefined) => {
             return menuTree?.map((item) => {
-                const menu: ItemType = {
+                const menu: any = {
                     key: item?.key,
                     label: item?.label,
                 }
@@ -43,13 +43,14 @@ export const userStore = defineStore('user', () => {
         const dfs = (menuTree: any[] | undefined) => {
             for (let item of menuTree || []) {
                 item.children?.length && dfs(item.children)
-                if (item.menuType !== 1) continue
-                const path = item.component.split('/').filter(i => i.length > 0).join('/')
+                if (item.type !== 1) continue
+                const path = item.component?.split('/').filter(i => i.length > 0).join('/')
                 routeList.push({
                     path: item.url,
                     name: item.name,
                     component: modules[`../views/${path}.vue`],
                 })
+                console.log(item)
             }
         }
         dfs(userInfo.value?.menuTree)

@@ -45,10 +45,10 @@ public class SysMenu implements Serializable {
     private String redirect;
 
     @Schema(description = "菜单类型(0:一级菜单;1:子菜单;2:按钮权限)")
-    private Integer menuType;
+    private Integer type;
 
     @Schema(description = "菜单权限编码")
-    private String perms;
+    private String permission;
 
     @Schema(description = "菜单排序")
     private Integer sort;

@@ -3,12 +3,12 @@ import NProgress from "@/utils/NProgress.ts";
 import {useUserStore} from "@/store";
 
 const routes = [{
+    path: '/',
+    component: () => import('@/layout/Index.vue')
+}, {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/Login.vue')
-}, {
-    path: '/',
-    component: () => import('@/layout/Index.vue')
 }]
 const router = createRouter({
     history: createWebHistory(),

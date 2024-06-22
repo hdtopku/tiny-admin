@@ -1,20 +1,19 @@
 <template>
-
   <a-layout class="min-h-screen">
     <div v-show="showMask" class="mask" @click="closeMask"></div>
     <a-layout-sider class="z-[1000]"
                     :style="{height: '100vh', position: isMiddleWidth ?'fixed' : '', left: 0, top: 0, bottom: 0 }"
-                    v-model:collapsed="collapsed" collapsible breakpoint="md"
+                    v-model:collapsed="menuCollapsed" collapsible breakpoint="md"
                     :collapsedWidth="collapsedWidth"
                     @collapse="onCollapse"
                     @breakpoint="onBreakpoint">
-      <div :class="{'hidden':isMiddleWidth && collapsed, 'text-xs': collapsed, 'text-2xl':!collapsed}"
+      <div :class="{'hidden':isMiddleWidth && menuCollapsed, 'text-xs': menuCollapsed, 'text-2xl':!menuCollapsed}"
            class="text-center py-4 font-bold">
         Tiny Admin
       </div>
       <Sidebar class="pb-16 pt-4"/>
-      <span @click="collapsed =!collapsed"
-            class="absolute top-2/3 text-white bg-[#011528] -right-10 text-2xl hover:bg-gray-700 rounded-r-lg cursor-pointer p-2">
+      <span @click="menuCollapsed =!menuCollapsed"
+            class="opacity-80 absolute top-2/3 text-white bg-[#011528] -right-10 text-2xl hover:bg-gray-700 rounded-r-lg cursor-pointer p-2">
       <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="currentColor"><path
           d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg>
         </span>
@@ -31,8 +30,10 @@
 <script lang="ts" setup>
 import {ref} from 'vue';
 import Sidebar from "@/layout/Sidebar.vue";
+import {storeToRefs} from "pinia";
+import {useMenuStore} from "@/store";
 
-const collapsed = ref<boolean>(false);
+const {menuCollapsed} = storeToRefs(useMenuStore())
 const collapsedWidth = ref<number>(80);
 const isMiddleWidth = ref<boolean>(false);
 const showMask = ref<boolean>(false);
@@ -49,15 +50,15 @@ const onBreakpoint = (broken: boolean) => {
 watch(showMask, (val) => {
   val ? document.body.style.overflow = "hidden" : document.body.style.overflow = "auto"
 })
-watch(collapsed, (val) => {
+watch(menuCollapsed, (val) => {
   if (isMiddleWidth.value) {
-    val ? showMask.value = false : showMask.value = true
+    showMask.value = !val;
   }
 })
 
 const closeMask = () => {
   showMask.value = false;
-  collapsed.value = true;
+  menuCollapsed.value = true;
 }
 </script>
 <style scoped>

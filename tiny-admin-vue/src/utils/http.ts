@@ -5,6 +5,7 @@ import {getToken} from "@/utils/auth.ts";
 import NProgress from "@/utils/NProgress.ts";
 
 const http = axios.create({
+    timeout: 30000,
     baseURL: import.meta.env.VITE_APP_API_URL,
     headers: {
         'Content-Type': 'application/json'
@@ -23,7 +24,7 @@ http.interceptors.response.use(
         if (code === 200) {
             return data;
         } else if (code === 500) {
-            message.error(msg)
+            message.error(msg || "服务异常，请稍后再试")
         } else if (code === 401) {
             message.error("请先登录")
             window.sessionStorage.clear()
