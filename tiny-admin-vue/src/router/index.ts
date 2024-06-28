@@ -9,7 +9,13 @@ const routes = [{
     path: '/login',
     name: 'Login',
     component: () => import('@/views/Login.vue')
-}]
+},
+    {
+        // hide: true,
+        path: '/:pathMatch(.*)*',
+        component: () => import(`@/views/404.vue`),
+    }
+]
 const router = createRouter({
     history: createWebHistory(),
     routes
@@ -32,14 +38,13 @@ router.beforeEach((to, _from, next) => {
             if (routeList?.length) {
                 router.addRoute(
                     {
-                        component: import('@/layout/Index.vue'),
+                        component: () => import('@/layout/Index.vue'),
                         path: "/",
                         name: "Layout",
                         children: routeList
                     }
                 )
             }
-            console.log(routeList)
             return next(to)
         } else {
             next()

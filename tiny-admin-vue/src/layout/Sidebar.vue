@@ -7,23 +7,28 @@
 </template>
 <script lang="ts" setup>
 import {useMenuStore, useUserStore} from "@/store/index.ts";
-import { storeToRefs } from 'pinia'
+import {storeToRefs} from 'pinia'
 
 import router from "@/router";
-const menus = useUserStore().getSidebar()
+import useGlobal from "@/hooks/useGlobal.ts";
+
+const menus = ref(useUserStore().getSidebar())
 const handleClick = ({key}) => {
   router.push(key)
 }
-const {openKeys, menuCollapsed}=storeToRefs(useMenuStore())
+const {openKeys, menuCollapsed} = storeToRefs(useMenuStore())
 
 let preOpenKeys
 watch(openKeys, (_val, oldVal) => {
-      preOpenKeys = oldVal;
+  preOpenKeys = oldVal;
 },)
 watch(menuCollapsed, (val) => {
-      if (!val) openKeys.value = preOpenKeys
+  if (!val) openKeys.value = preOpenKeys
 },)
-
+const {$bus} = useGlobal()
+$bus.on('update-user-info', () => {
+  menus.value = useUserStore().getSidebar()
+})
 </script>
 <style scoped>
 #components-layout-demo-side .logo {

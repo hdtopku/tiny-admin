@@ -37,7 +37,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
             SysMenuTree sysMenuTree = BeanUtil.copyProperties(menu, SysMenuTree.class);
             sysMenuTree.setLabel(menu.getName());
             sysMenuTree.setIcon(menu.getIcon());
-            sysMenuTree.setKey(menu.getUrl());
             return sysMenuTree;
         }).toList();
         List<SysMenuTree> parents = menus.stream().filter(item -> StringUtils.isBlank(item.getParentId())).toList();

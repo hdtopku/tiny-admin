@@ -1,8 +1,8 @@
 package com.tiny.admin.biz.system.controller;
 
-import com.tiny.admin.biz.system.vo.LoginForm;
-import com.tiny.admin.biz.config.security.AdminUserDetails;
+import com.tiny.admin.biz.system.dto.UserInfo;
 import com.tiny.admin.biz.system.service.AuthService;
+import com.tiny.admin.biz.system.vo.LoginForm;
 import com.tiny.core.web.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
@@ -27,9 +27,9 @@ public class AuthController {
         return Result.success(authService.login(loginForm.getUsername(), loginForm.getPassword()));
     }
 
-    @GetMapping("/getInfo")
+    @GetMapping("/getSelfInfo")
     @Operation(summary = "获取用户信息")
-    public Result<AdminUserDetails> getInfo() {
-        return Result.success(authService.getInfo());
+    public Result<UserInfo> getInfo() {
+        return Result.success(authService.getSelfInfo());
     }
 }

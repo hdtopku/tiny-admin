@@ -15,6 +15,7 @@ import {UserType} from "@/store/userStore.ts";
 export const postLogin = (data?: object): Promise<{token: string, userInfo: UserType}> => {
     return http.post("/login", data)
 };
-export const getInfo = () => {
-    return http.get("/getInfo")
+
+export const getSelfInfo = () => {
+    return http.get("/getSelfInfo")
 }

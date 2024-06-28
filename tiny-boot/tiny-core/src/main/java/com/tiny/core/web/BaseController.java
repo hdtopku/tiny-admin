@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -25,6 +26,11 @@ public class BaseController<S extends IService<E>, E> {
     @PostMapping("/insert")
     public Result<String> insert(@RequestBody E entity) {
         baseService.save(entity);
+        List<List<Integer>> res = new ArrayList<>();
+        res.add(new ArrayList<>(){{
+                add(1);
+                add(2);
+        }});
         return Result.success("添加成功");
     }
 

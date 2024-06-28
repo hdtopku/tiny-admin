@@ -1,15 +1,18 @@
 <script setup lang="ts">
 import {saveOrUpdateMenu} from "@/api/menu.ts";
 import {message} from "ant-design-vue";
+import IconSelector from "@/components/IconSelector.vue";
+import {useUserStore} from "@/store";
+import useGlobal from "@/hooks/useGlobal.ts";
 
 const props = defineProps({
-  menuTree: []
+  menuTree: Array as () => string[],
 })
-const modalVisible = ref(true)
+const modalVisible = ref(false)
 const isUpdate = ref(false)
 const title = isUpdate.value ? '更新菜单' : '新增菜单'
 const formRef = ref()
-const form = reactive({
+const form = ref({
   name: '',
   url: '',
   component: '',
@@ -31,10 +34,6 @@ const rules: any = {
     {required: true, message: '请输入菜单路径', trigger: ['blur', 'change']},
     {min: 2, max: 200, message: '长度在 2 到 200 个字符', trigger: ['blur', 'change']},
   ],
-  icon: [
-    {required: true, message: '请输入菜单图标', trigger: ['blur', 'change']},
-    {min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: ['blur', 'change']},
-  ],
   sort: [
     {required: true, message: '请输入菜单排序', trigger: ['blur', 'change']},
     {type: 'number', message: '请输入数字', trigger: ['blur', 'change']},
@@ -42,68 +41,89 @@ const rules: any = {
   type: [
     {required: true, message: '请选择菜单类型', trigger: ['blur', 'change']},
   ],
-  permission: [
-    {required: true, message: '请输入权限标识', trigger: ['blur', 'change']},
-    {min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: ['blur', 'change']},
-  ],
-}
-const fetchMenuList = async () => {
-  // const res = await getMenuList()
-  // if (res.code === 0) {
-  //   menuList.value = res.data
-  // }
 }
 const activeKey = ref('1')
 const loading = ref(false)
+const emits = defineEmits(['queryList'])
+const {$bus} = useGlobal()
 const handleOk = async () => {
-  loading.value = true
   formRef.value.validate().then(() => {
-    saveOrUpdateMenu(form).then(() => {
+    loading.value = true
+    saveOrUpdateMenu(form.value).then(() => {
       message.success('操作成功')
       modalVisible.value = false
-    })
-  }).finally(() => {
-    loading.value = false
+      emits('queryList')
+      useUserStore().refreshUserInfo().then(()=>{
+        $bus.emit('update-user-info')
+      })
+    }).finally(
+        () => {
+          loading.value = false
+        }
+    )
   })
 }
-defineExpose({
-  showModal(data) {
-    isUpdate.value = !!data
-    if (data) {
-      Object.assign(form, data)
-    }
-    modalVisible.value = true
-    fetchMenuList()
-  },
-})
 
 const userInputPerm = ref(false)
 const userInputComponent = ref(false)
 const handleUrlChange = () => {
-  if (form.url.startsWith('/')) {
-    form.url = form.url.slice(1)
-  }
-  if (form.url.endsWith('.vue')) {
-    form.url = form.url.slice(0, -4)
-  }
-  form.url = form.url
-      .replace(/_/g, '-')
-      .replace(/ /g, '-')
-      .replace(/--/g, '-')
-      .replace(/__/g, '-')
-      .toLowerCase()
+  if (isUpdate.value) return
   if (!userInputPerm.value) {
-    form.permission = `${form.url.toLowerCase().replace(/\//g, ':')}`
+    form.value.permission = `${form.value.url.toLowerCase().replace(/\//g, ':')}`
   }
   if (!userInputComponent.value) {
-    form.component = `${form.url}`
+    form.value.component = `${form.value.url}`
   }
 }
-
+watch(() => form.value.url, () => {
+  while (form.value.url?.startsWith('/')) {
+    form.value.url = form.value.url.slice(1)
+  }
+  if (form.value.url?.endsWith('.vue')) {
+    form.value.url = form.value.url?.slice(0, -4)
+  }
+  if (form.value.url?.length) {
+    form.value.url = form.value.url?.replace(/_/g, '-')
+        .replace(/ /g, '-')
+        .replace(/--/g, '-')
+        .replace(/__/g, '-')
+        .toLowerCase()
+  }
+})
+watch(() => form.value.component, () => {
+  if (form.value.component?.startsWith('views/')) {
+    form.value.component = form.value.component.slice(6)
+  }
+  if (form.value.component?.endsWith('.vue')) {
+    form.value.component = form.value.component.slice(0, -4)
+  }
+  while (form.value.component?.startsWith('/')) {
+    form.value.component = form.value.component.slice(1)
+  }
+})
+defineExpose({
+  showModal(isEdit, item) {
+    isUpdate.value = isEdit
+    if (item) {
+      Object.assign(form.value, {
+        id: item.id,
+        name: item.name,
+        url: item.url,
+        component: item.component,
+        icon: item.icon,
+        sort: item.sort,
+        parentId: item.parentId,
+        type: item.type,
+        permission: item.permission,
+      })
+    }
+    modalVisible.value = true
+  }
+})
 </script>
 
 <template>
-  <a-modal ok-text="提交" cancel-text="取消" :mask-closable="false" :open="modalVisible" :title="title"
+  <a-modal ok-text="提交" cancel-text="取消" :open="modalVisible" :title="title"
            @ok="handleOk" @cancel="() => modalVisible = false">
     <template #footer>
       <a-button key="back" @click="modalVisible = false">取消</a-button>
@@ -124,17 +144,16 @@ const handleUrlChange = () => {
                 :tree-data="props.menuTree"
                 tree-node-filter-prop="name"
                 :field-names="{
-      children: 'children',
-      label: 'name',
-      value: 'id',
-    }"
+                  children: 'children',
+                  label: 'name',
+                  value: 'id',
+                }"
             >
               <template #title="{ id: val, label }">
                 <a-tag color="blue" v-if="val === form.parentId">{{ label }}</a-tag>
                 <span v-else>{{ label }}</span>
               </template>
             </a-tree-select>
-
           </a-form-item>
           <a-form-item label="菜单名称" name="name">
             <a-input allow-clear autocomplete="off" v-model:value="form.name" placeholder="请输入菜单名称"/>
@@ -145,6 +164,9 @@ const handleUrlChange = () => {
               <a-input @change="handleUrlChange" allow-clear autocomplete="off" v-model:value="form.url"
                        placeholder="请输入访问URL"/>
             </div>
+          </a-form-item>
+          <a-form-item label="菜单图标" name="icon">
+            <icon-selector v-model:value="form.icon"/>
           </a-form-item>
           <a-form-item label="组件位置" name="component">
             <div class="flex items-center">
@@ -164,7 +186,7 @@ const handleUrlChange = () => {
                      placeholder="请输入权限标识"/>
           </a-form-item>
           <a-form-item help="数字在 1-9999 之间。数值越大，排序越靠后" label="菜单排序" name="sort">
-            <a-input-number allow-clear autocomplete="off" v-model:value="form.sort" :min="1" :max="9999"/>
+            <a-input-number allow-clear autocomplete="off" v-model="form.sort" :min="1" :max="9999"/>
           </a-form-item>
         </a-form>
       </a-tab-pane>

@@ -13,7 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
  * Created by lxh at 2024-05-29 20:05:28
  */
 @Configuration
-public class AdminSecurityConfig extends SecurityAuthConfig {
+public class AdminSecurityConfig extends SecurityAuthConfig<AdminUserDetails> {
     @Resource
     private SysUserMapper sysUserMapper;
 

@@ -5,11 +5,13 @@ import cn.hutool.core.map.MapUtil;
 import com.tiny.admin.biz.config.security.AdminUserDetails;
 import com.tiny.admin.biz.system.dto.UserInfo;
 import com.tiny.admin.biz.system.service.AuthService;
+import com.tiny.core.redis.service.RedisService;
 import com.tiny.core.util.JwtTokenUtil;
 import jakarta.annotation.Resource;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,12 @@ import java.util.Map;
 public class AuthServiceImpl implements AuthService {
     @Resource
     private AuthenticationManager authenticationManager;
+    @Resource
+    private RedisService redisService;
+    @Resource
+    private UserDetailsService userDetailsService;
+    private static final String TOKEN_KEY = "user-token";
+
 
     @Override
     public Map<String, Object> login(String username, String password) {
@@ -31,10 +39,12 @@ public class AuthServiceImpl implements AuthService {
             Authentication authenticate = authenticationManager.authenticate(authenticationToken);
             AdminUserDetails sysUserDetails = (AdminUserDetails) authenticate.getPrincipal();
             Map<String, Object> map = new HashMap<>();
-            map.put("token", JwtTokenUtil.generateToken(MapUtil.of("username", sysUserDetails.getUsername())));
+            String token = JwtTokenUtil.generateToken(MapUtil.of("username", sysUserDetails.getUsername()));
+            map.put("token", token);
             UserInfo userInfo = BeanUtil.copyProperties(sysUserDetails, UserInfo.class);
             userInfo.setMenuTree(SysMenuServiceImpl.convertTree(sysUserDetails.getMenuList()));
-            map.put("userInfo",  userInfo);
+            map.put("userInfo", userInfo);
+            redisService.set(TOKEN_KEY + ":" + sysUserDetails.getUsername(), sysUserDetails);
             return map;
         } catch (BadCredentialsException | UsernameNotFoundException e) {
             throw new UsernameNotFoundException("用户名或密码错误");
@@ -50,10 +60,15 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public AdminUserDetails getInfo() {
+    public UserInfo getSelfInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return  (AdminUserDetails)authentication.getPrincipal();
+        if (authentication == null) {
+            throw new UsernameNotFoundException("未登录");
+        }
+        AdminUserDetails sysUserDetails = (AdminUserDetails) userDetailsService.loadUserByUsername(authentication.getName());
+        UserInfo userInfo = BeanUtil.copyProperties(sysUserDetails, UserInfo.class);
+        userInfo.setMenuTree(SysMenuServiceImpl.convertTree(sysUserDetails.getMenuList()));
+        redisService.set(TOKEN_KEY + ":" + sysUserDetails.getUsername(), sysUserDetails);
+        return userInfo;
     }
-
-
 }

@@ -1,6 +1,5 @@
 package com.tiny.core.redis.config;
 
-import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
 import com.tiny.core.redis.service.RedisService;
 import com.tiny.core.redis.service.impl.RedisServiceImpl;
 import org.springframework.context.annotation.Bean;
@@ -33,7 +32,7 @@ public class RedisCoreConfig {
 
     @Bean
     public RedisSerializer<Object> redisSerializer() {
-        return new FastJsonRedisSerializer<>(Object.class);
+        return new FastJson2JsonRedisSerializer<>(Object.class);
     }
 
     @Bean

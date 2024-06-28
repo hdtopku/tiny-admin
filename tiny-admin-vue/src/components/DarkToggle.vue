@@ -12,6 +12,9 @@ watch(isDark, () => {
   useTitle(() => isDark.value ? `🌙Tiny Admin` : `☀️Tiny Admin`)
 }, {immediate: true})
 
+if (isDark.value) {
+  toggleDark()
+}
 </script>
 
 <template>

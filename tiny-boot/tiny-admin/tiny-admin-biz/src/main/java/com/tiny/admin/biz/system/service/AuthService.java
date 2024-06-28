@@ -1,11 +1,11 @@
 package com.tiny.admin.biz.system.service;
 
-import com.tiny.admin.biz.config.security.AdminUserDetails;
+import com.tiny.admin.biz.system.dto.UserInfo;
 
 import java.util.Map;
 
 public interface AuthService {
     Map<String, Object> login(String username, String password);
 
-    AdminUserDetails getInfo();
+    UserInfo getSelfInfo();
 }

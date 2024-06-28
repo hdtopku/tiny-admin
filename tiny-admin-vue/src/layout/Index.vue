@@ -8,7 +8,7 @@
                     @collapse="onCollapse"
                     @breakpoint="onBreakpoint">
       <div :class="{'hidden':isMiddleWidth && menuCollapsed, 'text-xs': menuCollapsed, 'text-2xl':!menuCollapsed}"
-           class="text-center py-4 font-bold">
+           class="text-center py-4 font-bold text-gray-400">
         Tiny Admin
       </div>
       <Sidebar class="pb-16 pt-4"/>
