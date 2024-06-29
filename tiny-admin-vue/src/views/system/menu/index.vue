@@ -23,16 +23,29 @@ const columns:any = [
     title: '菜单类型',
     dataIndex: 'type',
     key: 'type',
-  },
-  {
-    title: '权限码',
-    dataIndex: 'permission',
-    key:'permission',
+    width: 100,
   },
   {
     title: '排序',
     dataIndex: 'sort',
     key:'sort',
+    width: 60,
+  },
+  {
+    title: '权限码',
+    dataIndex: 'permission',
+    key:'permission',
+    width: 120,
+  },
+  {
+    title: '创建时间',
+    dataIndex: 'createTime',
+    key: 'createTime',
+  },
+  {
+    title: '更新时间',
+    dataIndex: 'updateTime',
+    key: 'updateTime',
   },
   {
     title: '操作',
@@ -77,7 +90,7 @@ const deleteMenu = (menuId) => {
         </a-input>
       </div>
     </div>
-    <a-table row-key="id" :columns="columns" :data-source="dataSource" :loading="switchLoading">
+    <a-table  :scroll="{ x: 'max-content', y: 'calc(100vh - 200px)' }" row-key="id" :columns="columns" :data-source="dataSource" :loading="switchLoading">
 
       <template #bodyCell="{record, column}">
         <template v-if="column.dataIndex === 'name'">

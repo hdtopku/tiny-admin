@@ -12,16 +12,19 @@ const modalVisible = ref(false)
 const isUpdate = ref(false)
 const title = isUpdate.value ? '更新菜单' : '新增菜单'
 const formRef = ref()
-const form = ref({
-  name: '',
-  url: '',
-  component: '',
-  icon: '',
-  sort: 9999,
-  parentId: null,
-  type: 0,
-  permission: '',
-})
+const defaultForm =
+    {
+      name: '',
+      url: '',
+      component: '',
+      icon: '',
+      sort: 9999,
+      parentId: null,
+      type: 0,
+      permission: '',
+    }
+
+const form:any = ref(defaultForm)
 const rules: any = {
   parentId: [
     {required: false, message: '请选择父菜单', trigger: ['blur', 'change']},
@@ -42,18 +45,32 @@ const rules: any = {
     {required: true, message: '请选择菜单类型', trigger: ['blur', 'change']},
   ],
 }
-const activeKey = ref('1')
+const buttonRules: any = {
+  name: [
+    {required: true, message: '请输入按钮名称', trigger: ['blur', 'change']},
+    {min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: ['blur', 'change']},
+  ],
+  permission: [
+    {required: true, message: '请输入权限标识', trigger: ['blur', 'change']},
+    {min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: ['blur', 'change']},
+  ],
+  sort: [
+    {required: true, message: '请输入按钮排序', trigger: ['blur', 'change']},
+    {type: 'number', message: '请输入数字', trigger: ['blur', 'change']},
+  ],
+}
 const loading = ref(false)
 const emits = defineEmits(['queryList'])
 const {$bus} = useGlobal()
+const btnFormRef=ref()
 const handleOk = async () => {
-  formRef.value.validate().then(() => {
+  const submitForm=()=>{
     loading.value = true
     saveOrUpdateMenu(form.value).then(() => {
       message.success('操作成功')
       modalVisible.value = false
       emits('queryList')
-      useUserStore().refreshUserInfo().then(()=>{
+      useUserStore().refreshUserInfo().then(() => {
         $bus.emit('update-user-info')
       })
     }).finally(
@@ -61,7 +78,16 @@ const handleOk = async () => {
           loading.value = false
         }
     )
-  })
+  }
+  if(activeKey.value === '1') {
+    formRef.value.validate().then(() => {
+      submitForm()
+    })
+  } else {
+    btnFormRef.value.validate().then(() => {
+      submitForm()
+    })
+  }
 }
 
 const userInputPerm = ref(false)
@@ -75,6 +101,11 @@ const handleUrlChange = () => {
     form.value.component = `${form.value.url}`
   }
 }
+const activeKey = ref('1')
+
+watch(activeKey, () => {
+ form.value.type = activeKey.value
+})
 watch(() => form.value.url, () => {
   while (form.value.url?.startsWith('/')) {
     form.value.url = form.value.url.slice(1)
@@ -116,8 +147,11 @@ defineExpose({
         type: item.type,
         permission: item.permission,
       })
+    } else {
+      form.value=Object.assign({}, defaultForm)
     }
     modalVisible.value = true
+    console.log(form.value.sort)
   }
 })
 </script>
@@ -186,11 +220,47 @@ defineExpose({
                      placeholder="请输入权限标识"/>
           </a-form-item>
           <a-form-item help="数字在 1-9999 之间。数值越大，排序越靠后" label="菜单排序" name="sort">
-            <a-input-number allow-clear autocomplete="off" v-model="form.sort" :min="1" :max="9999"/>
+            <a-input-number allow-clear autocomplete="off" v-model:value="form.sort" :min="1" :max="9999"/>
           </a-form-item>
         </a-form>
       </a-tab-pane>
-      <a-tab-pane key="2" tab="按钮">Content of Tab Pane 2</a-tab-pane>
+      <a-tab-pane key="2" tab="按钮">
+        <a-form ref="btnFormRef" :rules="buttonRules" :label-col="{span: 5}" class="pt-4" :model="form">
+          <a-form-item label="父级菜单" name="parentId">
+            <a-tree-select
+                v-model:value="form.parentId"
+                show-search
+                style="width: 100%"
+                :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+                placeholder="请选择父级菜单"
+                allow-clear
+                tree-default-expand-all
+                :tree-data="props.menuTree"
+                tree-node-filter-prop="name"
+                :field-names="{
+                  children: 'children',
+                  label: 'name',
+                  value: 'id',
+                }"
+            >
+              <template #title="{ id: val, label }">
+                <a-tag color="blue" v-if="val === form.parentId">{{ label }}</a-tag>
+                <span v-else>{{ label }}</span>
+              </template>
+            </a-tree-select>
+          </a-form-item>
+          <a-form-item label="按钮名称" name="name">
+            <a-input allow-clear autocomplete="off" v-model:value="form.name" placeholder="请输入按钮名称"/>
+          </a-form-item>
+          <a-form-item label="权限标识" name="permission">
+            <a-input allow-clear autocomplete="off" v-model:value="form.permission"
+                     placeholder="请输入权限标识"/>
+          </a-form-item>
+          <a-form-item label="按钮排序" help="数字在 1-9999 之间。数值越大，排序越靠后" name="sort">
+            <a-input-number autocomplete="off" v-model:value="form.sort" :min="1" :max="9999"/>
+          </a-form-item>
+        </a-form>
+      </a-tab-pane>
     </a-tabs>
 
   </a-modal>

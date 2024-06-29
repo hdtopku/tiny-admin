@@ -140,7 +140,7 @@ const handleDeleteUser = (id: string) => {
         </a-input>
       </div>
     </div>
-    <a-table :scroll="{ x: 'max-content', y: 300 }" @change="handleTableChange" :pagination="pagination"
+    <a-table :scroll="{ x: 'max-content', y: 'calc(100vh - 200px)' }" @change="handleTableChange" :pagination="pagination"
              :columns="columns"
              :dataSource="dataSource">
       <template #bodyCell="{record, column}">
