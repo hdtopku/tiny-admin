@@ -2,9 +2,12 @@
 import {deleteUser, getUserPage, saveOrUpdate} from "@/api/user.ts";
 import {useDebounceFn} from "@vueuse/core";
 import {DownOutlined, QuestionCircleOutlined} from '@ant-design/icons-vue';
-import UserModal from "@/views/system/user/UserModal.vue";
-import UserPasswordModal from "@/views/system/user/UserPasswordModal.vue";
 import {message} from "ant-design-vue";
+import {getRoleList} from "@/api/role.ts";
+
+const UserModal = defineAsyncComponent(() => import("@/views/system/user/UserModal.vue"))
+const UserPasswordModal = defineAsyncComponent(() => import ( "@/views/system/user/UserPasswordModal.vue"))
+const AssignRoleModal = defineAsyncComponent(() => import( "@/views/system/user/AssignRoleModal.vue"))
 
 const pagination = ref({
   current: 1,
@@ -28,6 +31,12 @@ const columns = [{
   key: 'nickname',
   width: 60,
 },
+  {
+    title: '角色列表',
+    dataIndex: 'roleNames',
+    key: 'roleNames',
+    width: 120,
+  },
   {
     title: '邮箱',
     dataIndex: 'email',
@@ -106,8 +115,8 @@ const defaultUserInfo = {
 const editUserInfo = ref(defaultUserInfo)
 const UserModalRef = ref()
 const saveOrUpdateUserInfo = (record: any, isEdit = false) => {
-  editUserInfo.value = Object.assign({}, record)
-  UserModalRef.value.showModal(Object.assign({}, isEdit ? record : defaultUserInfo), isEdit)
+  editUserInfo.value = {...record}
+  UserModalRef.value.showModal({...(isEdit ? record : defaultUserInfo)}, isEdit)
 }
 const UserPasswordModalRef = ref()
 const handleChangePassword = (record: any) => {
@@ -118,6 +127,19 @@ const handleDeleteUser = (id: string) => {
     queryList()
     message.success('删除成功')
   })
+}
+const AssignRoleModalRef = ref()
+
+let roleList: any
+const handleAssignRoles = (record: any) => {
+  if (!roleList) {
+    getRoleList().then((res: any) => {
+      roleList = res
+      AssignRoleModalRef.value.showModal(record, roleList)
+    })
+  } else {
+    AssignRoleModalRef.value.showModal(record, roleList)
+  }
 }
 </script>
 
@@ -140,10 +162,21 @@ const handleDeleteUser = (id: string) => {
         </a-input>
       </div>
     </div>
-    <a-table :scroll="{ x: 'max-content', y: 'calc(100vh - 200px)' }" @change="handleTableChange" :pagination="pagination"
+    <a-table :pagination="pagination" :scroll="{ x: 'max-content', y: 'calc(100vh - 200px)' }"
+             @change="handleTableChange"
              :columns="columns"
              :dataSource="dataSource">
       <template #bodyCell="{record, column}">
+        <template v-if="column.dataIndex === 'roleNames'">
+          <span v-if="record.roleNames?.length">
+          <a-tag v-for="item in record.roleNames" :key="item">
+            {{ item }}
+          </a-tag>
+          </span>
+          <span v-else class="text-gray-400 text-xs">
+          暂未分配角色
+          </span>
+        </template>
         <template v-if="column.dataIndex === 'status'">
           <div class="grid grid-cols-2 items-center justify-center">
             <a-popconfirm ok-text="是"
@@ -174,10 +207,12 @@ const handleDeleteUser = (id: string) => {
                     <a-button type="link">更换头像</a-button>
                   </a-menu-item>
                   <a-menu-item>
-                    <a-button type="link">分配角色</a-button>
+                    <a-button type="link" @click="handleAssignRoles(record)">分配角色</a-button>
                   </a-menu-item>
                   <a-menu-item>
-                    <a-popconfirm ok-type="danger" ok-text="是" cancel-text="否" :title="`是否删除用户(${record.username})？`" @confirm="() => {handleDeleteUser(record.key)}">
+                    <a-popconfirm :title="`是否删除用户(${record.username})？`" cancel-text="否" ok-text="是"
+                                  ok-type="danger"
+                                  @confirm="() => {handleDeleteUser(record.key)}">
                       <template #icon>
                         <question-circle-outlined style="color: red"/>
                       </template>
@@ -194,8 +229,5 @@ const handleDeleteUser = (id: string) => {
   </div>
   <UserModal @queryList="queryList" ref="UserModalRef" :userInfo="editUserInfo"/>
   <UserPasswordModal ref="UserPasswordModalRef"/>
+  <AssignRoleModal ref="AssignRoleModalRef" @queryList="queryList"/>
 </template>
-
-<style scoped>
-
-</style>

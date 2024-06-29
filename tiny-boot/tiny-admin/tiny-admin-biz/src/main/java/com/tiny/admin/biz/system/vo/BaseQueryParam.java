@@ -10,5 +10,5 @@ public class BaseQueryParam {
     private String keyword;
     private Integer pageNum = 1;
     private Integer pageSize = 10;
-    private Boolean status;
+    private Boolean status = true;
 }

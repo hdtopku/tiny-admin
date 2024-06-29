@@ -2,6 +2,7 @@
 import {Rule} from "ant-design-vue/es/form";
 import {saveOrUpdate} from "@/api/user.ts";
 import {message} from "ant-design-vue";
+
 const formRules: Record<string, Rule[]> = {
   username: [
     {
@@ -88,10 +89,7 @@ defineExpose({
       <a-form-item label="手机号">
         <a-input v-model:value="curUserInfo.phone" allow-clear autocomplete="off"/>
       </a-form-item>
+
     </a-form>
   </a-modal>
 </template>
-
-<style scoped>
-
-</style>

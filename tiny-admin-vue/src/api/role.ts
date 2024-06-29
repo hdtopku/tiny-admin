@@ -9,3 +9,6 @@ export const saveOrUpdate = async (data: any) => {
 export const deleteById = async (id: any) => {
     return http.post("/system/sysRole/deleteByIds" ,[id])
 }
+export const getRoleList = async () => {
+    return http.post("/system/sysRole/list")
+}

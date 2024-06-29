@@ -56,7 +56,7 @@ public class BaseController<S extends IService<E>, E> {
 
     @Operation(summary = "list查")
     @PostMapping("/list")
-    public Result list(@RequestBody E entity) {
+    public Result list(@RequestBody(required = false) E entity) {
         QueryWrapper<E> queryWrapper = ApprenticeUtil.getQueryWrapper(entity);
         List<E> list = baseService.list(queryWrapper);
         return Result.success(list);

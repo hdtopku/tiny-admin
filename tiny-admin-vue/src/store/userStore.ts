@@ -26,7 +26,7 @@ export const userStore = defineStore('user', () => {
         });
     };
     const refreshUserInfo = async () => {
-        return getSelfInfo().then((res) => {
+        return getSelfInfo().then((res: any) => {
             userInfo.value = res;
             return res;
         });

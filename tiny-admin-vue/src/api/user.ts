@@ -17,3 +17,6 @@ export const updatePassword = async (data: any) => {
 export const deleteUser = async (id: any) => {
     return http.post(`/system/sysUser/deleteByIds`, [id])
 }
+export const assignRoles = async (userId, roleIds) => {
+    return http.post(`/system/sysUser/assignRoles/${userId}`, roleIds)
+}
