@@ -6,12 +6,10 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,29 +20,11 @@ public class BaseController<S extends IService<E>, E> {
     @Autowired
     public S baseService;
 
-    @Operation(summary = "增")
-    @PostMapping("/insert")
-    public Result<String> insert(@RequestBody E entity) {
-        baseService.save(entity);
-        List<List<Integer>> res = new ArrayList<>();
-        res.add(new ArrayList<>(){{
-                add(1);
-                add(2);
-        }});
-        return Result.success("添加成功");
-    }
-
     @Operation(summary = "删")
     @PostMapping("/deleteByIds")
     public Result<String> delete(@RequestBody List<String> ids) {
         baseService.removeByIds(ids);
         return Result.success("删除成功");
-    }
-
-    @Operation(summary = "查")
-    @GetMapping("/getById")
-    public Result<E> getById(@RequestParam String id) {
-        return Result.success(baseService.getById(id));
     }
 
     @Operation(summary = "存或改")
@@ -79,14 +59,6 @@ public class BaseController<S extends IService<E>, E> {
         IPage<E> page = new Page<>(pageNum, pageSize);
         IPage<E> result = baseService.page(page, queryWrapper);
         return Result.success(result);
-    }
-
-    @Operation(summary = "获取数量")
-    @PostMapping("/count")
-    public Result count(@RequestBody E entity) {
-        QueryWrapper<E> queryWrapper = ApprenticeUtil.getQueryWrapper(entity);
-        long count = baseService.count(queryWrapper);
-        return Result.success(count);
     }
 }
 

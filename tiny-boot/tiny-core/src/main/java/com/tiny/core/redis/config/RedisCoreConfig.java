@@ -40,7 +40,10 @@ public class RedisCoreConfig {
         RedisCacheWriter redisCacheWriter = RedisCacheWriter.nonLockingRedisCacheWriter(redisConnectionFactory);
         //设置Redis缓存有效期为1天
         RedisCacheConfiguration redisCacheConfiguration = RedisCacheConfiguration.defaultCacheConfig()
-                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer())).entryTtl(Duration.ofDays(1));
+                .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(redisSerializer()))
+                .entryTtl(Duration.ofDays(7))
+                .disableCachingNullValues()
+                ;
         return new RedisCacheManager(redisCacheWriter, redisCacheConfiguration);
     }
 

@@ -8,6 +8,14 @@ spring:
     active: dev
   config:
     import: classpath:.env.local[.properties]
+  cache:
+    type: redis
+    #使用默认的即可
+#    cache-names: tiny-admin
+    redis:
+      time-to-live: 3600s
+    #如果指定了key前缀就用我们指定的前缀，如果没有就默认使用缓存的名字（value）作为前缀，最好不指定前缀
+      key-prefix: tiny-admin
   data:
     redis:
       host: ${REDIS_HOST}

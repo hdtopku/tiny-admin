@@ -7,7 +7,6 @@ import {getRoleList} from "@/api/role.ts";
 
 const UserModal = defineAsyncComponent(() => import("@/views/system/user/UserModal.vue"))
 const UserPasswordModal = defineAsyncComponent(() => import ( "@/views/system/user/UserPasswordModal.vue"))
-const AssignRoleModal = defineAsyncComponent(() => import( "@/views/system/user/AssignRoleModal.vue"))
 
 const pagination = ref({
   current: 1,
@@ -20,7 +19,7 @@ const searchForm = ref({
   pageNum: pagination.value.current,
   pageSize: pagination.value.pageSize,
 })
-const columns = [{
+const columns: any = [{
   title: '用户名',
   dataIndex: 'username',
   key: 'username',
@@ -112,11 +111,17 @@ const defaultUserInfo = {
   email: '',
   phone: '',
 }
-const editUserInfo = ref(defaultUserInfo)
 const UserModalRef = ref()
+let roleList: any
 const saveOrUpdateUserInfo = (record: any, isEdit = false) => {
-  editUserInfo.value = {...record}
-  UserModalRef.value.showModal({...(isEdit ? record : defaultUserInfo)}, isEdit)
+  if (!roleList) {
+    getRoleList().then((res: any) => {
+      roleList = res
+      UserModalRef.value.showModal({roles: roleList, isEdit, userInfo: {...(isEdit ? record : defaultUserInfo)}})
+    })
+  } else {
+    UserModalRef.value.showModal({roles: roleList, isEdit, userInfo: {...(isEdit ? record : defaultUserInfo)}})
+  }
 }
 const UserPasswordModalRef = ref()
 const handleChangePassword = (record: any) => {
@@ -130,7 +135,6 @@ const handleDeleteUser = (id: string) => {
 }
 const AssignRoleModalRef = ref()
 
-let roleList: any
 const handleAssignRoles = (record: any) => {
   if (!roleList) {
     getRoleList().then((res: any) => {
@@ -207,9 +211,6 @@ const handleAssignRoles = (record: any) => {
                     <a-button type="link">更换头像</a-button>
                   </a-menu-item>
                   <a-menu-item>
-                    <a-button type="link" @click="handleAssignRoles(record)">分配角色</a-button>
-                  </a-menu-item>
-                  <a-menu-item>
                     <a-popconfirm :title="`是否删除用户(${record.username})？`" cancel-text="否" ok-text="是"
                                   ok-type="danger"
                                   @confirm="() => {handleDeleteUser(record.key)}">
@@ -227,7 +228,6 @@ const handleAssignRoles = (record: any) => {
       </template>
     </a-table>
   </div>
-  <UserModal @queryList="queryList" ref="UserModalRef" :userInfo="editUserInfo"/>
+  <UserModal ref="UserModalRef" @queryList="queryList"/>
   <UserPasswordModal ref="UserPasswordModalRef"/>
-  <AssignRoleModal ref="AssignRoleModalRef" @queryList="queryList"/>
 </template>

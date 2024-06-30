@@ -60,12 +60,24 @@ const handleSubmit = () => {
 const emit=defineEmits(['queryList'])
 const curUserInfo = ref()
 const username=ref('')
+
+const roleList = ref()
+const filteredOptions = computed(() => {
+  return roleList.value.filter((item: any) => !curUserInfo.value.roleNames.includes(item.roleName)).map(item => ({
+    value: item.roleName,
+    label: item.roleName
+  }))
+})
+
 defineExpose({
-      showModal(userInfo:any, isEdit = false) {
+  showModal({roles, isEdit = false, userInfo}) {
+    console.log(roles)
+    console.log(userInfo)
         userInfoModalVisible.value = true
         isUpdate.value = isEdit
         curUserInfo.value = userInfo
         username.value = userInfo.username
+    roleList.value = roles
       }
     }
 )
@@ -89,7 +101,12 @@ defineExpose({
       <a-form-item label="手机号">
         <a-input v-model:value="curUserInfo.phone" allow-clear autocomplete="off"/>
       </a-form-item>
-
+      <a-form-item label="角色"
+      >
+        <a-select key="id" v-model:value="curUserInfo.roleNames" :options="filteredOptions" allow-clear
+                  mode="multiple" placeholder="请选择角色">
+        </a-select>
+      </a-form-item>
     </a-form>
   </a-modal>
 </template>

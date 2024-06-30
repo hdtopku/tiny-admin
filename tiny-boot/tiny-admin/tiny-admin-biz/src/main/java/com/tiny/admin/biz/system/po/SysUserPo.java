@@ -12,6 +12,6 @@ import java.util.Set;
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class SysUserVo extends SysUser {
+public class SysUserPo extends SysUser {
     private Set<SysRole> roles;
 }
