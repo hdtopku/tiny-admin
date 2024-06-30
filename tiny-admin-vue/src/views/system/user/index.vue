@@ -133,18 +133,6 @@ const handleDeleteUser = (id: string) => {
     message.success('删除成功')
   })
 }
-const AssignRoleModalRef = ref()
-
-const handleAssignRoles = (record: any) => {
-  if (!roleList) {
-    getRoleList().then((res: any) => {
-      roleList = res
-      AssignRoleModalRef.value.showModal(record, roleList)
-    })
-  } else {
-    AssignRoleModalRef.value.showModal(record, roleList)
-  }
-}
 </script>
 
 <template>
@@ -211,11 +199,15 @@ const handleAssignRoles = (record: any) => {
                     <a-button type="link">更换头像</a-button>
                   </a-menu-item>
                   <a-menu-item>
-                    <a-popconfirm :title="`是否删除用户(${record.username})？`" cancel-text="否" ok-text="是"
+                    <a-popconfirm cancel-text="否" ok-text="是"
                                   ok-type="danger"
                                   @confirm="() => {handleDeleteUser(record.key)}">
                       <template #icon>
                         <question-circle-outlined style="color: red"/>
+                      </template>
+                      <template #title>
+                        <div>是否删除用户？</div>
+                        <a-tag class="my-2" color="red">{{ record.username }}_{{ record.nickname }}</a-tag>
                       </template>
                       <a-button type="link" danger>删除用户</a-button>
                     </a-popconfirm>

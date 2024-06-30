@@ -18,5 +18,5 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface ISysUserService extends IService<SysUser> {
     IPage<SysUserDto> page(@RequestBody(required = false) BaseQueryParam param);
 
-    Boolean saveOrEdit(SysUserDto sysUserDto);
+    void saveOrEdit(SysUserDto sysUserDto);
 }

@@ -56,6 +56,16 @@ const columns: any = [{
   key: 'description',
 },
   {
+    title: '创建时间',
+    dataIndex: 'createTime',
+    key: 'createTime',
+  },
+  {
+    title: '更新时间',
+    dataIndex: 'updateTime',
+    key: 'updateTime',
+  },
+  {
     title: '操作',
     dataIndex: 'status',
     key: 'status',
@@ -108,7 +118,8 @@ const deleteRole= (id: string) => {
       </div>
 
     </div>
-    <a-table :scroll="{ x: 800, y: 300 }" @change="handleTableChange" :pagination="pagination" :columns="columns"
+    <a-table :columns="columns" :pagination="pagination"
+             :scroll="{ x: 'max-content', y: 'calc(100vh - 300px)' }" @change="handleTableChange"
              :dataSource="dataSource">
       <template #bodyCell="{record, column}">
         <template v-if="column.dataIndex === 'status'">
@@ -137,9 +148,14 @@ const deleteRole= (id: string) => {
                     <a-button type="link">分配权限</a-button>
                   </a-menu-item>
                   <a-menu-item>
-                    <a-popconfirm @confirm="() => {deleteRole(record.id)}" ok-type="danger" ok-text="是" cancel-text="否" :title="`是否删除角色：${record.roleName}？`">
+                    <a-popconfirm cancel-text="否" ok-text="是" ok-type="danger"
+                                  @confirm="() => {deleteRole(record.id)}">
                       <template #icon>
                         <question-circle-outlined style="color: red"/>
+                      </template>
+                      <template #title>
+                        <div>是否删除角色：</div>
+                        <a-tag class="my-2" color="red">{{ record.roleName }}</a-tag>
                       </template>
                       <a-button type="link" danger>删除角色</a-button>
                     </a-popconfirm>

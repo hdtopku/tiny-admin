@@ -75,7 +75,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Override
     @Transactional
-    public Boolean saveOrEdit(SysUserDto sysUserDto) {
+    public void saveOrEdit(SysUserDto sysUserDto) {
         SysUser sysUser = BeanUtil.copyProperties(sysUserDto, SysUser.class);
         sysUser.setId(sysUserDto.getKey());
         List<SysUserRoleRel> sysUserRoleRels = iSysUserRoleRelService.list(new MPJLambdaWrapper<SysUserRoleRel>().eq(SysUserRoleRel::getUserId, sysUserDto.getKey()));
@@ -86,10 +86,10 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             SysRole role = roles.stream().filter(r -> r.getRoleName().equals(item)).findFirst().orElseThrow(() -> new RuntimeException("角色："+item+ "不存在"));
             return role.getId();
         }).collect(Collectors.toSet());
+        this.saveOrUpdate(sysUser);
         if(!oldRoleIds.equals(newRoleIds)) {
-            updateUserRoleRel(sysUserDto.getKey(), newRoleIds);
+            updateUserRoleRel(sysUser.getId(), newRoleIds);
         }
-        return this.saveOrUpdate(sysUser);
     }
     private void updateUserRoleRel(String userId, Set<String> newRoleIds) {
         iSysUserRoleRelService.remove(new LambdaQueryWrapper<SysUserRoleRel>().eq(SysUserRoleRel::getUserId, userId));
