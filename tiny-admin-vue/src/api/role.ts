@@ -12,3 +12,6 @@ export const deleteById = async (id: any) => {
 export const getRoleList = async () => {
     return http.post("/system/sysRole/list")
 }
+export const assignMenu = async (roleId: string, menuIds: string[]) => {
+    return http.post(`/system/sysRole/assignMenu/${roleId}`, menuIds)
+}

@@ -91,10 +91,10 @@ defineExpose({
                    name="username">
         <a-input v-model:value="curUserInfo.username" allow-clear autocomplete="off"/>
       </a-form-item>
-      <a-form-item label="昵称" name="nickname">
+      <a-form-item label="用户昵称" name="nickname">
         <a-input v-model:value="curUserInfo.nickname" allow-clear autocomplete="off"/>
       </a-form-item>
-      <a-form-item label="角色"
+      <a-form-item label="分配角色"
       >
         <a-select key="id" v-model:value="curUserInfo.roleNames" :options="filteredOptions" allow-clear
                   mode="multiple" placeholder="请选择角色">

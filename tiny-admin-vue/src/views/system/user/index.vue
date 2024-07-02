@@ -25,10 +25,10 @@ const columns: any = [{
   key: 'username',
   width: 80,
 }, {
-  title: '昵称',
+  title: '用户昵称',
   dataIndex: 'nickname',
   key: 'nickname',
-  width: 60,
+  width: 120,
 },
   {
     title: '角色列表',

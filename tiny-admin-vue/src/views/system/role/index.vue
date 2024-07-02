@@ -5,6 +5,8 @@ import {DownOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue";
 import RoleModal from "@/views/system/role/RoleModal.vue";
 import {useDebounceFn} from "@vueuse/core";
 import {message} from "ant-design-vue";
+import AssignRole from "@/views/system/role/AssignRole.vue";
+import {getMenuTree} from "@/api/menu.ts";
 
 const pagination = ref({
   current: 1,
@@ -78,23 +80,35 @@ const handleTableChange = () => {
 }
 const confirmChangeStatus = (record: any) => {
   record.loading = true
-  saveOrUpdate({id:record.id, status: !record.status}).then(()=>{
+  saveOrUpdate({id: record.id, status: !record.status}).then(() => {
     changeStatus(record)
-  }).finally(()=>{
+  }).finally(() => {
     record.loading = false
   })
 }
 const changeStatus = (record: any) => {
-  record.status =!record.status
+  record.status = !record.status
 }
-const saveOrUpdateRole = (isEdit = false, record={}) => {
+const saveOrUpdateRole = (isEdit = false, record = {}) => {
   roleModalRef.value?.showModal(isEdit, isEdit ? record : {})
 }
-const deleteRole= (id: string) => {
+const deleteRole = (id: string) => {
   deleteById(id).then(() => {
     queryList()
     message.success('删除成功')
   })
+}
+const assignRoleRef = ref()
+let treeData
+const handleAssignRole = (record: any) => {
+  if (!treeData) {
+    getMenuTree().then((res: any) => {
+      treeData = res
+      assignRoleRef.value?.show(record, treeData)
+    })
+  } else {
+    assignRoleRef.value?.show(record, treeData)
+  }
 }
 </script>
 
@@ -104,7 +118,7 @@ const deleteRole= (id: string) => {
       <div class="flex items-center gap-4 mx-auto sm:w-[80%] w-full">
         <a-button type="primary" @click="()=>saveOrUpdateRole()">新增</a-button>
         <a-input @keydown.enter.prevent="queryList" allow-clear class="text-left"
-                 placeholder="搜索角色名称" type="text"
+                 placeholder="搜索角色或描述" type="text"
                  id="keyword"
                  v-model:value="searchForm.keyword" autocomplete="off">
           <template #prefix>
@@ -145,7 +159,7 @@ const deleteRole= (id: string) => {
                     <a-button type="link" @click="() => saveOrUpdateRole(true, record)">编辑角色</a-button>
                   </a-menu-item>
                   <a-menu-item>
-                    <a-button type="link">分配权限</a-button>
+                    <a-button type="link" @click="handleAssignRole(record)">分配权限</a-button>
                   </a-menu-item>
                   <a-menu-item>
                     <a-popconfirm cancel-text="否" ok-text="是" ok-type="danger"
@@ -169,6 +183,7 @@ const deleteRole= (id: string) => {
     </a-table>
   </div>
   <RoleModal @query-list="queryList" ref="roleModalRef"/>
+  <AssignRole @query-list="queryList" ref="assignRoleRef"/>
 </template>
 
 <style scoped>
