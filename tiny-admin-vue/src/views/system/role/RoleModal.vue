@@ -18,7 +18,11 @@ const curInfo = ref({
 let emits = defineEmits(['queryList']);
 const handleSubmit = () => {
   formRef.value.validate().then(() => {
-    saveOrUpdate(curInfo.value).then(() => {
+    saveOrUpdate({
+      id: curInfo.value.id,
+      roleName: curInfo.value.roleName,
+      description: curInfo.value.description
+    }).then(() => {
       modalVisible.value = false
       emits('queryList')
       message.success('角色已更新')

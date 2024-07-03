@@ -72,7 +72,7 @@ const columns: any = [{
     dataIndex: 'status',
     key: 'status',
     fixed: 'right',
-    width: 160,
+    width: 240,
   },
 ]
 const handleTableChange = () => {
@@ -137,7 +137,7 @@ const handleAssignRole = (record: any) => {
              :dataSource="dataSource">
       <template #bodyCell="{record, column}">
         <template v-if="column.dataIndex === 'status'">
-          <div class="grid grid-cols-2 items-center justify-center">
+          <div class="grid grid-cols-3 items-center">
             <a-popconfirm ok-text="是"
                           cancel-text="否" :title="record.status ? '是否禁用该角色？' : ' 是否启用该角色？'"
                           @confirm="() => {confirmChangeStatus(record)}">
@@ -148,6 +148,7 @@ const handleAssignRole = (record: any) => {
                         class="flex-shrink-0"
                         v-model:checked="record.status" checked-children="已启用" un-checked-children="已禁用"/>
             </a-popconfirm>
+            <a-button class="text-amber-500 -ml-1" type="link" @click="handleAssignRole(record)">分配权限</a-button>
             <a-dropdown>
               <a-button size="small" type="link" class="flex items-center">
                 操作
@@ -157,9 +158,6 @@ const handleAssignRole = (record: any) => {
                 <a-menu class="text-center">
                   <a-menu-item>
                     <a-button type="link" @click="() => saveOrUpdateRole(true, record)">编辑角色</a-button>
-                  </a-menu-item>
-                  <a-menu-item>
-                    <a-button type="link" @click="handleAssignRole(record)">分配权限</a-button>
                   </a-menu-item>
                   <a-menu-item>
                     <a-popconfirm cancel-text="否" ok-text="是" ok-type="danger"

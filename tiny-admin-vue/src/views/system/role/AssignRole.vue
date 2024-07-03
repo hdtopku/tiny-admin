@@ -3,21 +3,36 @@
       v-model:open="open"
       :root-style="{ color: 'blue' }"
       style="color: red"
-      title="分配菜单权限"
       placement="right"
       width="500"
   >
+    <template #title>
+      分配菜单权限：
+      <a-tooltip :title="currentUser?.description">
+        <span class="text-gray-400">{{ currentUser?.roleName }}</span>
+      </a-tooltip>
+    </template>
     <template #footer>
-      <a-space class="flex justify-end">
-        <a-button @click="open = false">取消</a-button>
-        <a-button type="primary" @click="handleSubmit">提交</a-button>
+      <a-space class="flex justify-between">
+        <a-space class="flex justify-end">
+          <a-checkbox v-model:checked="checkState.checkAll" :indeterminate="checkState.indeterminate"
+                      @change="handleCheckAll">全选/全不选({{ checkedKeys.checked?.length || 0 }})
+          </a-checkbox>
+          <span class="flex ">
+          <a-tooltip :arrow="false" mergedArrow title="展开全部" @click="handleExpandAll">
+            <a-button v-show="(expandedKeys?.length || 0) < allNodes.length" size="small"
+                      type="text">展开</a-button></a-tooltip>
+          <a-tooltip :arrow="false" title="折叠全部" @click="handleExpandAll(false)">
+            <a-button v-show="(expandedKeys?.length || 0) > 0" size="small" type="text">折叠</a-button></a-tooltip>
+        </span>
+        </a-space>
+        <a-space class="flex justify-end">
+          <a-button @click="open = false">取消</a-button>
+          <a-button type="primary" @click="handleSubmit">提交</a-button>
+        </a-space>
       </a-space>
     </template>
     <template #extra>
-      <a-space class="flex justify-end">
-        <a-checkbox>展开/折叠</a-checkbox>
-        <a-checkbox @change="onCheckAllChange">全选/全不选</a-checkbox>
-      </a-space>
     </template>
     <a-tree
         checkStrictly
@@ -45,21 +60,13 @@ const currentUser = ref<any>({})
 const treeData: any = ref([])
 
 const expandedKeys = ref<string[]>();
-const selectedKeys = ref<string[]>();
-const checkedKeys = ref<any>();
+const selectedKeys = ref<string[]>([]);
+const checkedKeys = ref<any>({checked: [], halfChecked: []});
 const fieldNames: TreeProps['fieldNames'] = {
   title: 'name',
   key: 'id'
 };
-watch(expandedKeys, () => {
-  console.log('expandedKeys', expandedKeys);
-});
-watch(selectedKeys, () => {
-  console.log('selectedKeys', selectedKeys);
-});
-watch(checkedKeys, () => {
-  console.log('checkedKeys', checkedKeys);
-});
+
 const emit = defineEmits(['queryList']);
 const handleSubmit = () => {
   assignMenu(currentUser.value.id, checkedKeys.value.checked).then(() => {
@@ -68,30 +75,47 @@ const handleSubmit = () => {
   })
 }
 
-const onCheckAllChange = (e: any) => {
-  let res: any = []
-  const dfs = (node: any) => {
-    if(!node) return
-    res.push(node.id)
-    if (node?.children?.length) {
-      node.children.forEach((item: any) => {
-        dfs(item)
-      })
-    }
-  }
+const checkState = ref({
+  indeterminate: true,
+  checkAll: false,
+})
+const handleCheckAll = (e: any) => {
   if (e.target.checked) {
-    treeData.value.map((item: any) => dfs(item))
-    checkedKeys.value = {checked: res};
+    checkedKeys.value = {checked: [...allNodes], halfChecked: []}
   } else {
-    checkedKeys.value = {checked: []};
+    checkedKeys.value = {checked: [], halfChecked: []}
+  }
+}
+let allNodes: any = []
+watch(checkedKeys, () => {
+  checkState.value = {
+    checkAll: checkedKeys.value.checked?.length === allNodes.length,
+    indeterminate: checkedKeys.value.checked?.length > 0 && checkedKeys.value.checked?.length < allNodes.length
+  }
+})
+const handleExpandAll = (expandAll = true) => {
+  if (expandAll) {
+    expandedKeys.value = [...allNodes]
+  } else {
+    expandedKeys.value = []
   }
 }
 defineExpose({
   show: (user: any, tree: any) => {
     open.value = true;
     currentUser.value = user;
-    checkedKeys.value = user.menus.map((menu: any) => menu.id);
+    checkedKeys.value = {checked: user.menus.map((menu: any) => menu.id), halfChecked: []}
     treeData.value = tree;
+    const dfs = (nodes: any) => {
+      nodes?.forEach((node: any) => {
+        allNodes.push(node.id)
+        if (node?.children?.length) {
+          dfs(node.children)
+        }
+      })
+    }
+    dfs(tree)
+    expandedKeys.value = [...allNodes]
   },
 })
 </script>
