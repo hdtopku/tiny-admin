@@ -36,7 +36,7 @@ import java.util.Map;
 @EnableWebSecurity
 @EnableMethodSecurity
 public abstract class SecurityAuthConfig<T extends UserDetails> implements UserDetailsService {
-    private final String tokenKey = "user-token";
+    private static final String TOKEN_KEY = "user-token";
     @Resource
     private RedisService redisService;
 
@@ -66,7 +66,7 @@ public abstract class SecurityAuthConfig<T extends UserDetails> implements UserD
                     Map<String, Object> stringObjectMap = JwtTokenUtil.parseToken(authToken);
                     if (stringObjectMap != null && stringObjectMap.containsKey("username")
                             && StringUtils.hasText((String)stringObjectMap.get("username"))) {
-                        Object o = redisService.get(tokenKey + ":" + stringObjectMap.get("username"));
+                        Object o = redisService.get(TOKEN_KEY + ":" + stringObjectMap.get("username"));
                         if (o != null) {
                             T userDetails = (T) o;
                             UsernamePasswordAuthenticationToken authenticated = UsernamePasswordAuthenticationToken.authenticated(userDetails, null, userDetails.getAuthorities());

@@ -1,6 +1,6 @@
 <template>
   <a-select
-      v-model="selectValue"
+      v-model:value="selectValue"
       show-search
       placeholder="选择图标"
       style="width: 100px"
@@ -35,20 +35,17 @@
 <script lang="ts" setup>
 import * as icons from '@ant-design/icons-vue';
 import {CreateIcon} from './CustomIcon.ts'
+import {Ref} from "vue";
 
-const selectValue = defineModel()
+const selectValue: Ref<any> = defineModel()
 const iconsKeys = Object.keys(icons).filter(key => key.charCodeAt(0) < 91 && key.charCodeAt(0) > 64)
 const options = ref(iconsKeys)
 const open = ref(false)
 const emit = defineEmits(['update:value'])
 const handleChooseIcon = (icon: string) => {
-  // selectValue.value = icon
   emit('update:value', icon)
   open.value = false
 }
-watch(selectValue, (val) => {
-  console.log(val)
-})
 const fetching = ref(true)
 const handleSearch = (value: string) => {
   value = value.trim()

@@ -62,7 +62,7 @@ public class SysMenu implements Serializable {
     private Boolean keepAlive;
 
     @Schema(description = "是否隐藏路由(0:否;1:是)")
-    private Integer hidden;
+    private Boolean hidden;
 
     @Schema(description = "是否隐藏 tab(0:否;1:是)")
     private Integer hiddenTab;

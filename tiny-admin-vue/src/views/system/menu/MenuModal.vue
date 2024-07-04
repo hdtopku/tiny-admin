@@ -8,9 +8,9 @@ import useGlobal from "@/hooks/useGlobal.ts";
 const props = defineProps({
   menuTree: Array as () => string[],
 })
-const modalVisible = ref(false)
+const open = ref(false)
 const isUpdate = ref(false)
-const title = isUpdate.value ? '更新菜单' : '新增菜单'
+const title = ref('')
 const formRef = ref()
 const defaultForm =
     {
@@ -19,12 +19,13 @@ const defaultForm =
       component: '',
       icon: '',
       sort: 9999,
+      hidden: false,
       parentId: null,
       type: 0,
       permission: '',
     }
 
-const form:any = ref(defaultForm)
+const form: any = ref(defaultForm)
 const rules: any = {
   parentId: [
     {required: false, message: '请选择父菜单', trigger: ['blur', 'change']},
@@ -62,13 +63,13 @@ const buttonRules: any = {
 const loading = ref(false)
 const emits = defineEmits(['queryList'])
 const {$bus} = useGlobal()
-const btnFormRef=ref()
+const btnFormRef = ref()
 const handleOk = async () => {
-  const submitForm=()=>{
+  const submitForm = () => {
     loading.value = true
     saveOrUpdateMenu(form.value).then(() => {
       message.success('操作成功')
-      modalVisible.value = false
+      open.value = false
       emits('queryList')
       useUserStore().refreshUserInfo().then(() => {
         $bus.emit('update-user-info')
@@ -79,7 +80,7 @@ const handleOk = async () => {
         }
     )
   }
-  if(activeKey.value === '1') {
+  if (activeKey.value === '1') {
     formRef.value.validate().then(() => {
       submitForm()
     })
@@ -104,7 +105,7 @@ const handleUrlChange = () => {
 const activeKey = ref('1')
 
 watch(activeKey, () => {
- form.value.type = activeKey.value
+  form.value.type = activeKey.value
 })
 watch(() => form.value.url, () => {
   while (form.value.url?.startsWith('/')) {
@@ -132,6 +133,7 @@ watch(() => form.value.component, () => {
     form.value.component = form.value.component.slice(1)
   }
 })
+let currentMenu: any = {}
 defineExpose({
   showModal(isEdit, item) {
     isUpdate.value = isEdit
@@ -142,26 +144,42 @@ defineExpose({
         url: item.url,
         component: item.component,
         icon: item.icon,
-        sort: item.sort,
+        sort: item.sort || 9999,
+        hidden: item.hidden,
         parentId: item.parentId,
         type: item.type,
         permission: item.permission,
       })
     } else {
-      form.value=Object.assign({}, defaultForm)
+      form.value = Object.assign({}, defaultForm)
     }
-    modalVisible.value = true
-    console.log(form.value.sort)
+    open.value = true
+    currentMenu = item
   }
 })
 </script>
 
 <template>
-  <a-modal ok-text="提交" cancel-text="取消" :open="modalVisible" :title="title"
-           @ok="handleOk" @cancel="() => modalVisible = false">
+  <a-drawer
+      v-model:open="open"
+      :root-style="{ color: 'blue' }"
+      destroyOnClose
+      placement="right"
+      style="color: red"
+      width="500"
+  >
+    <template #title>
+      <span v-if="isUpdate">
+        <span>修改菜单：</span>
+        <span class="text-gray-400">{{ currentMenu.name }}</span>
+      </span>
+      <span v-else>新增菜单</span>
+    </template>
     <template #footer>
-      <a-button key="back" @click="modalVisible = false">取消</a-button>
-      <a-button key="submit" type="primary" :loading="loading" @click="handleOk">提交</a-button>
+      <a-space class="flex justify-end">
+        <a-button key="back" @click="open = false">取消</a-button>
+        <a-button key="submit" :loading="loading" type="primary" @click="handleOk">提交</a-button>
+      </a-space>
     </template>
     <a-tabs v-model:activeKey="activeKey" type="card">
       <a-tab-pane key="1" tab="菜单">
@@ -190,7 +208,8 @@ defineExpose({
             </a-tree-select>
           </a-form-item>
           <a-form-item label="菜单名称" name="name">
-            <a-input allow-clear autocomplete="off" v-model:value="form.name" placeholder="请输入菜单名称"/>
+            <a-input v-model:value="form.name" allow-clear autocomplete="off" placeholder="请输入菜单名称">
+            </a-input>
           </a-form-item>
           <a-form-item label="访问URL" name="url">
             <div class="flex items-center">
@@ -199,8 +218,19 @@ defineExpose({
                        placeholder="请输入访问URL"/>
             </div>
           </a-form-item>
-          <a-form-item label="菜单图标" name="icon">
-            <icon-selector v-model:value="form.icon"/>
+          <div class="grid grid-cols-2">
+            <a-form-item :label-col="{span: 10}" help="数值越大，越靠后" label="菜单排序"
+                         name="sort">
+              <a-input-number v-model:value="form.sort" :defaultValue="9999" :max="9999" :min="1" allow-clear
+                              autocomplete="off"/>
+            </a-form-item>
+            <a-form-item :label-col="{span: 10}" label="菜单图标" name="icon">
+              <icon-selector v-model:value="form.icon"/>
+            </a-form-item>
+          </div>
+          <a-form-item label="隐藏菜单">
+            <a-switch v-model:checked="form.hidden" :checked-value="false" :un-checked-value="true"
+                      checked-children="已显示" un-checked-children="已隐藏"/>
           </a-form-item>
           <a-form-item label="组件位置" name="component">
             <div class="flex items-center">
@@ -218,9 +248,6 @@ defineExpose({
           <a-form-item label="权限标识" name="permission">
             <a-input @keyup="() => userInputPerm=true" allow-clear autocomplete="off" v-model:value="form.permission"
                      placeholder="请输入权限标识"/>
-          </a-form-item>
-          <a-form-item help="数字在 1-9999 之间。数值越大，排序越靠后" label="菜单排序" name="sort">
-            <a-input-number allow-clear autocomplete="off" v-model:value="form.sort" :min="1" :max="9999"/>
           </a-form-item>
         </a-form>
       </a-tab-pane>
@@ -262,8 +289,7 @@ defineExpose({
         </a-form>
       </a-tab-pane>
     </a-tabs>
-
-  </a-modal>
+  </a-drawer>
 </template>
 
 <style scoped>

@@ -109,7 +109,7 @@ const deleteMenu = (menuId) => {
           </template>
         </template>
         <template v-if="column.key === 'operation'" >
-          <a-button type="link" link @click="()=>saveOrUpdate(true, {parentId: record.id})">新增</a-button>
+          <a-button link type="link" @click="()=>saveOrUpdate(false, {parentId: record.id})">新增</a-button>
           <a-popconfirm ok-type="danger" ok-text="是" cancel-text="否" title="是否删除该菜单？" @confirm="()=>deleteMenu(record.id)">
             <template #icon>
               <question-circle-outlined style="color: red"/>

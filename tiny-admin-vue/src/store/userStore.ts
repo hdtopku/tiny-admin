@@ -33,7 +33,7 @@ export const userStore = defineStore('user', () => {
     };
     const getSidebar = (): ItemType[] => {
         const dfs = (menuTree: any[] | undefined) => {
-            return menuTree?.map((item) => {
+            return menuTree?.filter(item => !item.hidden).map((item) => {
                 const menu: any = {
                     key: item?.url,
                     label: item?.label,
