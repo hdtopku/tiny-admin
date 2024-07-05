@@ -58,6 +58,9 @@ export const userStore = defineStore('user', () => {
                     path: item.url,
                     name: item.name,
                     component: modules[`../views/${path}.vue`],
+                    meta: {
+                        keepAlive: item?.keepAlive ?? true,
+                    }
                 });
             }
         };

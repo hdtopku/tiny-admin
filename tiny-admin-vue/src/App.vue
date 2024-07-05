@@ -11,12 +11,6 @@ const isDark = useDark()
       algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
     }"
   >
-    <router-view v-slot="{ Component, route }">
-      <transition mode="out-in" name="fade">
-        <div :key="route.path">
-          <component :is="Component"></component>
-        </div>
-      </transition>
-    </router-view>
+    <router-view/>
   </a-config-provider>
 </template>

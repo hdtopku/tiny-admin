@@ -3,8 +3,12 @@ import {createVNode} from 'vue'
 
 export const CreateIcon = (props: any) => {
     const {icon} = props;
-    return createVNode(icons[icon]);
+    let node = icons[icon]
+    if (!node) return null
+    return createVNode(node);
 }
 export const GetIcon = (icon: string) => {
-    return createVNode(icons[icon]);
+    let node = icons[icon]
+    if (!node) return null
+    return createVNode(node);
 }

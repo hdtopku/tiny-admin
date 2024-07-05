@@ -22,7 +22,11 @@
       <a-layout-header class="flex !px-4">
       </a-layout-header>
       <a-layout-content>
-        <router-view/>
+        <router-view #default="{ Component, route }">
+          <keep-alive>
+            <component :is="Component" :key="route.path + (route.meta.keepAlive ? '' : Math.random())"/>
+          </keep-alive>
+        </router-view>
       </a-layout-content>
     </a-layout>
   </a-layout>

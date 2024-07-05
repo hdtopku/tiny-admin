@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 
 import {deleteMenuById, getMenuTree} from "@/api/menu.ts";
 import MenuModal from "@/views/system/menu/MenuModal.vue";

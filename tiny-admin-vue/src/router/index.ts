@@ -41,7 +41,7 @@ router.beforeEach((to, _from, next) => {
                         component: () => import('@/layout/Index.vue'),
                         path: "/",
                         name: "Layout",
-                        children: routeList
+                        children: routeList,
                     }
                 )
             }

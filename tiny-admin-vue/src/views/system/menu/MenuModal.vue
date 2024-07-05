@@ -4,22 +4,23 @@ import {message} from "ant-design-vue";
 import IconSelector from "@/components/IconSelector.vue";
 import {useUserStore} from "@/store";
 import useGlobal from "@/hooks/useGlobal.ts";
+import {DefaultOptionType} from "ant-design-vue/es/vc-tree-select/TreeSelect";
 
 const props = defineProps({
-  menuTree: Array as () => string[],
+  menuTree: Array as () => DefaultOptionType[],
 })
 const open = ref(false)
 const isUpdate = ref(false)
-const title = ref('')
 const formRef = ref()
 const defaultForm =
     {
       name: '',
       url: '',
       component: '',
-      icon: '',
+      icon: [],
       sort: 9999,
       hidden: false,
+      keepAlive: true,
       parentId: null,
       type: 0,
       permission: '',
@@ -149,6 +150,7 @@ defineExpose({
         parentId: item.parentId,
         type: item.type,
         permission: item.permission,
+        keepAlive: item.keepAlive,
       })
     } else {
       form.value = Object.assign({}, defaultForm)
@@ -228,10 +230,17 @@ defineExpose({
               <icon-selector v-model:value="form.icon"/>
             </a-form-item>
           </div>
-          <a-form-item label="隐藏菜单">
-            <a-switch v-model:checked="form.hidden" :checked-value="false" :un-checked-value="true"
-                      checked-children="已显示" un-checked-children="已隐藏"/>
-          </a-form-item>
+          <div class="grid grid-cols-2">
+            <a-form-item :label-col="{span: 10}" label="隐藏菜单">
+              <a-switch v-model:checked="form.hidden" :checked-value="false" :un-checked-value="true"
+                        checked-children="已显示" un-checked-children="已隐藏"/>
+            </a-form-item>
+            <a-form-item :label-col="{span: 12}" label="是否缓存页面"
+                         tooltip="缓存页面后，页面切换不会重新加载，提高页面切换效率。">
+              <a-switch v-model:checked="form.keepAlive" :checked-value="true" :un-checked-value="false"
+                        checked-children="已缓存" un-checked-children="未缓存"/>
+            </a-form-item>
+          </div>
           <a-form-item label="组件位置" name="component">
             <div class="flex items-center">
               <span class="">
