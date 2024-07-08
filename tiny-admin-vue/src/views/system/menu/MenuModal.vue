@@ -23,6 +23,7 @@ const defaultForm =
       keepAlive: true,
       parentId: null,
       type: 0,
+      buttonStrategy: 1,
       permission: '',
     }
 
@@ -56,10 +57,6 @@ const buttonRules: any = {
     {required: true, message: '请输入权限标识', trigger: ['blur', 'change']},
     {min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: ['blur', 'change']},
   ],
-  sort: [
-    {required: true, message: '请输入按钮排序', trigger: ['blur', 'change']},
-    {type: 'number', message: '请输入数字', trigger: ['blur', 'change']},
-  ],
 }
 const loading = ref(false)
 const emits = defineEmits(['queryList'])
@@ -81,7 +78,7 @@ const handleOk = async () => {
         }
     )
   }
-  if (activeKey.value === '1') {
+  if (activeKey.value === 1) {
     formRef.value.validate().then(() => {
       submitForm()
     })
@@ -103,7 +100,7 @@ const handleUrlChange = () => {
     form.value.component = `${form.value.url}`
   }
 }
-const activeKey = ref('1')
+const activeKey = ref(1)
 
 watch(activeKey, () => {
   form.value.type = activeKey.value
@@ -150,6 +147,7 @@ defineExpose({
         parentId: item.parentId,
         type: item.type,
         permission: item.permission,
+        buttonStrategy: item.buttonStrategy || 1,
         keepAlive: item.keepAlive,
       })
     } else {
@@ -157,6 +155,7 @@ defineExpose({
     }
     open.value = true
     currentMenu = item
+    activeKey.value = item?.type || 1
   }
 })
 </script>
@@ -184,7 +183,7 @@ defineExpose({
       </a-space>
     </template>
     <a-tabs v-model:activeKey="activeKey" type="card">
-      <a-tab-pane key="1" tab="菜单">
+      <a-tab-pane :key="1" tab="菜单">
         <a-form :label-col="{span: 5}" class="pt-4" :model="form" :rules="rules" ref="formRef">
           <a-form-item help="若未选择，则为顶级菜单" label="父级菜单" name="parentId">
             <a-tree-select
@@ -260,7 +259,7 @@ defineExpose({
           </a-form-item>
         </a-form>
       </a-tab-pane>
-      <a-tab-pane key="2" tab="按钮">
+      <a-tab-pane :key="2" tab="按钮">
         <a-form ref="btnFormRef" :rules="buttonRules" :label-col="{span: 5}" class="pt-4" :model="form">
           <a-form-item label="父级菜单" name="parentId">
             <a-tree-select
@@ -292,8 +291,11 @@ defineExpose({
             <a-input allow-clear autocomplete="off" v-model:value="form.permission"
                      placeholder="请输入权限标识"/>
           </a-form-item>
-          <a-form-item label="按钮排序" help="数字在 1-9999 之间。数值越大，排序越靠后" name="sort">
-            <a-input-number autocomplete="off" v-model:value="form.sort" :min="1" :max="9999"/>
+          <a-form-item label="授权策略" tooltip="未授权时：隐藏按钮或显示但不可点击" name="sort">
+            <a-radio-group v-model:value="form.buttonStrategy" name="radioGroup">
+              <a-radio :value="1">隐藏</a-radio>
+              <a-radio :value="2">显示</a-radio>
+            </a-radio-group>
           </a-form-item>
         </a-form>
       </a-tab-pane>

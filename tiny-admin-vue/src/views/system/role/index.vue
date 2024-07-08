@@ -35,10 +35,9 @@ const queryList = () => {
       pageSize: res.size,
       total: res.total,
     }
-  }).catch(err => {
+  }).catch((err) => {
     switchLoading.value = false
-    console.log(err)
-    message.error('获取角色列表失败')
+    message.error('获取角色列表失败'+ err.message)
   }).finally(() => {
     switchLoading.value = false
   })
@@ -46,7 +45,6 @@ const queryList = () => {
 queryList()
 const debounceQuery = useDebounceFn(queryList, 500)
 watch(() => searchForm.value.keyword, debounceQuery)
-
 
 const columns: any = [{
   title: '角色',
@@ -116,7 +114,7 @@ const handleAssignRole = (record: any) => {
   <div class="p-4">
     <div class="flex mb-4">
       <div class="flex items-center gap-4 mx-auto sm:w-[80%] w-full">
-        <a-button type="primary" @click="()=>saveOrUpdateRole()">新增</a-button>
+        <a-button v-permission="'role:add'" type="primary" @click="()=>saveOrUpdateRole()">新增</a-button>
         <a-input @keydown.enter.prevent="queryList" allow-clear class="text-left"
                  placeholder="搜索角色或描述" type="text"
                  id="keyword"

@@ -67,6 +67,9 @@ public class SysMenu implements Serializable {
     @Schema(description = "是否隐藏 tab(0:否;1:是)")
     private Integer hiddenTab;
 
+    @Schema(description = "按钮策略，未授权时(1:隐藏;2:显示但不可点击)")
+    private Integer buttonStrategy;
+
     @Schema(description = "描述")
     private String description;
 

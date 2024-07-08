@@ -33,19 +33,22 @@ export const userStore = defineStore('user', () => {
     };
     const getSidebar = (): ItemType[] => {
         const dfs = (menuTree: any[] | undefined) => {
-            return menuTree?.filter(item => !item.hidden).map((item) => {
+            return menuTree?.filter(item => !item.hidden && item.type === 1).map((item) => {
                 const menu: any = {
                     key: item?.url,
                     label: item?.label,
                     icon: () => GetIcon(item?.icon || ''),
-                };
-                if (item.children && item.children.length > 0) {
-                    menu.children = dfs(item.children);
                 }
-                return menu;
+                if (item.children && item.children.length > 0) {
+                    menu.children = dfs(item.children)
+                }
+                if (!(menu.children?.length > 0)) {
+                    menu.children = null
+                }
+                return menu
             }) || [];
         };
-        return dfs(userInfo.value?.menuTree);
+        return  dfs(userInfo.value?.menuTree)
     };
     const getRouteList = (): any[] => {
         const routeList: any[] = [];
@@ -64,9 +67,22 @@ export const userStore = defineStore('user', () => {
                 });
             }
         };
-        dfs(userInfo.value?.menuTree);
+        dfs(userInfo.value?.menuTree)
         return routeList;
-    };
+    }
+    const getPermissionList = () => {
+        const permissionList: string[] = [];
+        const dfs = (menuTree: any[] | undefined) => {
+            for (let item of menuTree || []) {
+                item.children?.length && dfs(item.children)
+                if (item.type === 2 && item.permission?.length) {
+                    permissionList.push(item.permission);
+                }
+            }
+            return permissionList;
+        }
+        return dfs(userInfo.value?.menuTree)
+    }
     return {
         userInfo,
         login,
@@ -74,6 +90,7 @@ export const userStore = defineStore('user', () => {
         getSidebar,
         getRouteList,
         refreshUserInfo,
+        getPermissionList,
         clearUserInfo() {
             userInfo.value = {
                 avatar: '',

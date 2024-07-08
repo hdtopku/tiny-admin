@@ -48,21 +48,29 @@ public class SysRoleController {
 
     @PostMapping("/page")
     public Result<IPage<SysRoleDto>> page(@RequestBody(required = false) BaseQueryParam param) {
+        MPJLambdaWrapper<SysRole> wrapper1 = new MPJLambdaWrapper<>();
+        wrapper1.select(SysRole::getId).distinct();
+        if (StringUtils.isNotBlank(param.getKeyword())) {
+            wrapper1.like(SysRole::getRoleName, param.getKeyword())
+                    .or().like(SysRole::getDescription, param.getKeyword());
+        } else {
+            wrapper1.eq(SysRole::getStatus, param.getStatus());
+        }
+        Page<SysRole> page1 = new Page<>(param.getPageNum(), param.getPageSize());
+        IPage<SysRole> iPage1 = sysRoleMapper.selectPage(page1, wrapper1);
+
         MPJLambdaWrapper<SysRole> wrapper = new MPJLambdaWrapper<>();
         wrapper.selectAll(SysRole.class)
                 .leftJoin(SysRoleMenuRel.class, SysRoleMenuRel::getRoleId, SysRole::getId)
                 .selectCollection(SysMenu.class, SysRoleDto::getMenus, map->map)
                 .leftJoin(SysMenu.class, SysMenu::getId, SysRoleMenuRel::getMenuId)
+                .in(SysRole::getId, iPage1.getRecords().stream().map(SysRole::getId).toList())
                 ;
         wrapper.orderByDesc(SysRole::getUpdateTime);
-        if (StringUtils.isNotBlank(param.getKeyword())) {
-            wrapper.like(SysRole::getRoleName, param.getKeyword())
-                    .or().like(SysRole::getDescription, param.getKeyword());
-        } else {
-            wrapper.eq(SysRole::getStatus, param.getStatus());
-        }
-        IPage<SysRoleDto> iPage = sysRoleMapper.selectJoinPage(new Page<>(param.getPageNum(), param.getPageSize()),SysRoleDto.class, wrapper);
-        return Result.success(iPage);
+        List<SysRoleDto> records = sysRoleMapper.selectJoinList(SysRoleDto.class, wrapper);
+        IPage<SysRoleDto> res = new Page<>(iPage1.getCurrent(), iPage1.getSize(), iPage1.getTotal());
+        res.setRecords(records);
+        return Result.success(res);
     }
 
     @Operation(summary = "list查")

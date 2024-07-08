@@ -16,7 +16,7 @@
       <a-space class="flex justify-between">
         <a-space class="flex justify-end">
           <a-checkbox v-model:checked="checkState.checkAll" :indeterminate="checkState.indeterminate"
-                      @change="handleCheckAll">全选/全不选({{ checkedKeys.checked?.length || 0 }})
+                      @change="handleCheckAll">全选/全不选({{ checkedKeys.checked?.length+'/'+allNodes.length || 0 }})
           </a-checkbox>
           <span class="flex ">
           <a-tooltip :arrow="false" mergedArrow title="展开全部" @click="handleExpandAll">
@@ -52,6 +52,8 @@
 import {ref} from 'vue';
 import {TreeProps} from "ant-design-vue";
 import {assignMenu} from "@/api/role.ts";
+import {useUserStore} from "@/store";
+import useGlobal from "@/hooks/useGlobal.ts";
 
 const open = ref<boolean>(false);
 
@@ -68,10 +70,14 @@ const fieldNames: TreeProps['fieldNames'] = {
 };
 
 const emit = defineEmits(['queryList']);
+const {$bus} = useGlobal()
 const handleSubmit = () => {
   assignMenu(currentUser.value.id, checkedKeys.value.checked).then(() => {
     emit('queryList')
-    open.value = false;
+    open.value = false
+    useUserStore().refreshUserInfo().then(() => {
+      $bus.emit('update-user-info')
+    })
   })
 }
 
@@ -105,7 +111,8 @@ defineExpose({
     open.value = true;
     currentUser.value = user;
     checkedKeys.value = {checked: user.menus.map((menu: any) => menu.id), halfChecked: []}
-    treeData.value = tree;
+    treeData.value = tree
+    allNodes=[]
     const dfs = (nodes: any) => {
       nodes?.forEach((node: any) => {
         allNodes.push(node.id)

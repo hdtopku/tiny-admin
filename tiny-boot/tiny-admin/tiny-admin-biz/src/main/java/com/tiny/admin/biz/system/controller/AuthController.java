@@ -29,7 +29,7 @@ public class AuthController {
 
     @GetMapping("/getSelfInfo")
     @Operation(summary = "获取用户信息")
-    public Result<UserInfo> getInfo() {
+    public Result<UserInfo> getSelfInfo() {
         return Result.success(authService.getSelfInfo());
     }
 }

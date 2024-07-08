@@ -38,6 +38,12 @@ const columns:any = [
     width: 120,
   },
   {
+    title: '按钮策略',
+    dataIndex: 'buttonStrategy',
+    key:'permission',
+    width: 120,
+  },
+  {
     title: '创建时间',
     dataIndex: 'createTime',
     key: 'createTime',
@@ -75,7 +81,7 @@ const deleteMenu = (menuId) => {
   <div class="p-4">
     <div class="flex mb-4">
       <div class="flex items-center gap-4 mx-auto sm:w-[80%] w-full">
-        <a-button type="primary" @click="()=>saveOrUpdate()">新增</a-button>
+        <a-button v-permission="'menu:add'" type="primary" @click="()=>saveOrUpdate()">新增</a-button>
         <a-input @keydown.enter.prevent="queryList" allow-clear class="text-left"
                  placeholder="搜索菜单名称" type="text"
                  id="keyword"

@@ -27,7 +27,9 @@ watch(menuCollapsed, (val) => {
 },)
 const {$bus} = useGlobal()
 $bus.on('update-user-info', () => {
-  menus.value = useUserStore().getSidebar()
+  // menus.value = useUserStore().getSidebar()
+
+  location.reload()
 })
 </script>
 <style scoped>
