@@ -1,7 +1,7 @@
 import {defineStore} from "pinia";
 import {getSelfInfo, postLogin} from "@/api/auth.ts";
 import router from "@/router";
-import {setToken} from "@/utils/auth.ts";
+import {setToken} from "@/utils/token.ts";
 import {ItemType} from 'ant-design-vue';
 import {GetIcon} from "@/components/CustomIcon.ts";
 
@@ -12,6 +12,7 @@ export type UserType = {
     username?: string,
     nickname?: string,
     menuTree?: any[],
+    publicMenuList?: any[]
 }
 
 export const userStore = defineStore('user', () => {
@@ -47,16 +48,19 @@ export const userStore = defineStore('user', () => {
                 }
                 return menu
             }) || [];
-        };
+        }
         return  dfs(userInfo.value?.menuTree)
     };
     const getRouteList = (): any[] => {
         const routeList: any[] = [];
         const dfs = (menuTree: any[] | undefined) => {
             for (let item of menuTree || []) {
-                item.children?.length && dfs(item.children);
-                if (item.type === 2) continue;
-                const path = item.component?.split('/').filter(i => i.length > 0).join('/');
+                item.children?.length && dfs(item.children)
+                if (item.type === 2) continue
+                let path = item.component?.split('/').filter(i => i.length > 0).join('/')
+                if (item.unauthorized) {
+                    path = '403'
+                }
                 routeList.push({
                     path: item.url,
                     name: item.name,
@@ -64,22 +68,22 @@ export const userStore = defineStore('user', () => {
                     meta: {
                         keepAlive: item?.keepAlive ?? true,
                     }
-                });
+                })
             }
         };
         dfs(userInfo.value?.menuTree)
         return routeList;
     }
-    const getPermissionList = () => {
-        const permissionList: string[] = [];
+    const getBtnPermissionSet = () => {
+        const permissionSet: Set<string> = new Set();
         const dfs = (menuTree: any[] | undefined) => {
             for (let item of menuTree || []) {
                 item.children?.length && dfs(item.children)
                 if (item.type === 2 && item.permission?.length) {
-                    permissionList.push(item.permission);
+                    permissionSet.add(item.permission)
                 }
             }
-            return permissionList;
+            return permissionSet;
         }
         return dfs(userInfo.value?.menuTree)
     }
@@ -90,7 +94,7 @@ export const userStore = defineStore('user', () => {
         getSidebar,
         getRouteList,
         refreshUserInfo,
-        getPermissionList,
+        getBtnPermissionSet,
         clearUserInfo() {
             userInfo.value = {
                 avatar: '',

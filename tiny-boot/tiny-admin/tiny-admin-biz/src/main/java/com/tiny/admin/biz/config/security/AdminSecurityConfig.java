@@ -1,7 +1,9 @@
 package com.tiny.admin.biz.config.security;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.tiny.admin.biz.system.entity.*;
+import com.tiny.admin.biz.system.mapper.SysMenuMapper;
 import com.tiny.admin.biz.system.mapper.SysUserMapper;
 import com.tiny.core.security.config.SecurityAuthConfig;
 import jakarta.annotation.Resource;
@@ -16,6 +18,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 public class AdminSecurityConfig extends SecurityAuthConfig<AdminUserDetails> {
     @Resource
     private SysUserMapper sysUserMapper;
+    @Resource
+    private SysMenuMapper sysMenuMapper;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -30,6 +34,9 @@ public class AdminSecurityConfig extends SecurityAuthConfig<AdminUserDetails> {
                 .eq(SysUser::getUsername, username)
                 .eq(SysUser::getDelFlag, 1)
                 .orderByAsc(SysMenu::getSort);
-        return sysUserMapper.selectJoinOne(AdminUserDetails.class, wrapper);
+        sysMenuMapper.selectList(new LambdaQueryWrapper<>(SysMenu.class).eq(SysMenu::getUnauthorizedStrategy, 1));
+        AdminUserDetails userDetails = sysUserMapper.selectJoinOne(AdminUserDetails.class, wrapper);
+        userDetails.setPublicMenuList(sysMenuMapper.selectList(new LambdaQueryWrapper<>(SysMenu.class).eq(SysMenu::getUnauthorizedStrategy, 1)));
+        return userDetails;
     }
 }

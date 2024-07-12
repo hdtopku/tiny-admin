@@ -1,13 +1,21 @@
 import {useUserStore} from "@/store";
 
-let permissionList
-const permission=(el, binding)=>{
-    if(!permissionList) {
-        permissionList = useUserStore().getPermissionList()
+let permissionSet
+const permission = (el: HTMLElement, binding: any) => {
+    if (!permissionSet) {
+        permissionSet = useUserStore().getBtnPermissionSet()
     }
-    const hasPermission = permissionList.includes(binding.value)
-    if(!hasPermission) {
+    const nextSibling: any = el.nextElementSibling
+    if (permissionSet.has(binding.value)) {
+        nextSibling.parentNode?.removeChild(nextSibling)
+    } else {
         el.parentNode?.removeChild(el)
+        let showMenu = useUserStore().userInfo.publicMenuList?.some((item: any) => item.unauthorizedStrategy === 1 && item.permission === binding.value)
+        if (showMenu) {
+            nextSibling.setAttribute("disabled", true)
+        } else {
+            nextSibling.parentNode?.removeChild(nextSibling)
+        }
     }
 }
 

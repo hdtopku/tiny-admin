@@ -28,6 +28,10 @@ public class SysMenu implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
 
+    @TableField(exist = false)
+    @Schema(description = "是否有该菜单的访问权限")
+    private boolean unauthorized;
+
     @Schema(description = "主键ID")
     private String id;
 
@@ -67,8 +71,8 @@ public class SysMenu implements Serializable {
     @Schema(description = "是否隐藏 tab(0:否;1:是)")
     private Integer hiddenTab;
 
-    @Schema(description = "按钮策略，未授权时(1:隐藏;2:显示但不可点击)")
-    private Integer buttonStrategy;
+    @Schema(description = "未授权时：按钮(0:隐藏;1:显示但不可点击；菜单重定向至(0:404页面;1:403 页面)")
+    private Integer unauthorizedStrategy;
 
     @Schema(description = "描述")
     private String description;

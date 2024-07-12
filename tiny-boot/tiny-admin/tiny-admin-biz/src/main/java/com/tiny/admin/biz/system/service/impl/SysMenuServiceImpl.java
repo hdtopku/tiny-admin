@@ -11,8 +11,7 @@ import com.tiny.admin.biz.system.mapper.SysMenuMapper;
 import com.tiny.admin.biz.system.service.ISysMenuService;
 import org.springframework.stereotype.Service;
 
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 /**
  * <p>
@@ -33,7 +32,13 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     }
 
     public static List<SysMenuTree> convertTree(List<SysMenu> menuList) {
-        List<SysMenuTree> menus = menuList.stream().sorted(Comparator.comparing(SysMenu::getSort)).map(menu -> {
+        if(CollUtil.isEmpty(menuList)) return new ArrayList<>();
+        Set<String> menuIds=new HashSet<>();
+        List<SysMenuTree> menus = menuList.stream().filter(menu->{
+            if(menuIds.contains(menu.getId())) return false;
+            menuIds.add(menu.getId());
+            return true;
+        }).sorted(Comparator.comparing(SysMenu::getSort)).map(menu -> {
             SysMenuTree sysMenuTree = BeanUtil.copyProperties(menu, SysMenuTree.class);
             sysMenuTree.setLabel(menu.getName());
             sysMenuTree.setIcon(menu.getIcon());

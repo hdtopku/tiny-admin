@@ -23,7 +23,7 @@ const defaultForm =
       keepAlive: true,
       parentId: null,
       type: 0,
-      buttonStrategy: 1,
+      unauthorizedStrategy: 0,
       permission: '',
     }
 
@@ -133,7 +133,7 @@ watch(() => form.value.component, () => {
 })
 let currentMenu: any = {}
 defineExpose({
-  showModal(isEdit, item) {
+  showModal(item, isEdit) {
     isUpdate.value = isEdit
     if (item) {
       Object.assign(form.value, {
@@ -147,7 +147,7 @@ defineExpose({
         parentId: item.parentId,
         type: item.type,
         permission: item.permission,
-        buttonStrategy: item.buttonStrategy || 1,
+        unauthorizedStrategy: item.unauthorizedStrategy || 0,
         keepAlive: item.keepAlive,
       })
     } else {
@@ -229,8 +229,27 @@ defineExpose({
               <icon-selector v-model:value="form.icon"/>
             </a-form-item>
           </div>
+          <a-form-item :label-col="{span:12}" label="未授权时，重定向至" name="sort">
+            <a-radio-group v-model:value="form.unauthorizedStrategy" name="radioGroup">
+              <a-radio :value="0">404页面</a-radio>
+              <a-radio :value="1">403页面</a-radio>
+            </a-radio-group>
+          </a-form-item>
+          <a-form-item label="组件位置" name="component">
+            <div class="flex items-center">
+              <span class="">
+                views/
+              </span>
+              <a-input v-model:value="form.component" allow-clear autocomplete="off"
+                       placeholder="请输入组件位置" @keyup="() => userInputComponent=true">
+                <template #suffix>
+                  .vue
+                </template>
+              </a-input>
+            </div>
+          </a-form-item>
           <div class="grid grid-cols-2">
-            <a-form-item :label-col="{span: 10}" label="隐藏菜单">
+            <a-form-item :label-col="{span: 10}" label="是否隐藏菜单">
               <a-switch v-model:checked="form.hidden" :checked-value="false" :un-checked-value="true"
                         checked-children="已显示" un-checked-children="已隐藏"/>
             </a-form-item>
@@ -240,23 +259,10 @@ defineExpose({
                         checked-children="已缓存" un-checked-children="未缓存"/>
             </a-form-item>
           </div>
-          <a-form-item label="组件位置" name="component">
-            <div class="flex items-center">
-              <span class="">
-                views/
-              </span>
-              <a-input @keyup="() => userInputComponent=true" allow-clear autocomplete="off"
-                       v-model:value="form.component" placeholder="请输入组件位置">
-                <template #suffix>
-                  .vue
-                </template>
-              </a-input>
-            </div>
-          </a-form-item>
-          <a-form-item label="权限标识" name="permission">
-            <a-input @keyup="() => userInputPerm=true" allow-clear autocomplete="off" v-model:value="form.permission"
-                     placeholder="请输入权限标识"/>
-          </a-form-item>
+          <!--          <a-form-item label="权限标识" name="permission">-->
+          <!--            <a-input @keyup="() => userInputPerm=true" allow-clear autocomplete="off" v-model:value="form.permission"-->
+          <!--                     placeholder="请输入权限标识"/>-->
+          <!--          </a-form-item>-->
         </a-form>
       </a-tab-pane>
       <a-tab-pane :key="2" tab="按钮">
@@ -291,10 +297,10 @@ defineExpose({
             <a-input allow-clear autocomplete="off" v-model:value="form.permission"
                      placeholder="请输入权限标识"/>
           </a-form-item>
-          <a-form-item label="授权策略" tooltip="未授权时：隐藏按钮或显示但不可点击" name="sort">
-            <a-radio-group v-model:value="form.buttonStrategy" name="radioGroup">
-              <a-radio :value="1">隐藏</a-radio>
-              <a-radio :value="2">显示</a-radio>
+          <a-form-item label="未授权时" name="sort">
+            <a-radio-group v-model:value="form.unauthorizedStrategy" name="radioGroup">
+              <a-radio :value="0">隐藏按钮</a-radio>
+              <a-radio :value="1">显示按钮(不可点击)</a-radio>
             </a-radio-group>
           </a-form-item>
         </a-form>

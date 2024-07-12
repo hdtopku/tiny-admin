@@ -1,5 +1,6 @@
 package com.tiny.admin.biz.system.dto;
 
+import com.tiny.admin.biz.system.entity.SysMenu;
 import lombok.Data;
 
 import java.util.List;
@@ -13,4 +14,5 @@ public class UserInfo {
     private String avatar;
     private String nickname;
     private List<SysMenuTree> menuTree;
+    private List<SysMenu> publicMenuList;
 }

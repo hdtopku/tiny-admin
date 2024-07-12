@@ -1,7 +1,7 @@
 import axios from 'axios';
 import router from "@/router";
 import {message} from "ant-design-vue";
-import {getToken} from "@/utils/auth.ts";
+import {getToken} from "@/utils/token.ts";
 import NProgress from "@/utils/NProgress.ts";
 
 const http = axios.create({

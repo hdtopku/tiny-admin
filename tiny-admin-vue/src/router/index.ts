@@ -11,8 +11,18 @@ const routes = [{
     component: () => import('@/views/Login.vue')
 },
     {
+        path: '/',
+        component: () => import('@/layout/Index.vue'),
+        children: [
+            {
+                path: '403',
+                component: () => import('@/views/403.vue'), // 注意看这里，替换成了 403 页面组件
+            }
+        ]
+    },
+    {
         // hide: true,
-        path: '/:pathMatch(.*)*',
+        path: '/:all(.*)*',
         component: () => import(`@/views/404.vue`),
     }
 ]
@@ -22,7 +32,7 @@ const router = createRouter({
 })
 const whiteList = ['/login']
 
-let routeList
+let routeList, publicRouteList
 router.beforeEach((to, _from, next) => {
     NProgress.start()
     const token = localStorage.getItem('token')
@@ -35,6 +45,7 @@ router.beforeEach((to, _from, next) => {
     if (token?.length) {
         if (!routeList) {
             routeList = useUserStore().getRouteList()
+            publicRouteList = useUserStore().userInfo.publicMenuList?.filter(item => item.type === 1)
             if (routeList?.length) {
                 router.addRoute(
                     {
@@ -47,6 +58,10 @@ router.beforeEach((to, _from, next) => {
             }
             return next(to)
         } else {
+            const path = to.path?.split('/').filter(item => item.length).join('/').toLowerCase()
+            if (to.matched.length === 1 && to.matched[0].path.endsWith('(.*)*') && publicRouteList?.find((item: any) => path === item.url?.split('/').join('/').toLowerCase())) {
+                return next('/403')
+            }
             next()
         }
     } else {

@@ -11,6 +11,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -23,8 +24,9 @@ public class AdminUserDetails extends SysUser implements UserDetails {
 
     @Serial
     private static final long serialVersionUID = 1L;
-    private List<SysRole> roles;
-    private List<SysMenu> menuList;
+    private List<SysRole> roles=new ArrayList<>();
+    private List<SysMenu> menuList=new ArrayList<>();
+    private List<SysMenu> publicMenuList=new ArrayList<>(); // 没有权限，但是也可见的菜单列表
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

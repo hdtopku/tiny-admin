@@ -13,7 +13,7 @@ const searchForm = reactive({
 })
 const switchLoading = ref(false)
 const dataSource = ref()
-const columns:any = [
+const columns: any = [
   {
     title: '菜单名称',
     dataIndex: 'name',
@@ -28,19 +28,19 @@ const columns:any = [
   {
     title: '排序',
     dataIndex: 'sort',
-    key:'sort',
+    key: 'sort',
     width: 60,
   },
   {
     title: '权限码',
     dataIndex: 'permission',
-    key:'permission',
+    key: 'permission',
     width: 120,
   },
   {
     title: '按钮策略',
-    dataIndex: 'buttonStrategy',
-    key:'permission',
+    dataIndex: 'unauthorizedStrategy',
+    key: 'permission',
     width: 120,
   },
   {
@@ -66,8 +66,8 @@ const queryList = () => {
 }
 queryList()
 const menuModalRef = ref()
-const saveOrUpdate = (isEdit = false, menu:any = null) => {
-  menuModalRef.value.showModal(isEdit, menu)
+const saveOrUpdate = (menu: any = null, isEdit = false) => {
+  menuModalRef.value.showModal(menu, isEdit)
 }
 const deleteMenu = (menuId) => {
   deleteMenuById(menuId).then(() => {
@@ -81,14 +81,16 @@ const deleteMenu = (menuId) => {
   <div class="p-4">
     <div class="flex mb-4">
       <div class="flex items-center gap-4 mx-auto sm:w-[80%] w-full">
-        <a-button v-permission="'menu:add'" type="primary" @click="()=>saveOrUpdate()">新增</a-button>
+        <Auth :has-permission="'menu:add'">
+          <a-button type="primary" @click="()=>saveOrUpdate()">新增</a-button>
+        </Auth>
         <a-input @keydown.enter.prevent="queryList" allow-clear class="text-left"
                  placeholder="搜索菜单名称" type="text"
                  id="keyword"
                  v-model:value="searchForm.keyword" autocomplete="off">
           <template #prefix>
             <a-switch :loading="switchLoading" class="flex-shrink-0"
-                       checked-children="已启用" un-checked-children="已禁用"/>
+                      checked-children="已启用" un-checked-children="已禁用"/>
           </template>
           <template #suffix>
             <a-button type="primary" @click="queryList">搜索</a-button>
@@ -96,7 +98,8 @@ const deleteMenu = (menuId) => {
         </a-input>
       </div>
     </div>
-    <a-table  :scroll="{ x: 'max-content', y: 'calc(100vh - 200px)' }" row-key="id" :columns="columns" :data-source="dataSource" :loading="switchLoading">
+    <a-table :columns="columns" :data-source="dataSource" :loading="switchLoading"
+             :scroll="{ x: 'max-content', y: 'calc(100vh - 200px)' }" row-key="id">
 
       <template #bodyCell="{record, column}">
         <template v-if="column.dataIndex === 'name'">
@@ -114,15 +117,16 @@ const deleteMenu = (menuId) => {
             按钮
           </template>
         </template>
-        <template v-if="column.key === 'operation'" >
-          <a-button link type="link" @click="()=>saveOrUpdate(false, {parentId: record.id})">新增</a-button>
-          <a-popconfirm ok-type="danger" ok-text="是" cancel-text="否" title="是否删除该菜单？" @confirm="()=>deleteMenu(record.id)">
+        <template v-if="column.key === 'operation'">
+          <a-button link type="link" @click="()=>saveOrUpdate({parentId: record.id},false )">新增</a-button>
+          <a-popconfirm cancel-text="否" ok-text="是" ok-type="danger" title="是否删除该菜单？"
+                        @confirm="()=>deleteMenu(record.id)">
             <template #icon>
               <question-circle-outlined style="color: red"/>
             </template>
             <a-button type="link" danger>删除</a-button>
           </a-popconfirm>
-          <a-button type="link" @click="saveOrUpdate(true, record)">修改</a-button>
+          <a-button type="link" @click="saveOrUpdate(record, true)">修改</a-button>
         </template>
       </template>
     </a-table>
