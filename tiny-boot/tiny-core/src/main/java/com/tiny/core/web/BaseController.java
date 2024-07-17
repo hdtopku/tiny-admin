@@ -28,7 +28,7 @@ public class BaseController<S extends IService<E>, E> {
     }
 
     @Operation(summary = "存或改")
-    @PostMapping("/saveOrUpdate")
+//    @PostMapping("/saveOrUpdate")
     public Result<String> save(@RequestBody E entity) {
         baseService.saveOrUpdate(entity);
         return Result.success("操作成功");

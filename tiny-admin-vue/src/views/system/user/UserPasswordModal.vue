@@ -33,7 +33,7 @@ defineExpose({
 </script>
 
 <template>
-  <a-modal destroy-on-close ok-text="提交" cancel-text="取消" @ok="handleChangePassword" @cancel="()=>passwordItem = {}"
+  <a-modal ok-text="提交" cancel-text="取消" @ok="handleChangePassword" @cancel="()=>passwordItem = {}"
            v-model:open="passwordModalVisible" :title="`修改密码_${username}`">
     <a-form @keydown.enter="handleChangePassword" :model="passwordItem" ref="passwordFormRef" :rules="passwordRules">
       <a-form-item name="password" required>

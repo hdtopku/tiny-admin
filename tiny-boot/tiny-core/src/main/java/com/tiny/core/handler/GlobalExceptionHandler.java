@@ -6,6 +6,8 @@ import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,7 +23,7 @@ import org.springframework.web.servlet.NoHandlerFoundException;
 public class GlobalExceptionHandler implements ErrorController {
 
     @ExceptionHandler(RuntimeException.class)
-    public Result<Object> handler(RuntimeException ex) {
+    public Result<Object> handler(RuntimeException ex) throws Exception {
         log.error("Ops!", ex);
         return this.internalServerError(ex);
     }
@@ -77,14 +79,24 @@ public class GlobalExceptionHandler implements ErrorController {
      */
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler
-    public Result<Object> internalServerError(Exception e) {
+    public Result<Object> internalServerError(Exception e) throws Exception {
         if (e instanceof DuplicateKeyException) {
             String message = e.getMessage();
             if (message.contains("Duplicate entry")) {
                 return Result.failure(message.split(" ")[2] + "已存在，请修改！");
             }
         }
+        if (e instanceof AccessDeniedException
+                || e instanceof AuthenticationException) {
+            throw e;
+        }
         return Result.failure(e.getMessage());
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler(AccessDeniedException.class)
+    public void accessDeniedException(AccessDeniedException e) throws AccessDeniedException {
+        throw e;
     }
 
     @ExceptionHandler(DuplicateKeyException.class)

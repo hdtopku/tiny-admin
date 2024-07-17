@@ -100,7 +100,6 @@ const deleteMenu = (menuId) => {
     </div>
     <a-table :columns="columns" :data-source="dataSource" :loading="switchLoading"
              :scroll="{ x: 'max-content', y: 'calc(100vh - 200px)' }" row-key="id">
-
       <template #bodyCell="{record, column}">
         <template v-if="column.dataIndex === 'name'">
           <CreateIcon :icon="record.icon"/>
@@ -118,7 +117,8 @@ const deleteMenu = (menuId) => {
           </template>
         </template>
         <template v-if="column.key === 'operation'">
-          <a-button link type="link" @click="()=>saveOrUpdate({parentId: record.id},false )">新增</a-button>
+          <a-button type="link" @click="saveOrUpdate(record, true)">修改</a-button>
+          <Auth :has-permission="'system:sysmenu:deletebyids'">
           <a-popconfirm cancel-text="否" ok-text="是" ok-type="danger" title="是否删除该菜单？"
                         @confirm="()=>deleteMenu(record.id)">
             <template #icon>
@@ -126,7 +126,8 @@ const deleteMenu = (menuId) => {
             </template>
             <a-button type="link" danger>删除</a-button>
           </a-popconfirm>
-          <a-button type="link" @click="saveOrUpdate(record, true)">修改</a-button>
+          </Auth>
+          <a-button v-show="record.type === 1" link type="link" @click="()=>saveOrUpdate({parentId: record.id},false )">新增</a-button>
         </template>
       </template>
     </a-table>

@@ -4,6 +4,7 @@ import com.tiny.core.redis.service.RedisService;
 import jakarta.annotation.Resource;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,7 +43,7 @@ public class RedisServiceImpl implements RedisService {
     }
 
     @Override
-    public Long del(List<String> keys) {
+    public Long del(Collection<String> keys) {
         return redisTemplate.delete(keys);
     }
 

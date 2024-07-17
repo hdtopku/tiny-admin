@@ -9,6 +9,22 @@ import {DefaultOptionType} from "ant-design-vue/es/vc-tree-select/TreeSelect";
 const props = defineProps({
   menuTree: Array as () => DefaultOptionType[],
 })
+const getMenuTree = () => {
+  const dfs=(menus: any) => {
+    if(!menus?.length) return []
+    let newMenus:any = []
+    menus.filter((menu:any) => menu.type === 1).forEach((menu: any) => {
+      let newMenu:any={...menu}
+      if (menu?.children?.length) {
+        newMenu.children=dfs(menu.children)
+      }
+      newMenus.push(newMenu)
+    })
+    return newMenus
+  }
+  return dfs(props.menuTree)
+}
+const menuTree = computed(() => getMenuTree())
 const open = ref(false)
 const isUpdate = ref(false)
 const formRef = ref()
@@ -27,7 +43,7 @@ const defaultForm =
       permission: '',
     }
 
-const form: any = ref(defaultForm)
+const form: any = ref({...defaultForm})
 const rules: any = {
   parentId: [
     {required: false, message: '请选择父菜单', trigger: ['blur', 'change']},
@@ -40,10 +56,6 @@ const rules: any = {
     {required: true, message: '请输入菜单路径', trigger: ['blur', 'change']},
     {min: 2, max: 200, message: '长度在 2 到 200 个字符', trigger: ['blur', 'change']},
   ],
-  sort: [
-    {required: true, message: '请输入菜单排序', trigger: ['blur', 'change']},
-    {type: 'number', message: '请输入数字', trigger: ['blur', 'change']},
-  ],
   type: [
     {required: true, message: '请选择菜单类型', trigger: ['blur', 'change']},
   ],
@@ -53,10 +65,10 @@ const buttonRules: any = {
     {required: true, message: '请输入按钮名称', trigger: ['blur', 'change']},
     {min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: ['blur', 'change']},
   ],
-  permission: [
-    {required: true, message: '请输入权限标识', trigger: ['blur', 'change']},
-    {min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: ['blur', 'change']},
-  ],
+  // permission: [
+  //   {required: true, message: '请输入权限标识', trigger: ['blur', 'change']},
+  //   {min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: ['blur', 'change']},
+  // ],
 }
 const loading = ref(false)
 const emits = defineEmits(['queryList'])
@@ -65,6 +77,9 @@ const btnFormRef = ref()
 const handleOk = async () => {
   const submitForm = () => {
     loading.value = true
+    if (!isUpdate.value && form.value.type === 2) {
+      form.value.component = null
+    }
     saveOrUpdateMenu(form.value).then(() => {
       message.success('操作成功')
       open.value = false
@@ -88,7 +103,6 @@ const handleOk = async () => {
     })
   }
 }
-
 const userInputPerm = ref(false)
 const userInputComponent = ref(false)
 const handleUrlChange = () => {
@@ -131,9 +145,11 @@ watch(() => form.value.component, () => {
     form.value.component = form.value.component.slice(1)
   }
 })
+
 let currentMenu: any = {}
 defineExpose({
   showModal(item, isEdit) {
+    open.value = true
     isUpdate.value = isEdit
     if (item) {
       Object.assign(form.value, {
@@ -151,9 +167,8 @@ defineExpose({
         keepAlive: item.keepAlive,
       })
     } else {
-      form.value = Object.assign({}, defaultForm)
+      form.value = {...defaultForm}
     }
-    open.value = true
     currentMenu = item
     activeKey.value = item?.type || 1
   }
@@ -164,17 +179,16 @@ defineExpose({
   <a-drawer
       v-model:open="open"
       :root-style="{ color: 'blue' }"
-      destroyOnClose
       placement="right"
       style="color: red"
       width="500"
   >
     <template #title>
       <span v-if="isUpdate">
-        <span>修改菜单：</span>
+        <span>修改{{ form.type === 1 ? '菜单' : '按钮' }}：</span>
         <span class="text-gray-400">{{ currentMenu.name }}</span>
       </span>
-      <span v-else>新增菜单</span>
+      <span v-else>新增{{ form.type === 1 ? '菜单' : '按钮' }}</span>
     </template>
     <template #footer>
       <a-space class="flex justify-end">
@@ -183,6 +197,10 @@ defineExpose({
       </a-space>
     </template>
     <a-tabs v-model:activeKey="activeKey" type="card">
+      <template #rightExtra>
+        <span class="text-gray-400">已选类别：<a-tag
+            class="text-gray-400">{{ form.type === 1 ? '菜单' : '按钮' }}</a-tag></span>
+      </template>
       <a-tab-pane :key="1" tab="菜单">
         <a-form :label-col="{span: 5}" class="pt-4" :model="form" :rules="rules" ref="formRef">
           <a-form-item help="若未选择，则为顶级菜单" label="父级菜单" name="parentId">
@@ -194,7 +212,7 @@ defineExpose({
                 placeholder="请选择父级菜单"
                 allow-clear
                 tree-default-expand-all
-                :tree-data="props.menuTree"
+                :tree-data="menuTree"
                 tree-node-filter-prop="name"
                 :field-names="{
                   children: 'children',
@@ -219,22 +237,6 @@ defineExpose({
                        placeholder="请输入访问URL"/>
             </div>
           </a-form-item>
-          <div class="grid grid-cols-2">
-            <a-form-item :label-col="{span: 10}" help="数值越大，越靠后" label="菜单排序"
-                         name="sort">
-              <a-input-number v-model:value="form.sort" :defaultValue="9999" :max="9999" :min="1" allow-clear
-                              autocomplete="off"/>
-            </a-form-item>
-            <a-form-item :label-col="{span: 10}" label="菜单图标" name="icon">
-              <icon-selector v-model:value="form.icon"/>
-            </a-form-item>
-          </div>
-          <a-form-item :label-col="{span:12}" label="未授权时，重定向至" name="sort">
-            <a-radio-group v-model:value="form.unauthorizedStrategy" name="radioGroup">
-              <a-radio :value="0">404页面</a-radio>
-              <a-radio :value="1">403页面</a-radio>
-            </a-radio-group>
-          </a-form-item>
           <a-form-item label="组件位置" name="component">
             <div class="flex items-center">
               <span class="">
@@ -248,6 +250,27 @@ defineExpose({
               </a-input>
             </div>
           </a-form-item>
+          <a-form-item label="权限标识" tooltip="若不填写该字段，则表示不设置权限，并对所有人开放。" name="permission">
+            <a-input @keyup="() => userInputPerm=true" allow-clear autocomplete="off"
+                     v-model:value="form.permission"
+                     placeholder="请输入权限标识"/>
+          </a-form-item>
+          <div class="grid grid-cols-2">
+            <a-form-item :label-col="{span: 10}" help="数值越大，越靠后" label="菜单排序">
+              <a-input-number v-model:value="form.sort" :defaultValue="9999" :max="9999" :min="1" allow-clear
+                              autocomplete="off"/>
+            </a-form-item>
+            <a-form-item :label-col="{span: 10}" label="菜单图标" name="icon">
+              <icon-selector v-model:value="form.icon"/>
+            </a-form-item>
+          </div>
+          <a-form-item :label-col="{span:12}" label="对未授权角色，重定向至"
+                       tooltip="注意：若选择重定向至404页面，则该菜单、子菜单及其侧边栏将对未授权用户不可见。">
+            <a-radio-group v-model:value="form.unauthorizedStrategy" name="radioGroup">
+              <a-radio :value="0">404页面</a-radio>
+              <a-radio :value="1">403页面</a-radio>
+            </a-radio-group>
+          </a-form-item>
           <div class="grid grid-cols-2">
             <a-form-item :label-col="{span: 10}" label="是否隐藏菜单">
               <a-switch v-model:checked="form.hidden" :checked-value="false" :un-checked-value="true"
@@ -259,14 +282,10 @@ defineExpose({
                         checked-children="已缓存" un-checked-children="未缓存"/>
             </a-form-item>
           </div>
-          <!--          <a-form-item label="权限标识" name="permission">-->
-          <!--            <a-input @keyup="() => userInputPerm=true" allow-clear autocomplete="off" v-model:value="form.permission"-->
-          <!--                     placeholder="请输入权限标识"/>-->
-          <!--          </a-form-item>-->
         </a-form>
       </a-tab-pane>
       <a-tab-pane :key="2" tab="按钮">
-        <a-form ref="btnFormRef" :rules="buttonRules" :label-col="{span: 5}" class="pt-4" :model="form">
+        <a-form ref="btnFormRef" :rules="buttonRules" :label-col="{span: 6}" class="pt-4" :model="form">
           <a-form-item label="父级菜单" name="parentId">
             <a-tree-select
                 v-model:value="form.parentId"
@@ -276,7 +295,7 @@ defineExpose({
                 placeholder="请选择父级菜单"
                 allow-clear
                 tree-default-expand-all
-                :tree-data="props.menuTree"
+                :tree-data="menuTree"
                 tree-node-filter-prop="name"
                 :field-names="{
                   children: 'children',
@@ -293,14 +312,27 @@ defineExpose({
           <a-form-item label="按钮名称" name="name">
             <a-input allow-clear autocomplete="off" v-model:value="form.name" placeholder="请输入按钮名称"/>
           </a-form-item>
-          <a-form-item label="权限标识" name="permission">
-            <a-input allow-clear autocomplete="off" v-model:value="form.permission"
-                     placeholder="请输入权限标识"/>
+          <a-form-item label="接口URL"
+                       tooltip="请求后端接口的URL，如：/system/sysmenu/saveorupdate。对于未授权用户，接口禁止调用。"
+                       name="url">
+            <div class="flex items-center">
+              <span>/</span>
+              <a-input @change="handleUrlChange" allow-clear autocomplete="off" v-model:value="form.url"
+                       placeholder="请输入后端接口URL"/>
+            </div>
           </a-form-item>
-          <a-form-item label="未授权时" name="sort">
+          <a-form-item help="隐藏按钮、显示但禁用时，需填写该字段才可以生效。"
+                       label="权限标识"
+                       tooltip="权限标识(如：user:add,user:edit,role:add等)。配合Auth.vue组件使用，对于未授权用户，控制按钮的显示/隐藏，可否点击等。"
+                       name="permission">
+            <a-input allow-clear autocomplete="off" v-model:value="form.permission"
+                     placeholder="请输入按钮权限标识"/>
+          </a-form-item>
+          <a-form-item label="对未授权角色" name="sort">
             <a-radio-group v-model:value="form.unauthorizedStrategy" name="radioGroup">
               <a-radio :value="0">隐藏按钮</a-radio>
-              <a-radio :value="1">显示按钮(不可点击)</a-radio>
+              <a-radio :value="1">显示但禁用</a-radio>
+              <a-radio :value="2">可点击但提交失败</a-radio>
             </a-radio-group>
           </a-form-item>
         </a-form>

@@ -1,5 +1,6 @@
 package com.tiny.core.redis.service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,7 +35,7 @@ public interface RedisService {
     /**
      * 批量删除属性
      */
-    Long del(List<String> keys);
+    Long del(Collection<String> keys);
 
     /**
      * 设置过期时间

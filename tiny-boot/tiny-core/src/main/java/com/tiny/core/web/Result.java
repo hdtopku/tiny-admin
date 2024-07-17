@@ -31,4 +31,7 @@ public class Result<T> {
     public static <T> Result<T> failure(String message) {
         return new Result<>(FAILURE_CODE, message, null);
     }
+    public static <T> Result<T> failure(int code, String message) {
+        return new Result<>(code, message, null);
+    }
 }

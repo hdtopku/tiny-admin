@@ -30,7 +30,7 @@ public class AdminUserDetails extends SysUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return menuList.stream().filter(menu -> StringUtils.isNotBlank(menu.getPermission())).map(menu -> new SimpleGrantedAuthority(menu.getPermission())).toList();
+        return menuList.stream().filter(menu -> StringUtils.isNotBlank(menu.getUrl())).map(menu -> new SimpleGrantedAuthority(menu.getUrl().toLowerCase())).toList();
     }
 
     @Override

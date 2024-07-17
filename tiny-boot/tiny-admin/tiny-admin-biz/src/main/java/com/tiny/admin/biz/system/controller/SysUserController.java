@@ -3,7 +3,6 @@ package com.tiny.admin.biz.system.controller;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.tiny.admin.biz.system.dto.SysUserDto;
 import com.tiny.admin.biz.system.entity.SysUser;
-import com.tiny.admin.biz.system.service.ISysUserRoleRelService;
 import com.tiny.admin.biz.system.service.ISysUserService;
 import com.tiny.admin.biz.system.vo.BaseQueryParam;
 import com.tiny.core.web.BaseController;
@@ -26,9 +25,6 @@ import org.springframework.web.bind.annotation.*;
 public class SysUserController  extends BaseController<ISysUserService, SysUser> {
     @Resource
     private ISysUserService iSysUserService;
-    @Resource
-    private ISysUserRoleRelService iSysUserRoleRelService;
-
 
     @PostMapping("/page")
     public Result<IPage<SysUserDto>> page(@RequestBody(required = false) BaseQueryParam param) {

@@ -72,17 +72,17 @@ const filteredOptions = computed(() => {
 defineExpose({
   showModal({roles, isEdit = false, userInfo}) {
         userInfoModalVisible.value = true
-    isUpdate.value = isEdit ?? false
-    curUserInfo.value = userInfo || {}
-    username.value = userInfo.username || ''
-    roleList.value = roles || []
+        isUpdate.value = isEdit ?? false
+        curUserInfo.value = userInfo || {}
+        username.value = userInfo.username || ''
+        roleList.value = roles || []
       }
     }
 )
 </script>
 
 <template>
-  <a-modal v-model:open="userInfoModalVisible" destroy-on-close ok-text="提交" cancel-text="取消"
+  <a-modal v-model:open="userInfoModalVisible" ok-text="提交" cancel-text="取消"
            :title="isUpdate? `编辑用户_${username}` : '新增用户'"
            @ok="handleSubmit">
     <a-form ref="formRef" :model="curUserInfo" :rules="formRules" class="pt-4" @keydown.enter="handleSubmit"

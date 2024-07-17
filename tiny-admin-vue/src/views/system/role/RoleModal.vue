@@ -2,8 +2,6 @@
 import {Rule} from "ant-design-vue/es/form";
 import {saveOrUpdate} from "@/api/role.ts";
 import {message} from "ant-design-vue";
-import {useUserStore} from "@/store";
-import useGlobal from "@/hooks/useGlobal.ts";
 
 const rules: Record<string, Rule[]> = {
   roleName: [
@@ -49,7 +47,7 @@ defineExpose({
 </script>
 
 <template>
-  <a-modal destroy-on-close :title="isUpdate? `编辑角色-${curName}` : '新增角色'" :open="modalVisible" ok-text="提交" cancel-text="取消"
+  <a-modal :title="isUpdate? `编辑角色-${curName}` : '新增角色'" :open="modalVisible" ok-text="提交" cancel-text="取消"
            @ok="handleSubmit" @cancel="handleCancel">
     <a-form @keydown.enter.prevent="handleSubmit" class="pt-4" :label-col="{ span: 4 }" ref="formRef" :rules="rules" :model="curInfo">
       <a-form-item name="roleName" label="角色名称">

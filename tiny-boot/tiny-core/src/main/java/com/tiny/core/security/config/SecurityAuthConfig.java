@@ -12,7 +12,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.authorization.AuthorizationDecision;
+import org.springframework.security.authorization.AuthorizationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -23,6 +23,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.intercept.RequestAuthorizationContext;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -38,7 +39,13 @@ import java.util.Map;
 public abstract class SecurityAuthConfig<T extends UserDetails> implements UserDetailsService {
     private static final String TOKEN_KEY = "user-token";
     @Resource
+    private RestfulAuthenticationEntryPoint restfulAuthenticationEntryPoint;
+    @Resource
+    private RestfulAccessDeniedHandler restfulAccessDeniedHandler;
+    @Resource
     private RedisService redisService;
+    @Resource
+    private AuthorizationManager<RequestAuthorizationContext> authorizationManager;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -48,15 +55,12 @@ public abstract class SecurityAuthConfig<T extends UserDetails> implements UserD
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
-        http
-                .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/login").permitAll()
-                        .anyRequest().access((authentication, object) -> {
-                            String requestURI = object.getRequest().getRequestURI();
-                            authentication.get().getAuthorities().stream().map(Object::toString).forEach(System.out::println);
-                            return new AuthorizationDecision(true);
-                        })
-                );
+        http.authorizeHttpRequests(authorize -> authorize
+                .requestMatchers("/login", "/error").permitAll()
+                .anyRequest().access(authorizationManager)
+            );
+        http.exceptionHandling(exceptionHandling -> exceptionHandling.accessDeniedHandler(restfulAccessDeniedHandler));
+        http.exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(restfulAuthenticationEntryPoint));
         http.addFilterBefore(new OncePerRequestFilter() {
             @Override
             protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
