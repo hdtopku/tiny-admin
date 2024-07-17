@@ -78,6 +78,7 @@ const deleteMenu = (menuId) => {
 </script>
 
 <template>
+  <div>
   <div class="p-4">
     <div class="flex mb-4">
       <div class="flex items-center gap-4 mx-auto sm:w-[80%] w-full">
@@ -133,6 +134,7 @@ const deleteMenu = (menuId) => {
     </a-table>
   </div>
   <MenuModal @query-list="queryList" ref="menuModalRef" :menuTree="dataSource"/>
+  </div>
 </template>
 
 <style scoped>

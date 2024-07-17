@@ -5,16 +5,16 @@ const permission = (el: HTMLElement, binding: any) => {
     if (!permissionSet) {
         permissionSet = useUserStore().getBtnPermissionSet()
     }
-    const nextSibling: any = el.nextElementSibling
+    const nextSibling: any = el?.nextElementSibling
     if (permissionSet.has(binding.value)) {
-        nextSibling.parentNode?.removeChild(nextSibling)
+        nextSibling?.parentNode?.removeChild(nextSibling)
     } else {
-        el.parentNode?.removeChild(el)
+        el?.parentNode?.removeChild(el)
         let showMenu = useUserStore().userInfo.publicMenuList?.some((item: any) => item.unauthorizedStrategy === 1 && item.permission === binding.value)
         if (showMenu) {
             nextSibling.setAttribute("disabled", true)
         } else {
-            nextSibling.parentNode?.removeChild(nextSibling)
+            nextSibling?.parentNode?.removeChild(nextSibling)
         }
     }
 }

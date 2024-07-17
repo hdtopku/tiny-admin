@@ -1,21 +1,24 @@
 <template>
-  <a-tree
-      v-model:expandedKeys="expandedKeys"
-      v-model:selectedKeys="selectedKeys"
-      v-model:checkedKeys="checkedKeys"
-      checkable
-      :tree-data="treeData"
-      :field-names="fieldNames"
-  >
-    <template #title="{ name, key }">
-      <span v-if="key === '0-0-1'" style="color: #1890ff">{{ name }}</span>
-      <template v-else>{{ name }}</template>
-    </template>
-  </a-tree>
+  <div>
+    <a-tree
+        v-model:checkedKeys="checkedKeys"
+        v-model:expandedKeys="expandedKeys"
+        v-model:selectedKeys="selectedKeys"
+        :field-names="fieldNames"
+        :tree-data="treeData"
+        checkable
+    >
+      <template #title="{ name, key }">
+        <span v-if="key === '0-0-1'" style="color: #1890ff">{{ name }}</span>
+        <template v-else>{{ name }}</template>
+      </template>
+    </a-tree>
+  </div>
 </template>
 <script lang="ts" setup>
-import { Ref, ref, watch } from 'vue';
-import type { TreeProps } from 'ant-design-vue';
+import {Ref, ref, watch} from 'vue';
+import type {TreeProps} from 'ant-design-vue';
+
 const expandedKeys = ref<string[]>(['0-0-0', '0-0-1']);
 const selectedKeys = ref<string[]>(['0-0-0', '0-0-1']);
 const checkedKeys = ref<string[]>(['0-0-0', '0-0-1']);
@@ -35,14 +38,14 @@ const treeData: Ref<TreeProps['treeData']> = ref([
         key: '0-0-0',
         disabled: true,
         child: [
-          { name: 'leaf', key: '0-0-0-0', disableCheckbox: true },
-          { name: 'leaf', key: '0-0-0-1' },
+          {name: 'leaf', key: '0-0-0-0', disableCheckbox: true},
+          {name: 'leaf', key: '0-0-0-1'},
         ],
       },
       {
         name: 'parent 1-1',
         key: '0-0-1',
-        child: [{ key: '0-0-1-0', name: 'zcvc' }],
+        child: [{key: '0-0-1-0', name: 'zcvc'}],
       },
     ],
   },

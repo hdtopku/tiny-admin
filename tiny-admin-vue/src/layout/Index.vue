@@ -23,9 +23,15 @@
       </a-layout-header>
       <a-layout-content>
         <router-view #default="{ Component, route }">
-          <keep-alive>
-            <component :is="Component" :key="route.path + (route.meta.keepAlive ? '' : Math.random())"/>
-          </keep-alive>
+          <transition :duration="{ enter: 10, leave: 0 }"
+                      appear-active-class="animate__animated animate__slideInUp"
+                      enter-active-class="animate__animated animate__fadeIn fade-enter-active"
+                      mode="out-in">
+            <keep-alive>
+              <component :is="Component"
+                         :key="route.path + (route.meta.keepAlive ? '' : Math.random())"/>
+            </keep-alive>
+          </transition>
         </router-view>
       </a-layout-content>
     </a-layout>

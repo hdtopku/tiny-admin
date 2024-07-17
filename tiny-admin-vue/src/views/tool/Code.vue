@@ -3,7 +3,10 @@
 </script>
 
 <template>
-代码生成
+  <div>
+
+    代码生成
+  </div>
 </template>
 
 <style scoped>

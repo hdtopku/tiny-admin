@@ -1,5 +1,4 @@
 import {createRouter, createWebHistory} from "vue-router";
-import NProgress from "@/utils/NProgress.ts";
 import {useUserStore} from "@/store";
 
 const routes = [{
@@ -34,7 +33,7 @@ const whiteList = ['/login']
 
 let routeList, publicRouteList
 router.beforeEach((to, _from, next) => {
-    NProgress.start()
+    // NProgress.start()
     const token = localStorage.getItem('token')
     if (whiteList.includes(to.path)) {
         if (to.path === '/login' && token?.length) {
@@ -69,7 +68,7 @@ router.beforeEach((to, _from, next) => {
     }
 })
 router.afterEach(() => {
-    NProgress.done()
+    // NProgress.done()
     window.scrollTo(0, 0)
 })
 

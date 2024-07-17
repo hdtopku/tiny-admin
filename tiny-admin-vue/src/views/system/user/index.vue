@@ -136,6 +136,7 @@ const handleDeleteUser = (id: string) => {
 </script>
 
 <template>
+  <div>
   <div class="p-4">
     <div class="flex mb-4">
       <div class="flex items-center gap-4 mx-auto sm:w-[80%] w-full">
@@ -222,4 +223,5 @@ const handleDeleteUser = (id: string) => {
   </div>
   <UserModal ref="UserModalRef" @queryList="queryList"/>
   <UserPasswordModal ref="UserPasswordModalRef"/>
+  </div>
 </template>

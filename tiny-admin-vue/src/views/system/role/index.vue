@@ -112,6 +112,8 @@ const handleAssignRole = (record: any) => {
 </script>
 
 <template>
+  <div>
+
   <div class="p-4">
     <div class="flex mb-4">
       <div class="flex items-center gap-4 mx-auto sm:w-[80%] w-full">
@@ -183,6 +185,7 @@ const handleAssignRole = (record: any) => {
   </div>
   <RoleModal @query-list="queryList" ref="roleModalRef"/>
   <AssignRole @query-list="queryList" ref="assignRoleRef"/>
+  </div>
 </template>
 
 <style scoped>

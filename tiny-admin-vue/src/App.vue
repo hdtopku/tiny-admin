@@ -14,3 +14,6 @@ const isDark = useDark()
     <router-view/>
   </a-config-provider>
 </template>
+
+<style scoped>
+</style>
