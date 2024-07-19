@@ -1,5 +1,5 @@
 import {createRouter, createWebHistory} from "vue-router";
-import {useUserStore} from "@/store";
+import {useMenuStore, useUserStore} from "@/store";
 
 const routes = [{
     path: '/',
@@ -67,7 +67,8 @@ router.beforeEach((to, _from, next) => {
         next('/login')
     }
 })
-router.afterEach(() => {
+router.afterEach((to) => {
+    useMenuStore().addTab(to)
     // NProgress.done()
     window.scrollTo(0, 0)
 })

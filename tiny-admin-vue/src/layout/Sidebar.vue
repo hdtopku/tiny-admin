@@ -1,8 +1,8 @@
 <template>
-  <a-menu v-model:collapsed="menuCollapsed" v-model:selected-keys="useMenuStore().selectedKeys"
-          v-model:open-keys="openKeys"
-          @click="handleClick" :items="menus" class="overflow-auto h-full "
-          theme="dark" mode="inline">
+  <a-menu v-model:collapsed="sidebarCollapsed" v-model:open-keys="sidebarOpenKeys"
+          v-model:selected-keys="useMenuStore().sidebarSelectedKeys"
+          :items="menus" class="overflow-auto h-full " mode="inline"
+          theme="dark" @click="handleClick">
   </a-menu>
 </template>
 <script lang="ts" setup>
@@ -16,14 +16,14 @@ const menus = ref(useUserStore().getSidebar())
 const handleClick = ({key}) => {
   router.push(key)
 }
-const {openKeys, menuCollapsed} = storeToRefs(useMenuStore())
+const {sidebarOpenKeys, sidebarCollapsed} = storeToRefs(useMenuStore())
 
 let preOpenKeys
-watch(openKeys, (_val, oldVal) => {
+watch(sidebarOpenKeys, (_val, oldVal) => {
   preOpenKeys = oldVal;
 },)
-watch(menuCollapsed, (val) => {
-  if (!val) openKeys.value = preOpenKeys
+watch(sidebarCollapsed, (val) => {
+  if (!val) sidebarOpenKeys.value = preOpenKeys
 },)
 const {$bus} = useGlobal()
 $bus.on('update-user-info', () => {
@@ -33,17 +33,4 @@ $bus.on('update-user-info', () => {
 })
 </script>
 <style scoped>
-#components-layout-demo-side .logo {
-  height: 32px;
-  margin: 16px;
-  background: rgba(255, 255, 255, 0.3);
-}
-
-.site-layout .site-layout-background {
-  background: #fff;
-}
-
-[data-theme='dark'] .site-layout .site-layout-background {
-  background: #141414;
-}
 </style>
