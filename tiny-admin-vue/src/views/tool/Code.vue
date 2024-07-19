@@ -5,7 +5,7 @@
 <template>
   <div>
 
-    代码生成
+    代码生成，敬请期待...
   </div>
 </template>
 
