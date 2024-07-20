@@ -1,15 +1,51 @@
 import {defineStore} from 'pinia'
 import router from "@/router";
+import {useUserStore} from "@/store/index.ts";
+import {Ref} from "vue";
 
 export const menuStore = defineStore('menu', () => {
     const sidebarOpenKeys = ref([])
-    const sidebarSelectedKeys = ref([])
+    const sidebarSelectedKeys: Ref<string[]> = ref([])
     const sidebarCollapsed = ref(false)
+    const getBreadcrumb = (url: any) => {
+        const breadcrumb: any = []
+        const menuTree = useUserStore().userInfo.menuTree
+        const map: Map<string, any> = new Map()
+        let parentId = ''
+        const dfs = (url: string, menus: any) => {
+            for (let menu of menus) {
+                if (!menu.url?.length) continue
+                if (menu.url === url) {
+                    parentId = menu.parentId
+                    breadcrumb.unshift({
+                        breadcrumbName: menu.name,
+                        path: menu.url
+                    })
+                }
+                if (menu.id?.length) map.set(menu.id, menu)
+                if (menu?.children?.length) {
+                    dfs(url, menu.children)
+                }
+            }
+        }
+        dfs(url, menuTree)
+        while (parentId.length) {
+            const menu = map.get(parentId)
+            breadcrumb.unshift({
+                breadcrumbName: menu.name,
+                path: menu.url
+            })
+            parentId = menu.parentId
+        }
+        return breadcrumb
+    }
+
     const openedTabs: any = ref([])
     const activeTab = ref('')
     let keepTabsOrder = false
     const addTab = (route: any) => {
         activeTab.value = route.path
+        sidebarSelectedKeys.value = [route.path]
         if (keepTabsOrder && openedTabs.value.some((tab) => tab.key === route.path)) {
             keepTabsOrder = false
             return
@@ -60,7 +96,8 @@ export const menuStore = defineStore('menu', () => {
         activeTab,
         addTab,
         removeTab,
-        changeTab
+        changeTab,
+        getBreadcrumb
     }
 }, {
     persist: {

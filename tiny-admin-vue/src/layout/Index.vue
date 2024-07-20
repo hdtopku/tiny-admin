@@ -4,21 +4,17 @@
     <a-layout-sider
         v-model:collapsed="sidebarCollapsed"
         :collapsedWidth="collapsedWidth"
-        :style="{overflow: 'auto',height: '100vh', position: isMiddleWidth ?'fixed' : 'fixed', left: 0, top: 0, bottom: 0 }"
+        :style="{overflow: 'auto', position: isMiddleWidth ?'fixed' : 'fixed', left: 0, top: 0, bottom: 0 }"
         breakpoint="md" class="z-[1000] float-left"
         collapsible
         @breakpoint="onBreakpoint"
         @collapse="onCollapse">
       <div
-          :class="{'hidden':isMiddleWidth && sidebarCollapsed, 'text-xs': sidebarCollapsed, 'text-2xl':!sidebarCollapsed}"
-          class="py-4 font-bold text-gray-400 fixed bg-white text-center w-[200px]">
+          :class="{'hidden':isMiddleWidth && sidebarCollapsed, 'text-xs w-[80px]': sidebarCollapsed, 'text-2xl w-[200px]':!sidebarCollapsed}"
+          class="py-4 font-bold text-gray-400 w-full fixed text-center">
         Tiny Admin
       </div>
-      <a-menu v-model:collapsed="sidebarCollapsed" v-model:open-keys="sidebarOpenKeys"
-              v-model:selected-keys="useMenuStore().sidebarSelectedKeys"
-              :items="menus" class="overflow-auto h-full mt-[64px]" mode="inline"
-              theme="dark" @click="handleClick">
-      </a-menu>
+      <Sidebar class="overflow-auto mt-[64px]"/>
       <span :class="sidebarCollapsed ? 'left-20' : 'left-52'"
             class="opacity-80 fixed z-10 top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white bg-[#011528] text-2xl hover:bg-gray-700 rounded-r-lg cursor-pointer p-2"
             @click="sidebarCollapsed =!sidebarCollapsed">
@@ -26,26 +22,27 @@
           d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg>
         </span>
     </a-layout-sider>
-    <a-layout>
-      <a-layout-header class="fixed w-full bg-white">
+    <a-layout
+        :class="{'ml-[80px]': sidebarCollapsed, 'ml-[200px]':!sidebarCollapsed}"
+    >
+      <a-layout-header class="fixed w-full z-[12] border-b border-gray-200">
+        <Breadcrumb class="mx-4 my-2"/>
       </a-layout-header>
-      <a-layout-content class="ml-[200px] mt-[64px]">
-        <Tabs class="fixed z-10 bg-white"/>
-        <div class="pt-10">
-          <router-view #default="{ Component, route }">
-            <transition :duration="{ enter: 250, leave: 150 }"
-                        appear
-                        appear-active-class="animate__animated animate__fadeInLeft"
-                        enter-active-class="animate__animated animate__fadeIn fade-enter-active"
-                        leave-active-class="animate__animated animate__fadeOut"
-                        mode="out-in">
-              <keep-alive>
-                <component :is="Component"
-                           :key="route.path + (route.meta.keepAlive ? '' : Math.random())"/>
-              </keep-alive>
-            </transition>
-          </router-view>
-        </div>
+      <a-layout-content class="relative mt-20">
+        <Tabs class="bg-white fixed z-10 pt-11 top-0 px-2"/>
+        <router-view #default="{ Component, route }" class="">
+          <transition :duration="{ enter: 250, leave: 150 }"
+                      appear
+                      appear-active-class="animate__animated animate__fadeInLeft"
+                      enter-active-class="animate__animated animate__fadeIn fade-enter-active"
+                      leave-active-class="animate__animated animate__fadeOut"
+                      mode="out-in">
+            <keep-alive>
+              <component :is="Component"
+                         :key="route.path + (route.meta.keepAlive ? '' : Math.random())"/>
+            </keep-alive>
+          </transition>
+        </router-view>
       </a-layout-content>
     </a-layout>
   </a-layout>
@@ -53,13 +50,14 @@
 <script lang="ts" setup>
 import {ref} from 'vue';
 import {storeToRefs} from "pinia";
-import {useMenuStore, useUserStore} from "@/store";
+import {useMenuStore} from "@/store";
 import Tabs from "@/layout/Tabs.vue";
-import router from "@/router";
-import useGlobal from "@/hooks/useGlobal.ts";
+import Sidebar from "@/layout/Sidebar.vue";
+import Breadcrumb from "@/layout/Breadcrumb.vue";
+
+const {sidebarCollapsed} = storeToRefs(useMenuStore())
 
 
-const {sidebarOpenKeys, sidebarCollapsed} = storeToRefs(useMenuStore())
 const collapsedWidth = ref<number>(80);
 const isMiddleWidth = ref<boolean>(false);
 const showMask = ref<boolean>(false);
@@ -86,29 +84,15 @@ const closeMask = () => {
   showMask.value = false;
   sidebarCollapsed.value = true;
 }
-
-const menus = ref(useUserStore().getSidebar())
-const handleClick = ({key}) => {
-  router.push(key)
-}
-
-let preOpenKeys
-watch(sidebarOpenKeys, (_val, oldVal) => {
-  preOpenKeys = oldVal;
-},)
-watch(sidebarCollapsed, (val) => {
-  if (!val) sidebarOpenKeys.value = preOpenKeys
-},)
-const {$bus} = useGlobal()
-$bus.on('update-user-info', () => {
-  // menus.value = useUserStore().getSidebar()
-
-  location.reload()
-})
 </script>
 <style scoped>
 ::v-deep(.ant-layout-sider-zero-width-trigger) {
   display: none;
+}
+
+::v-deep(.ant-layout-header) {
+  height: auto;
+  padding: 0;
 }
 
 .ant-layout .ant-layout-header {

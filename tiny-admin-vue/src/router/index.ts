@@ -69,6 +69,7 @@ router.beforeEach((to, _from, next) => {
 })
 router.afterEach((to) => {
     useMenuStore().addTab(to)
+
     // NProgress.done()
     window.scrollTo(0, 0)
 })

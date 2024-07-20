@@ -32,10 +32,10 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
     }
 
     public static List<SysMenuTree> convertTree(List<SysMenu> menuList) {
-        if(CollUtil.isEmpty(menuList)) return new ArrayList<>();
-        Set<String> menuIds=new HashSet<>();
-        List<SysMenuTree> menus = menuList.stream().filter(menu->{
-            if(menuIds.contains(menu.getId())) return false;
+        if (CollUtil.isEmpty(menuList)) return new ArrayList<>();
+        Set<String> menuIds = new HashSet<>();
+        List<SysMenuTree> menus = menuList.stream().filter(menu -> {
+            if (menuIds.contains(menu.getId())) return false;
             menuIds.add(menu.getId());
             return true;
         }).sorted(Comparator.comparing(SysMenu::getSort)).map(menu -> {
@@ -45,8 +45,12 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
             return sysMenuTree;
         }).toList();
         List<SysMenuTree> parents = menus.stream().filter(item -> StringUtils.isBlank(item.getParentId())).toList();
-        parents.forEach(item ->
-                item.setChildren(dfs(menus, item.getId()))
+        parents.forEach(item -> {
+                    item.setChildren(dfs(menus, item.getId()));
+//                    if (CollUtil.isNotEmpty(item.getChildren()) && StringUtils.isBlank(item.getComponent()) && item.getType() == 1) {
+//                        item.setComponent(item.getChildren().get(0).getComponent());
+//                    }
+                }
         );
         return parents;
     }

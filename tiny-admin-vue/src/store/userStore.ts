@@ -52,7 +52,7 @@ export const userStore = defineStore('user', () => {
         return  dfs(userInfo.value?.menuTree)
     };
     const getRouteList = (): any[] => {
-        const routeList: any[] = [];
+        const routeList: any[] = []
         const dfs = (menuTree: any[] | undefined) => {
             for (let item of menuTree || []) {
                 item.children?.length && dfs(item.children)
@@ -61,16 +61,24 @@ export const userStore = defineStore('user', () => {
                 if (item.unauthorized) {
                     path = '403'
                 }
-                routeList.push({
+                if (!item.unauthorized && !item.component?.length && !item.redirect?.length && item.children?.length) {
+                    item.redirect = item.children[0].url
+                }
+                let route = {
                     path: item.url,
                     name: item.name,
                     component: modules[`../views/${path}.vue`],
                     meta: {
                         keepAlive: item?.keepAlive ?? true,
-                    }
-                })
+                    },
+                    redirect: undefined
+                }
+                if (item.redirect?.length) {
+                    route.redirect = item.redirect
+                }
+                routeList.push(route)
             }
-        };
+        }
         dfs(userInfo.value?.menuTree)
         return routeList;
     }
