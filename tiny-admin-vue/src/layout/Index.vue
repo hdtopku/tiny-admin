@@ -11,7 +11,7 @@
         @collapse="onCollapse">
       <div
           :class="{'hidden':isMiddleWidth && sidebarCollapsed, 'text-xs w-[80px]': sidebarCollapsed, 'text-2xl w-[200px]':!sidebarCollapsed}"
-          class="py-4 font-bold text-gray-400 w-full fixed text-center">
+          class="py-4 font-bold text-gray-400 float-left text-center">
         Tiny Admin
       </div>
       <Sidebar class="overflow-auto mt-[64px]"/>

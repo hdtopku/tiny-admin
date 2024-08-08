@@ -56,7 +56,7 @@ public abstract class SecurityAuthConfig<T extends UserDetails> implements UserD
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/login", "/error").permitAll()
+                .requestMatchers("/login", "/error", "**").permitAll()
                 .anyRequest().access(authorizationManager)
             );
         http.exceptionHandling(exceptionHandling -> exceptionHandling.accessDeniedHandler(restfulAccessDeniedHandler));

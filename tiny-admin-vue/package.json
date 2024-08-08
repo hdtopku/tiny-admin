@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
+    "@stomp/stompjs": "^7.0.0",
     "@vueuse/core": "^10.9.0",
     "animate.css": "^4.1.1",
     "ant-design-vue": "4.x",

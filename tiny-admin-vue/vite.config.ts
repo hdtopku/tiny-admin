@@ -16,6 +16,12 @@ export default defineConfig(({command}) => {
                     target: 'http://localhost:8080/',
                     changeOrigin: true,
                     rewrite: (path) => path.replace(/^\/api/, '')
+                },
+                '/spring-boot-tutorial': {
+                    target: 'ws://localhost:8081/spring-boot-tutorial',
+                    changeOrigin: true,
+                    ws: true,
+                    rewrite: (path) => path.replace(/^\/spring-boot-tutorial/, '')
                 }
             }
         },
