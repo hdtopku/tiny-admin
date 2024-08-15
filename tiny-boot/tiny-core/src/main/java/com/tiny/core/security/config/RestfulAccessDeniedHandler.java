@@ -5,6 +5,7 @@ import com.tiny.core.web.Result;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import java.io.IOException;
  */
 @Component
 public class RestfulAccessDeniedHandler implements AccessDeniedHandler {
+
     @Override
     public void handle(HttpServletRequest request,
                        HttpServletResponse response,
@@ -24,7 +26,8 @@ public class RestfulAccessDeniedHandler implements AccessDeniedHandler {
         response.setHeader("Cache-Control","no-cache");
         response.setCharacterEncoding("UTF-8");
         response.setContentType("application/json");
-        response.getWriter().println(JSONUtil.parse(Result.failure(403, "没有权限访问该资源")));
+        response.setStatus(HttpStatus.FORBIDDEN.value());
+        response.getWriter().println(JSONUtil.parse(Result.failure(HttpStatus.FORBIDDEN.value(), "您没有权限访问该资源！")));
         response.getWriter().flush();
     }
 }

@@ -2,6 +2,7 @@
 import DarkToggle from "@/components/DarkToggle.vue";
 import {useUserStore} from "@/store";
 import {message} from "ant-design-vue";
+import router from "@/router";
 
 const loginForm = ref({
   username: "",
@@ -11,11 +12,12 @@ const loginLoading = ref(false);
 const handleLogin = () => {
   loginLoading.value = true;
   useUserStore().login(loginForm.value).then(() => {
-    message.success("登录成功");
-  }).catch((err) => {
-    message.error(`登录失败，原因：${err}`);
+    router.push("/home")
+    message.success("登录成功！")
+  }).catch((error) => {
+    message.error(error)
   }).finally(() => {
-    loginLoading.value = false;
+    loginLoading.value = false
   })
 }
 </script>

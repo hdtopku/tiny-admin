@@ -11,7 +11,6 @@ const onlineUrl = '/app/online'
 const getOnlineUsersUrl = '/app/getOnlineUsers'
 const onlineUsers: Ref<any[]> = ref([])
 websocketClient.onConnect = () => {
-  console.log('WebSocket connected')
   websocketClient.subscribe(topicUrl, (users) => {
     onlineUsers.value = JSON.parse(users.body)
   })
@@ -33,7 +32,7 @@ const login = (user) => {
     body: JSON.stringify(user)
   })
 }
-const offline = (user)=>{
+const offline = (user) => {
   websocketClient.publish({
     destination: '/app/offline',
     body: user.id

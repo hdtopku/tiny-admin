@@ -37,7 +37,6 @@ const queryList = () => {
       total: res.total,
     }
   }).catch((err) => {
-    switchLoading.value = false
     message.error('获取角色列表失败' + err.message)
   }).finally(() => {
     switchLoading.value = false

@@ -4,26 +4,28 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.tiny.admin.biz.system.entity.SysMenu;
 import com.tiny.admin.biz.system.entity.SysRole;
 import com.tiny.admin.biz.system.entity.SysUser;
+import com.tiny.core.security.config.UserDetailsBo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serial;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by lxh at 2024-06-10 08:54:28
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class AdminUserDetails extends SysUser implements UserDetails {
+public class AdminUserDetails extends SysUser implements UserDetailsBo {
 
     @Serial
     private static final long serialVersionUID = 1L;
+    private Set<String> tokens;
     private List<SysRole> roles=new ArrayList<>();
     private List<SysMenu> menuList=new ArrayList<>();
     private List<SysMenu> publicMenuList=new ArrayList<>(); // 没有权限，但是也可见的菜单列表

@@ -36,7 +36,7 @@ public class ChatController {
         if(!memberService.getMembers().isEmpty()) {
             simpMessagingTemplate.convertAndSend("/topic/onlineUsers", memberService.getMembers());
         }
-        Message newMessage = new Message(newUser, null, Action.JOINED, Instant.now());
+        Message newMessage = new Message(newUser.id(), newUser.username(), null, Action.JOINED, Instant.now());
         simpMessagingTemplate.convertAndSend("/topic/messages", newMessage);
     }
     @MessageMapping("/getOnlineUsers")
@@ -49,6 +49,10 @@ public class ChatController {
     public void offline(String userId, SimpMessageHeaderAccessor headerAccessor) {
         memberService.removeMember(userId);
         simpMessagingTemplate.convertAndSend("/topic/onlineUsers", memberService.getMembers());
+    }
+    @MessageMapping("/chat.sendMessage")
+    public void sendMessage(Message message) {
+        simpMessagingTemplate.convertAndSend("/topic/messages", message);
     }
 
     @EventListener
@@ -76,7 +80,7 @@ public class ChatController {
         if(user == null) return;
         memberService.removeMember(user);
         simpMessagingTemplate.convertAndSend("/topic/onlineUsers", memberService.getMembers());
-        Message newMessage = new Message(user, null, Action.LEFT, Instant.now());
+        Message newMessage = new Message(user.id(), user.username(), null, Action.LEFT, Instant.now());
         simpMessagingTemplate.convertAndSend("/topic/messages", newMessage);
     }
 

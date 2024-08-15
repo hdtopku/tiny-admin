@@ -1,8 +1,8 @@
 import axios from 'axios';
-import router from "@/router";
-import {message} from "ant-design-vue";
 import {getToken} from "@/utils/token.ts";
 import NProgress from "@/utils/NProgress.ts";
+import {message} from "ant-design-vue";
+import {useUserStore} from "@/store"
 
 const http = axios.create({
     timeout: 30000,
@@ -20,38 +20,37 @@ http.interceptors.request.use(config => {
 http.interceptors.response.use(
     response => {
         NProgress.done()
-        let {msg, data, code} = response.data;
+        const {msg, data, code} = response.data;
         if (code === 200) {
-            return data;
+            return data
         } else if (code === 500) {
-            message.error(msg || "服务异常，请稍后再试")
+            return Promise.reject(new Error(msg || "服务异常，请稍后再试"))
         } else if (code === 401) {
-            message.error("请先登录")
-            window.sessionStorage.clear()
-            router.push('/login')
+            useUserStore().logout()
+            return Promise.reject(new Error(msg || "请先登录"))
         } else if (code === 403) {
-            message.error("权限不足")
-        } else {
-            message.error(`服务异常：${msg}`)
+            return Promise.reject(new Error(msg || "权限不足"))
         }
         return Promise.reject(new Error(msg))
     },
     error => {
         NProgress.done()
+        const errorMsg = error.response?.data?.msg || error.message
         if (error.message.includes("401")) {
-            message.error("请先登录")
+            message.error(errorMsg || "请先登录")
+            useUserStore().logout()
+            return Promise.reject(errorMsg || "请先登录")
         } else if (error.message.includes("403")) {
-            message.error("权限不足")
+            message.error(errorMsg || "权限不足")
+            return Promise.reject(errorMsg || "权限不足")
         } else if (error.message.includes("500")) {
-            message.error("服务异常，请稍后再试")
+            return Promise.reject(errorMsg || "服务异常，请稍后再试")
         } else if (error.message.includes('timeout')) {
-            message.error('请求超时，请稍后再试')
+            return Promise.reject("请求超时，请稍后再试")
         } else if (error.message.includes('Network Error')) {
-            message.error('网络连接错误，请检查网络连接')
+            return Promise.reject("网络连接异常，请检查网络连接")
         } else if (error.message.includes('Request failed with status code')) {
-            message.error(`服务异常：${error.message}`)
-        } else {
-            message.error(`网络错误：${error.message}`)
+            return Promise.reject(new Error(error.message))
         }
         return Promise.reject(new Error(error.message))
     }

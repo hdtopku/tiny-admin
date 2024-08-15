@@ -9,6 +9,9 @@ import com.tiny.admin.biz.system.service.AuthService;
 import com.tiny.core.redis.service.RedisService;
 import com.tiny.core.util.JwtTokenUtil;
 import jakarta.annotation.Resource;
+import org.redisson.api.RMapCache;
+import org.redisson.api.RedissonClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,10 +19,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by lxh at 2024-06-10 08:42:23
@@ -31,7 +32,12 @@ public class AuthServiceImpl implements AuthService {
     @Resource
     private RedisService redisService;
     @Resource
+    private RedissonClient redissonClient;
+    @Resource
     private UserDetailsService userDetailsService;
+    @Value("${constant.redis-users-token-map-key}")
+    private String redisUsersTokenMapKey;
+
     private static final String TOKEN_KEY = "user-token";
 
 
@@ -39,18 +45,27 @@ public class AuthServiceImpl implements AuthService {
     public Map<String, Object> login(String username, String password) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
         try {
+            //  Authentication
             Authentication authenticate = authenticationManager.authenticate(authenticationToken);
             AdminUserDetails sysUserDetails = (AdminUserDetails) authenticate.getPrincipal();
-            Map<String, Object> map = new HashMap<>();
+
+            // Generate and store token
             String token = JwtTokenUtil.generateToken(MapUtil.of("username", sysUserDetails.getUsername()));
-            map.put("token", token);
+//            redisService.set(TOKEN_KEY + ":" + sysUserDetails.getUsername(), sysUserDetails);
+            RMapCache<String, Object> userMap = redissonClient.getMapCache(redisUsersTokenMapKey);
+//            RMap<String, Object> userMap = redissonClient.getMap(redisUsersTokenMapKey);
+            sysUserDetails.setTokens(new HashSet<>(Collections.singletonList(token)));
+            userMap.put(sysUserDetails.getUsername(), sysUserDetails, 30, TimeUnit.MINUTES);
+//            userMap.put(sysUserDetails.getUsername(), sysUserDetails);
+            // Return result
+            Map<String, Object> resMap = new HashMap<>();
             UserInfo userInfo = BeanUtil.copyProperties(sysUserDetails, UserInfo.class);
-            addUnauthorizedMenuList(sysUserDetails, userInfo);
-            map.put("userInfo", userInfo);
-            redisService.set(TOKEN_KEY + ":" + sysUserDetails.getUsername(), sysUserDetails);
-            return map;
+            addUnauthorizedMenuList(sysUserDetails, userInfo);  // 增加未授权，但在公共菜单中的菜单列表
+            resMap.put("userInfo", userInfo);
+            resMap.put("token", token);
+            return resMap;
         } catch (BadCredentialsException | UsernameNotFoundException e) {
-            throw new UsernameNotFoundException("用户名或密码错误");
+            throw new BadCredentialsException("用户名或密码错误");
         } catch (LockedException e) {
             throw new LockedException("用户已被锁定");
         } catch (DisabledException e) {

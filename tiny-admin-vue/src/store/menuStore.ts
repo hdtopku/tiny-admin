@@ -44,6 +44,7 @@ export const menuStore = defineStore('menu', () => {
     const activeTab = ref('')
     let keepTabsOrder = false
     const addTab = (route: any) => {
+        if (route.path === '/login') return
         activeTab.value = route.path
         sidebarSelectedKeys.value = [route.path]
         if (keepTabsOrder && openedTabs.value.some((tab) => tab.key === route.path)) {

@@ -1,7 +1,7 @@
 import {defineStore} from "pinia";
 import {getSelfInfo, postLogin} from "@/api/auth.ts";
 import router from "@/router";
-import {setToken} from "@/utils/token.ts";
+import {removeToken, setToken} from "@/utils/token.ts";
 import {ItemType} from 'ant-design-vue';
 import {GetIcon} from "@/components/CustomIcon.ts";
 
@@ -22,7 +22,7 @@ export const userStore = defineStore('user', () => {
         return postLogin(data).then((res) => {
             setToken(res.token);
             userInfo.value = res.userInfo;
-            router.push('/');
+            router.push('/home');
             return res;
         });
     };
@@ -95,9 +95,18 @@ export const userStore = defineStore('user', () => {
         }
         return dfs(userInfo.value?.menuTree)
     }
+    const logout = () => {
+        removeToken()
+        localStorage.clear()
+        sessionStorage.clear()
+        setTimeout(() => {
+            router.push('/login')
+        }, 500)
+    }
     return {
         userInfo,
         login,
+        logout,
         routeList,
         getSidebar,
         getRouteList,
