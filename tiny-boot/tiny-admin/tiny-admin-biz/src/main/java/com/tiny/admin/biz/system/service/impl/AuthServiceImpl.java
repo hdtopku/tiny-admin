@@ -51,12 +51,9 @@ public class AuthServiceImpl implements AuthService {
 
             // Generate and store token
             String token = JwtTokenUtil.generateToken(MapUtil.of("username", sysUserDetails.getUsername()));
-//            redisService.set(TOKEN_KEY + ":" + sysUserDetails.getUsername(), sysUserDetails);
-            RMapCache<String, Object> userMap = redissonClient.getMapCache(redisUsersTokenMapKey);
-//            RMap<String, Object> userMap = redissonClient.getMap(redisUsersTokenMapKey);
             sysUserDetails.setTokens(new HashSet<>(Collections.singletonList(token)));
+            RMapCache<String, Object> userMap = redissonClient.getMapCache(redisUsersTokenMapKey);
             userMap.put(sysUserDetails.getUsername(), sysUserDetails, 30, TimeUnit.MINUTES);
-//            userMap.put(sysUserDetails.getUsername(), sysUserDetails);
             // Return result
             Map<String, Object> resMap = new HashMap<>();
             UserInfo userInfo = BeanUtil.copyProperties(sysUserDetails, UserInfo.class);

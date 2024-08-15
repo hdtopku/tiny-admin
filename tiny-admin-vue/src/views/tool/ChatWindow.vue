@@ -3,10 +3,13 @@
     <a-layout-sider
         :style="{ overflow: 'auto', height: '100vh', position: 'fixed',  }"
     >
-      <div class="logo"/>
       <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
         <a-menu-item :icon="() => h(item.icon)" v-for="(item, index) in userList" :key="index">
-          <span class="nav-text">{{ item.name }}</span>
+          <div class="flex justify-between items-center">
+            <span class="nav-text">{{ item.name }}</span>
+            <div :class="{'bg-green-500': item.isOnline, 'bg-gray-500':!item.isOnline}"
+                 class="w-2 h-2 rounded-full flex justify-center items-center"></div>
+          </div>
         </a-menu-item>
       </a-menu>
     </a-layout-sider>
@@ -16,8 +19,8 @@
         <p class="text-xl">Hi, I am {{ userList[selectedKeys[0]].name }}, happy to chat with you.</p>
         <div v-for="(item, index) in chatHistory.concat(chatHistory)" :key="index">
           <div class="chat-item grid grid-cols-[200px_1fr)]">
-            <div class="chat-content" :class="{'justify-self-end': item.isRight}">
-              <div class="chat-name text-sm text-gray-500 my-2" :class="{'text-right': item.isRight}">{{
+            <div :class="{'justify-self-end': item.isMine}" class="chat-content">
+              <div :class="{'text-right': item.isMine}" class="chat-name text-sm text-gray-500 my-2">{{
                   item.name
                 }}
               </div>
@@ -38,6 +41,7 @@
             allow-clear
             @search="handleSendMessage"
         />
+        <a-button type="primary" @click="getOnlineUsers">获取在线用户</a-button>
         <a-button type="primary" class="w-full ml-2" @click="handleSendMessage">Send</a-button>
       </div>
     </a-layout>
@@ -68,18 +72,19 @@ const onlineUsers: Ref<any[]> = ref([])
 websocketClient.onConnect = () => {
   websocketClient.subscribe(topicUrl, (users) => {
     onlineUsers.value = JSON.parse(users.body)
+    const userSet = new Set(onlineUsers.value.map(item => item.username))
+    userList.value.forEach((user) => {
+      user.isOnline = userSet.has(user.name);
+    })
   })
   websocketClient.subscribe(messageTopicUrl, (message) => {
     const messageObj = JSON.parse(message.body)
     if (messageObj.message?.length)
       chatHistory.value.push(messageObj)
   })
-  websocketClient.publish({
-    destination: getOnlineUsersUrl,
-  })
-  for (let user of users) {
-    login(user)
-  }
+  // for (let user of users) {
+  //   login(user)
+  // }
 }
 websocketClient.activate()
 websocketClient.onWebSocketError((error) => {
@@ -97,6 +102,11 @@ const login = (user) => {
   websocketClient.publish({
     destination: onlineUrl,
     body: JSON.stringify(user)
+  })
+}
+const getOnlineUsers = () => {
+  websocketClient.publish({
+    destination: getOnlineUsersUrl,
   })
 }
 const currentMessage = ref('')
@@ -121,74 +131,80 @@ const chatHistory: Ref<any[]> = ref<any[]>([{
   name: 'admin',
   message: 'Hello, how can I help you?',
   time: '2022-01-01 12:00:00',
-  isRight: false,
+  isMine: false,
 }, {
   id: "2",
   name: 'test',
   message: 'I want to ask something.',
   time: '2022-01-01 12:00:00',
-  isRight: false,
+  isMine: false,
 }, {
   id: "3",
   name: 'test 2',
   message: 'How about this question?',
   time: '2022-01-01 12:00:00',
-  isRight: false,
+  isMine: false,
 }, {
   id: "4",
   name: 'test 3',
   message: 'What is the price of the product?',
   time: '2022-01-01 12:00:00',
-  isRight: true,
+  isMine: true,
 }, {
   id: "5",
   name: 'operator',
   message: 'I am sorry, I cannot answer this question.',
   time: '2022-01-01 12:00:00',
-  isRight: false,
+  isMine: false,
 }, {
   id: "6",
   name: 'developer',
   message: 'I am sorry, I cannot answer this question.',
   time: '2022-01-01 12:00:00',
-  isRight: false,
+  isMine: false,
 }, {
   id: "7",
   name: 'zhangsan',
   message: 'I am sorry, I cannot answer this question.',
   time: '2022-01-01 12:00:00',
-  isRight: false,
+  isMine: false,
 }, {
   id: "8",
   name: 'lisi',
   message: 'I am sorry, I cannot answer this question.',
   time: '2022-01-01 12:00:00',
-  isRight: false,
+  isMine: false,
 }]);
 const userList = ref([{
   id: "1",
   name: 'admin',
   icon: UserOutlined,
+  isOnline: false,
 }, {
   id: "2",
   name: 'test',
   icon: VideoCameraOutlined,
+  isOnline: false,
 }, {
   id: "3",
   name: 'test 2',
   icon: UploadOutlined,
+  isOnline: false,
 }, {
   id: "4",
   name: 'test 3',
   icon: BarChartOutlined,
+  isOnline: false,
 }, {
   id: "5",
   name: 'operator',
   icon: CloudOutlined,
+  isOnline: false,
 }, {
   id: "6",
   name: 'developer',
   icon: AppstoreOutlined,
+  isOnline: false,
 }, {
   id: "7",
   name: 'zhangsan',
@@ -197,6 +213,7 @@ const userList = ref([{
   id: "8",
   name: 'lisi',
   icon: ShopOutlined,
+  isOnline: false,
 }])
 watch(selectedKeys, (val) => {
   console.log(val)
