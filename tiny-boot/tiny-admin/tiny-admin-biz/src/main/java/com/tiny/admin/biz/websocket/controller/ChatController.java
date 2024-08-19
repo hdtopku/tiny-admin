@@ -1,8 +1,6 @@
 package com.tiny.admin.biz.websocket.controller;
 
-import com.tiny.admin.biz.websocket.po.Action;
 import com.tiny.admin.biz.websocket.po.Message;
-import com.tiny.admin.biz.websocket.po.User;
 import com.tiny.admin.biz.websocket.service.MemberService;
 import jakarta.annotation.Resource;
 import lombok.extern.log4j.Log4j2;
@@ -17,7 +15,6 @@ import org.springframework.web.socket.messaging.SessionConnectedEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
-import java.time.Instant;
 import java.util.Map;
 
 /**
@@ -30,28 +27,17 @@ public class ChatController {
     private MemberService memberService;
     @Resource
     private SimpMessagingTemplate simpMessagingTemplate;
-
-    @MessageMapping("/online")
-    public void getUsers(User user, SimpMessageHeaderAccessor headerAccessor) {
-        User newUser = new User(user.id(), user.username());
-        headerAccessor.getSessionAttributes().put("currentUser", newUser);
-        memberService.addMember(newUser);
-        if (!memberService.getMembers().isEmpty()) {
-            simpMessagingTemplate.convertAndSend("/topic/onlineUsers", memberService.getMembers());
-        }
-        Message newMessage = new Message(newUser.id(), newUser.username(), null, Action.JOINED, Instant.now());
-        simpMessagingTemplate.convertAndSend("/topic/messages", newMessage);
-    }
+    private static final String GET_ONLINE_USERS_TOPIC = "/topic/onlineUsers";
 
     @MessageMapping("/getOnlineUsers")
     public void getOnlineUsers() {
-        simpMessagingTemplate.convertAndSend("/topic/onlineUsers", memberService.getMembers());
+        simpMessagingTemplate.convertAndSend(GET_ONLINE_USERS_TOPIC, memberService.getMembers());
     }
 
     @MessageMapping("/offline")
     public void offline(String userId, SimpMessageHeaderAccessor headerAccessor) {
         memberService.removeMember(userId);
-        simpMessagingTemplate.convertAndSend("/topic/onlineUsers", memberService.getMembers());
+        simpMessagingTemplate.convertAndSend(GET_ONLINE_USERS_TOPIC, memberService.getMembers());
     }
 
     @MessageMapping("/chat.sendMessage")
@@ -81,12 +67,12 @@ public class ChatController {
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         Map<String, Object> sessionAttributes = headerAccessor.getSessionAttributes();
         if (sessionAttributes == null) return;
-        User user = (User) sessionAttributes.get("currentUser");
-        if (user == null) return;
-        memberService.removeMember(user);
+        String username = (String) sessionAttributes.get("currentUser");
+        if (username == null) return;
+        memberService.removeMember(username);
         simpMessagingTemplate.convertAndSend("/topic/onlineUsers", memberService.getMembers());
-        Message newMessage = new Message(user.id(), user.username(), null, Action.LEFT, Instant.now());
-        simpMessagingTemplate.convertAndSend("/topic/messages", newMessage);
+//        Message newMessage = new Message(user.id(), user.username(), null, Action.LEFT, Instant.now());
+//        simpMessagingTemplate.convertAndSend("/topic/messages", newMessage);
     }
 
 }

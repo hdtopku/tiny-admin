@@ -6,12 +6,14 @@ import com.tiny.admin.biz.config.security.AdminUserDetails;
 import com.tiny.admin.biz.system.dto.UserInfo;
 import com.tiny.admin.biz.system.entity.SysMenu;
 import com.tiny.admin.biz.system.service.AuthService;
+import com.tiny.admin.biz.websocket.service.MemberService;
 import com.tiny.core.redis.service.RedisService;
 import com.tiny.core.util.JwtTokenUtil;
 import jakarta.annotation.Resource;
 import org.redisson.api.RMapCache;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,6 +39,11 @@ public class AuthServiceImpl implements AuthService {
     private UserDetailsService userDetailsService;
     @Value("${constant.redis-users-token-map-key}")
     private String redisUsersTokenMapKey;
+    @Resource
+    private MemberService memberService;
+    @Resource
+    private SimpMessagingTemplate simpMessagingTemplate;
+    private static final String GET_ONLINE_USERS_TOPIC = "/topic/onlineUsers";
 
     private static final String TOKEN_KEY = "user-token";
 
@@ -52,8 +59,14 @@ public class AuthServiceImpl implements AuthService {
             // Generate and store token
             String token = JwtTokenUtil.generateToken(MapUtil.of("username", sysUserDetails.getUsername()));
             sysUserDetails.setTokens(new HashSet<>(Collections.singletonList(token)));
+            sysUserDetails.setLoginTime(System.currentTimeMillis());
             RMapCache<String, Object> userMap = redissonClient.getMapCache(redisUsersTokenMapKey);
             userMap.put(sysUserDetails.getUsername(), sysUserDetails, 30, TimeUnit.MINUTES);
+
+            // send online websocket message to client
+            simpMessagingTemplate.convertAndSend(GET_ONLINE_USERS_TOPIC, memberService.getMembers());
+
+
             // Return result
             Map<String, Object> resMap = new HashMap<>();
             UserInfo userInfo = BeanUtil.copyProperties(sysUserDetails, UserInfo.class);

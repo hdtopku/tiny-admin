@@ -4,6 +4,7 @@ import router from "@/router";
 import {removeToken, setToken} from "@/utils/token.ts";
 import {ItemType} from 'ant-design-vue';
 import {GetIcon} from "@/components/CustomIcon.ts";
+import websocketClient from "@/utils/websocket.ts";
 
 const modules = import.meta.glob('../views/**/*.vue')
 
@@ -14,17 +15,22 @@ export type UserType = {
     menuTree?: any[],
     publicMenuList?: any[]
 }
+const setMyselfOnlineUrl = '/app/setMyselfOnline'
 
 export const userStore = defineStore('user', () => {
     const routeList = ref<any>([]);
     const userInfo = ref<UserType>({});
-    const login = async (data: { username: string; password: string; }) => {
+    const login = async (data: any) => {
         return postLogin(data).then((res) => {
             setToken(res.token);
             userInfo.value = res.userInfo;
             router.push('/home');
+            websocketClient.publish({
+                destination: setMyselfOnlineUrl,
+                body: userInfo.value.username
+            })
             return res;
-        });
+        })
     };
     const refreshUserInfo = async () => {
         return getSelfInfo().then((res: any) => {
@@ -105,21 +111,13 @@ export const userStore = defineStore('user', () => {
     }
     return {
         userInfo,
-        login,
         logout,
+        login,
         routeList,
         getSidebar,
         getRouteList,
         refreshUserInfo,
         getBtnPermissionSet,
-        clearUserInfo() {
-            userInfo.value = {
-                avatar: '',
-                username: '',
-                nickname: '',
-                menuTree: []
-            };
-        }
     };
 }, {
     persist: {

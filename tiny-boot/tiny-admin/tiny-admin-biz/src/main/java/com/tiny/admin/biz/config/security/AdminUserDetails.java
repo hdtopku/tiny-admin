@@ -26,6 +26,7 @@ public class AdminUserDetails extends SysUser implements UserDetailsBo {
     @Serial
     private static final long serialVersionUID = 1L;
     private Set<String> tokens;
+    private Long loginTime;
     private List<SysRole> roles=new ArrayList<>();
     private List<SysMenu> menuList=new ArrayList<>();
     private List<SysMenu> publicMenuList=new ArrayList<>(); // 没有权限，但是也可见的菜单列表

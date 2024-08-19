@@ -4,9 +4,10 @@
         :style="{ overflow: 'auto', height: '100vh', position: 'fixed',  }"
     >
       <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
-        <a-menu-item :icon="() => h(item.icon)" v-for="(item, index) in userList" :key="index">
+        <a-menu-item
+            v-for="(item, index) in allUsers" :key="index">
           <div class="flex justify-between items-center">
-            <span class="nav-text">{{ item.name }}</span>
+            <span class="nav-text">{{ item.nickname }}</span>
             <div :class="{'bg-green-500': item.isOnline, 'bg-gray-500':!item.isOnline}"
                  class="w-2 h-2 rounded-full flex justify-center items-center"></div>
           </div>
@@ -41,14 +42,16 @@
             allow-clear
             @search="handleSendMessage"
         />
-        <a-button type="primary" @click="getOnlineUsers">获取在线用户</a-button>
         <a-button type="primary" class="w-full ml-2" @click="handleSendMessage">Send</a-button>
       </div>
     </a-layout>
   </a-layout>
 </template>
 <script lang="ts" setup>
-import {h, Ref, ref} from 'vue';
+import {Ref, ref} from 'vue';
+import websocketClient from "@/utils/websocket.ts";
+import {getUserPage} from "@/api/user.ts";
+import {useChatStore} from "@/store";
 import {
   AppstoreOutlined,
   BarChartOutlined,
@@ -57,58 +60,36 @@ import {
   TeamOutlined,
   UploadOutlined,
   UserOutlined,
-  VideoCameraOutlined,
-} from '@ant-design/icons-vue';
-import {Client} from "@stomp/stompjs";
+  VideoCameraOutlined
+} from "@ant-design/icons-vue";
 
-const websocketClient = new Client({
-  brokerURL: 'ws://localhost:8080/spring-boot-tutorial',
-})
-const topicUrl = '/topic/onlineUsers'
-const onlineUrl = '/app/online'
 const getOnlineUsersUrl = '/app/getOnlineUsers'
-const messageTopicUrl = '/topic/messages'
-const onlineUsers: Ref<any[]> = ref([])
-websocketClient.onConnect = () => {
-  websocketClient.subscribe(topicUrl, (users) => {
-    onlineUsers.value = JSON.parse(users.body)
-    const userSet = new Set(onlineUsers.value.map(item => item.username))
-    userList.value.forEach((user) => {
-      user.isOnline = userSet.has(user.name);
+const allUsers: Ref<any[]> = ref([])
+let onlineUserSet = new Set()
+const sortUsers = (users) => {
+  const onlineUsers: any[] = [], offlineUsers: any[] = []
+  for (const user of users) {
+    if (onlineUserSet.has(user.username)) {
+      onlineUsers.push(user)
+    } else {
+      offlineUsers.push(user)
+    }
+  }
+  allUsers.value = onlineUsers.concat(offlineUsers)
+}
+getUserPage({pageSize: 1000, pageNum: 1}).then((res: any) => {
+  const users: any[] = []
+  res.records?.forEach(item => {
+    users.push({
+      id: item.key, username: item.username,
+      nickname: item.nickname, email: item.email, phone: item.phone,
+      roles: item.roles,
+      isOnline: onlineUserSet.has(item.username),
     })
   })
-  websocketClient.subscribe(messageTopicUrl, (message) => {
-    const messageObj = JSON.parse(message.body)
-    if (messageObj.message?.length)
-      chatHistory.value.push(messageObj)
-  })
-  // for (let user of users) {
-  //   login(user)
-  // }
-}
-websocketClient.activate()
-websocketClient.onWebSocketError((error) => {
-  console.log('WebSocket Error:', error)
+  sortUsers(users)
 })
-websocketClient.onDisconnect = () => {
-  console.log('WebSocket Disconnected')
-}
 
-const users = [{id: '123456', username: 'admin'}, {id: '132412', username: 'test'}, {
-  id: '138291',
-  username: 'lisi'
-}, {id: '810183', username: 'wangwu'}]
-const login = (user) => {
-  websocketClient.publish({
-    destination: onlineUrl,
-    body: JSON.stringify(user)
-  })
-}
-const getOnlineUsers = () => {
-  websocketClient.publish({
-    destination: getOnlineUsersUrl,
-  })
-}
 const currentMessage = ref('')
 const handleSendMessage = () => {
   const message = {
@@ -175,6 +156,10 @@ const chatHistory: Ref<any[]> = ref<any[]>([{
   time: '2022-01-01 12:00:00',
   isMine: false,
 }]);
+watch(selectedKeys, (val) => {
+  console.log(val)
+})
+
 const userList = ref([{
   id: "1",
   name: 'admin',
@@ -215,8 +200,13 @@ const userList = ref([{
   icon: ShopOutlined,
   isOnline: false,
 }])
-watch(selectedKeys, (val) => {
-  console.log(val)
+websocketClient.publish({
+  destination: getOnlineUsersUrl,
+})
+const chatStore = useChatStore()
+watch(chatStore, () => {
+  onlineUserSet = new Set(chatStore.onlineUsers)
+  sortUsers(allUsers.value)
 })
 </script>
 <style scoped>
