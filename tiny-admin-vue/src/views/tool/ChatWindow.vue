@@ -5,7 +5,7 @@
     >
       <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
         <a-menu-item
-            v-for="(item, index) in allUsers" :key="index">
+            v-for="(item, index) in useChatStore().allUsers" :key="index">
           <div class="flex justify-between items-center">
             <span class="nav-text">{{ item.nickname }}</span>
             <div :class="{'bg-green-500': item.isOnline, 'bg-gray-500':!item.isOnline}"
@@ -17,11 +17,11 @@
     <a-layout :style="{ marginLeft: '200px' }">
       <a-layout-header :style="{ background: '#fff', padding: 0 }"/>
       <a-layout-content :style="{ margin: '24px 16px 120px', overflow: 'initial' }">
-        <div v-for="(item, index) in chatHistory.concat(chatHistory)" :key="index">
+        <div v-for="(item, index) in useChatStore().allUsers[selectedKeys[0]]?.chatHistory" :key="index">
           <div class="chat-item grid grid-cols-[200px_1fr)]">
             <div :class="{'justify-self-end': item.isMine}" class="chat-content">
               <div :class="{'text-right': item.isMine}" class="chat-name text-sm text-gray-500 my-2">{{
-                  item.name
+                  item.isMine ? 'Me' : useChatStore().allUsers[selectedKeys[0]].username
                 }}
               </div>
               <div class="chat-message text-md">
@@ -47,50 +47,53 @@
   </a-layout>
 </template>
 <script lang="ts" setup>
-import {Ref, ref} from 'vue';
+import {ref} from 'vue';
 import websocketClient from "@/utils/websocket.ts";
-import {getUserPage} from "@/api/user.ts";
 import {useChatStore, useUserStore} from "@/store";
 
 const getOnlineUsersUrl = '/app/getOnlineUsers'
-const allUsers: Ref<any[]> = ref([])
+
 let onlineUserSet = new Set()
-const sortUsers = (users:any) => {
-  const onlineUsers: any[] = [], offlineUsers: any[] = []
-  for (const user of users) {
-    if (onlineUserSet.has(user.username)) {
-      user.isOnline = true
-      onlineUsers.push(user)
-    } else {
-      user.isOnline = false
-      offlineUsers.push(user)
-    }
-  }
-  allUsers.value = onlineUsers.concat(offlineUsers)
-}
-getUserPage({pageSize: 1000, pageNum: 1}).then((res: any) => {
-  websocketClient.publish({
-    destination: getOnlineUsersUrl,
-    body: useUserStore().userInfo.username
-  })
-  const users: any[] = []
-  res.records?.forEach(item => {
-    users.push({
-      id: item.key, username: item.username,
-      nickname: item.nickname, email: item.email, phone: item.phone,
-      roles: item.roles,
-      isOnline: onlineUserSet.has(item.username),
-    })
-  })
-  sortUsers(users)
-})
+// const sortUsers = (users: any) => {
+//   const onlineUsers: any[] = [], offlineUsers: any[] = []
+//   for (const user of users) {
+//     if (onlineUserSet.has(user.username)) {
+//       user.isOnline = true
+//       onlineUsers.push(user)
+//     } else {
+//       user.isOnline = false
+//       offlineUsers.push(user)
+//     }
+//   }
+//   useChatStore().allUsers = onlineUsers.concat(offlineUsers)
+// }
+// getUserPage({pageSize: 1000, pageNum: 1}).then((res: any) => {
+//   websocketClient.publish({
+//     destination: getOnlineUsersUrl,
+//     body: useUserStore().userInfo.username
+//   })
+//   const users: any[] = []
+//   res.records?.forEach(item => {
+//     users.push({
+//       id: item.key,
+//       username: item.username,
+//       nickname: item.nickname,
+//       email: item.email,
+//       phone: item.phone,
+//       roles: item.roles,
+//       isOnline: onlineUserSet.has(item.username),
+//       chatHistory: []
+//     })
+//   })
+// sortUsers(users)
+// })
 
 const currentMessage = ref('')
 
 const handleSendMessage = () => {
   const message = {
     fromUsername: useUserStore().userInfo.username,
-    toUsername: allUsers.value[selectedKeys.value[0]].username,
+    toUsername: useChatStore().allUsers[selectedKeys.value[0]].username,
     content: currentMessage.value,
   }
   websocketClient.publish({
@@ -100,64 +103,15 @@ const handleSendMessage = () => {
   currentMessage.value = ''
 }
 
-const selectedKeys = ref<string[]>([]);
-const chatHistory: Ref<any[]> = ref<any[]>([{
-  id: "1",
-  name: 'admin',
-  message: 'Hello, how can I help you?',
-  time: '2022-01-01 12:00:00',
-  isMine: false,
-}, {
-  id: "2",
-  name: 'test',
-  message: 'I want to ask something.',
-  time: '2022-01-01 12:00:00',
-  isMine: false,
-}, {
-  id: "3",
-  name: 'test 2',
-  message: 'How about this question?',
-  time: '2022-01-01 12:00:00',
-  isMine: false,
-}, {
-  id: "4",
-  name: 'test 3',
-  message: 'What is the price of the product?',
-  time: '2022-01-01 12:00:00',
-  isMine: true,
-}, {
-  id: "5",
-  name: 'operator',
-  message: 'I am sorry, I cannot answer this question.',
-  time: '2022-01-01 12:00:00',
-  isMine: false,
-}, {
-  id: "6",
-  name: 'developer',
-  message: 'I am sorry, I cannot answer this question.',
-  time: '2022-01-01 12:00:00',
-  isMine: false,
-}, {
-  id: "7",
-  name: 'zhangsan',
-  message: 'I am sorry, I cannot answer this question.',
-  time: '2022-01-01 12:00:00',
-  isMine: false,
-}, {
-  id: "8",
-  name: 'lisi',
-  message: 'I am sorry, I cannot answer this question.',
-  time: '2022-01-01 12:00:00',
-  isMine: false,
-}])
-watch(selectedKeys, (val) => {
-  console.log(val)
+const selectedKeys = ref<number[]>([0]);
+watch(selectedKeys, () => {
+  console.log(selectedKeys.value)
 })
 
 const chatStore = useChatStore()
 watch(chatStore, () => {
   onlineUserSet = new Set(chatStore.onlineUsers || [])
-  sortUsers(allUsers.value)
+  // sortUsers(useChatStore().allUsers)
 })
 </script>
 <style scoped>

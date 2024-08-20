@@ -13,11 +13,8 @@ websocketClient.onConnect = () => {
         useChatStore().onlineUsers = JSON.parse(users.body) || []
     })
     websocketClient.subscribe('/user/'+useUserStore().userInfo.username+receivePrivateMessageTopicUrl, (message) => {
-        console.log('private message', JSON.parse(message.body))
+        useChatStore().addNewMessage(JSON.parse(message.body))
     })
-    // websocketClient.subscribe(receivePublicMessageTopicUrl, (message) => {
-    //     console.log('public message', JSON.parse(message.body))
-    // })
     websocketClient.publish({
         destination: getOnlineUsersUrl,
     })
