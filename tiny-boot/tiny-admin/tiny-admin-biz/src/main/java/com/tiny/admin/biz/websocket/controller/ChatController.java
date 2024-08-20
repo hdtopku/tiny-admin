@@ -28,6 +28,8 @@ public class ChatController {
     @Resource
     private SimpMessagingTemplate simpMessagingTemplate;
     private static final String GET_ONLINE_USERS_TOPIC = "/topic/onlineUsers";
+//    private static final String RECEIVE_PUBLIC_MESSAGE_TOPIC = "/topic/receivePublicMessage";
+    private static final String RECEIVE_PRIVATE_MESSAGE_TOPIC = "/topic/receivePrivateMessage";
 
     @MessageMapping("/getOnlineUsers")
     public void getOnlineUsers() {
@@ -42,7 +44,7 @@ public class ChatController {
 
     @MessageMapping("/chat.sendMessage")
     public void sendMessage(Message message) {
-        simpMessagingTemplate.convertAndSend("/topic/messages", message);
+        simpMessagingTemplate.convertAndSendToUser(message.toUsername(), RECEIVE_PRIVATE_MESSAGE_TOPIC, message);
     }
 
     @EventListener
@@ -62,17 +64,14 @@ public class ChatController {
 
     @EventListener
     public void handleSessionDisconnectEvent(SessionDisconnectEvent event) {
-//        log.info("WebSocket session disconnected:{} ", event.getUser().getName());
         log.info("WebSocket session disconnected ");
         StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
         Map<String, Object> sessionAttributes = headerAccessor.getSessionAttributes();
         if (sessionAttributes == null) return;
-        String username = (String) sessionAttributes.get("currentUser");
+        String username = (String) sessionAttributes.get("user");
         if (username == null) return;
         memberService.removeMember(username);
-        simpMessagingTemplate.convertAndSend("/topic/onlineUsers", memberService.getMembers());
-//        Message newMessage = new Message(user.id(), user.username(), null, Action.LEFT, Instant.now());
-//        simpMessagingTemplate.convertAndSend("/topic/messages", newMessage);
+        simpMessagingTemplate.convertAndSend(GET_ONLINE_USERS_TOPIC, memberService.getMembers());
     }
 
 }

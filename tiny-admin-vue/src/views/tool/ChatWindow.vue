@@ -17,7 +17,6 @@
     <a-layout :style="{ marginLeft: '200px' }">
       <a-layout-header :style="{ background: '#fff', padding: 0 }"/>
       <a-layout-content :style="{ margin: '24px 16px 120px', overflow: 'initial' }">
-        <p class="text-xl">Hi, I am {{ userList[selectedKeys[0]].name }}, happy to chat with you.</p>
         <div v-for="(item, index) in chatHistory.concat(chatHistory)" :key="index">
           <div class="chat-item grid grid-cols-[200px_1fr)]">
             <div :class="{'justify-self-end': item.isMine}" class="chat-content">
@@ -51,33 +50,29 @@
 import {Ref, ref} from 'vue';
 import websocketClient from "@/utils/websocket.ts";
 import {getUserPage} from "@/api/user.ts";
-import {useChatStore} from "@/store";
-import {
-  AppstoreOutlined,
-  BarChartOutlined,
-  CloudOutlined,
-  ShopOutlined,
-  TeamOutlined,
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined
-} from "@ant-design/icons-vue";
+import {useChatStore, useUserStore} from "@/store";
 
 const getOnlineUsersUrl = '/app/getOnlineUsers'
 const allUsers: Ref<any[]> = ref([])
 let onlineUserSet = new Set()
-const sortUsers = (users) => {
+const sortUsers = (users:any) => {
   const onlineUsers: any[] = [], offlineUsers: any[] = []
   for (const user of users) {
     if (onlineUserSet.has(user.username)) {
+      user.isOnline = true
       onlineUsers.push(user)
     } else {
+      user.isOnline = false
       offlineUsers.push(user)
     }
   }
   allUsers.value = onlineUsers.concat(offlineUsers)
 }
 getUserPage({pageSize: 1000, pageNum: 1}).then((res: any) => {
+  websocketClient.publish({
+    destination: getOnlineUsersUrl,
+    body: useUserStore().userInfo.username
+  })
   const users: any[] = []
   res.records?.forEach(item => {
     users.push({
@@ -91,13 +86,12 @@ getUserPage({pageSize: 1000, pageNum: 1}).then((res: any) => {
 })
 
 const currentMessage = ref('')
+
 const handleSendMessage = () => {
   const message = {
-    id: users[0].id,
-    username: users[0].username,
-    message: currentMessage.value,
-    action: 'COMMENTED',
-    timestamp: null
+    fromUsername: useUserStore().userInfo.username,
+    toUsername: allUsers.value[selectedKeys.value[0]].username,
+    content: currentMessage.value,
   }
   websocketClient.publish({
     destination: '/app/chat.sendMessage',
@@ -106,7 +100,7 @@ const handleSendMessage = () => {
   currentMessage.value = ''
 }
 
-const selectedKeys = ref<string[]>(['4']);
+const selectedKeys = ref<string[]>([]);
 const chatHistory: Ref<any[]> = ref<any[]>([{
   id: "1",
   name: 'admin',
@@ -155,57 +149,14 @@ const chatHistory: Ref<any[]> = ref<any[]>([{
   message: 'I am sorry, I cannot answer this question.',
   time: '2022-01-01 12:00:00',
   isMine: false,
-}]);
+}])
 watch(selectedKeys, (val) => {
   console.log(val)
 })
 
-const userList = ref([{
-  id: "1",
-  name: 'admin',
-  icon: UserOutlined,
-  isOnline: false,
-}, {
-  id: "2",
-  name: 'test',
-  icon: VideoCameraOutlined,
-  isOnline: false,
-}, {
-  id: "3",
-  name: 'test 2',
-  icon: UploadOutlined,
-  isOnline: false,
-}, {
-  id: "4",
-  name: 'test 3',
-  icon: BarChartOutlined,
-  isOnline: false,
-}, {
-  id: "5",
-  name: 'operator',
-  icon: CloudOutlined,
-  isOnline: false,
-}, {
-  id: "6",
-  name: 'developer',
-  icon: AppstoreOutlined,
-  isOnline: false,
-}, {
-  id: "7",
-  name: 'zhangsan',
-  icon: TeamOutlined,
-}, {
-  id: "8",
-  name: 'lisi',
-  icon: ShopOutlined,
-  isOnline: false,
-}])
-websocketClient.publish({
-  destination: getOnlineUsersUrl,
-})
 const chatStore = useChatStore()
 watch(chatStore, () => {
-  onlineUserSet = new Set(chatStore.onlineUsers)
+  onlineUserSet = new Set(chatStore.onlineUsers || [])
   sortUsers(allUsers.value)
 })
 </script>
