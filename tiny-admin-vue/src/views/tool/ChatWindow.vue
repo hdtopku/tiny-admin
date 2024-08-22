@@ -5,7 +5,7 @@
     >
       <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
         <a-menu-item
-            v-for="(item, index) in useChatStore().allUsers" :key="index">
+            v-for="(item, index) in useChatStore().allUsersList" :key="index">
           <div class="flex justify-between items-center">
             <span class="nav-text">{{ item.nickname }}</span>
             <div :class="{'bg-green-500': item.isOnline, 'bg-gray-500':!item.isOnline}"
@@ -17,15 +17,15 @@
     <a-layout :style="{ marginLeft: '200px' }">
       <a-layout-header :style="{ background: '#fff', padding: 0 }"/>
       <a-layout-content :style="{ margin: '24px 16px 120px', overflow: 'initial' }">
-        <div v-for="(item, index) in useChatStore().allUsers[selectedKeys[0]]?.chatHistory" :key="index">
+        <div v-for="(item, index) in currentChatHistory" :key="index">
           <div class="chat-item grid grid-cols-[200px_1fr)]">
             <div :class="{'justify-self-end': item.isMine}" class="chat-content">
               <div :class="{'text-right': item.isMine}" class="chat-name text-sm text-gray-500 my-2">{{
-                  item.isMine ? 'Me' : useChatStore().allUsers[selectedKeys[0]].username
+                  item.isMine ? 'Me' : item.fromUsername
                 }}
               </div>
               <div class="chat-message text-md">
-                <span class=" text-gray-800 bg-white p-2 rounded-lg">{{ item.message }}</span>
+                <span class=" text-gray-800 bg-white p-2 rounded-lg">{{ item.content }}</span>
               </div>
             </div>
           </div>
@@ -47,13 +47,13 @@
   </a-layout>
 </template>
 <script lang="ts" setup>
-import {ref} from 'vue';
-import websocketClient from "@/utils/websocket.ts";
+import {Ref, ref} from 'vue';
 import {useChatStore, useUserStore} from "@/store";
+import {chatHistoryDb} from "@/utils/localdb.ts";
+import websocketClient from "@/utils/websocket.ts";
 
-const getOnlineUsersUrl = '/app/getOnlineUsers'
 
-let onlineUserSet = new Set()
+// let onlineUserSet = new Set()
 // const sortUsers = (users: any) => {
 //   const onlineUsers: any[] = [], offlineUsers: any[] = []
 //   for (const user of users) {
@@ -88,31 +88,46 @@ let onlineUserSet = new Set()
 // sortUsers(users)
 // })
 
+
 const currentMessage = ref('')
 
 const handleSendMessage = () => {
   const message = {
     fromUsername: useUserStore().userInfo.username,
-    toUsername: useChatStore().allUsers[selectedKeys.value[0]].username,
+    toUsername: useChatStore().allUsersList[selectedKeys.value[0]].username,
     content: currentMessage.value,
   }
   websocketClient.publish({
     destination: '/app/chat.sendMessage',
     body: JSON.stringify(message)
   })
+  const localMessage = {
+    fromUsername: useChatStore().allUsersList[selectedKeys.value[0]].username,
+    toUsername: useUserStore().userInfo.username,
+    content: currentMessage.value,
+    isMine: true,
+  }
+  useChatStore().addNewMessage(localMessage)
   currentMessage.value = ''
 }
 
-const selectedKeys = ref<number[]>([0]);
+const selectedKeys = ref<number[]>([0])
+const currentChatHistory: Ref<any[]> = ref<any[]>([])
 watch(selectedKeys, () => {
-  console.log(selectedKeys.value)
+  chatHistoryDb.getItem(useChatStore().allUsersList[selectedKeys.value[0] || 0]?.username).then((res: any) => {
+    currentChatHistory.value = JSON.parse(res || '[]')
+  })
 })
 
 const chatStore = useChatStore()
 watch(chatStore, () => {
-  onlineUserSet = new Set(chatStore.onlineUsers || [])
-  // sortUsers(useChatStore().allUsers)
+  const username = useChatStore().allUsersList[selectedKeys.value[0] || 0]?.username || ''
+  if (!username.length) return
+  chatHistoryDb.getItem(username).then((res: any) => {
+    currentChatHistory.value = JSON.parse(res || '[]')
+  })
 })
+
 </script>
 <style scoped>
 #components-layout-demo-fixed-sider .logo {

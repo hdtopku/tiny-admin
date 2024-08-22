@@ -12,7 +12,7 @@ websocketClient.onConnect = () => {
     websocketClient.subscribe(getOnlineUsersTopicUrl, (users) => {
         useChatStore().onlineUsers = JSON.parse(users.body) || []
     })
-    websocketClient.subscribe('/user/'+useUserStore().userInfo.username+receivePrivateMessageTopicUrl, (message) => {
+    websocketClient.subscribe('/user/' + useUserStore().userInfo.username + receivePrivateMessageTopicUrl, (message) => {
         useChatStore().addNewMessage(JSON.parse(message.body))
     })
     websocketClient.publish({

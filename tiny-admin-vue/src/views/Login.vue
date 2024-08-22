@@ -16,6 +16,7 @@ const handleLogin = () => {
     router.push("/home")
     message.success("登录成功！")
   }).catch((error) => {
+    console.log(error)
     message.error(error)
   }).finally(() => {
     loginLoading.value = false

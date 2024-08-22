@@ -19,7 +19,7 @@ const setMyselfOnlineUrl = '/app/setMyselfOnline'
 
 export const userStore = defineStore('user', () => {
     const routeList = ref<any>([]);
-    const userInfo = ref<UserType>({});
+    const userInfo = ref<UserType>({})
     const login = async (data: any) => {
         return postLogin(data).then((res) => {
             setToken(res.token);

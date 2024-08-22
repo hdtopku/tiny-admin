@@ -1,46 +1,50 @@
 import {defineStore} from "pinia";
 import {ref, Ref} from "vue";
 import {getUserPage} from "@/api/user.ts";
-import websocketClient from "@/utils/websocket.ts";
 import {useUserStore} from "@/store/index.ts";
+import {chatHistoryDb} from "@/utils/localdb.ts";
+import websocketClient from "@/utils/websocket.ts";
 
 export const chatStore = defineStore('chat', () => {
     const onlineUsers: Ref<string[]> = ref([])
-    const allUsers: Ref<any[]> = ref([])
+    const allUsersList: Ref<any> = ref([])
+    const usersMap: any = new Map()
+    const getChatHistories = () => {
+        const chatUsernames: Ref<string[]> = ref([])
+        const usersList: any[] = []
+        const map = new Map(usersMap)
+        chatHistoryDb.keys().then((keys: string[]) => {
+            chatUsernames.value = keys
+            keys.forEach(key => {
+                if (map.has(key)) {
+                    usersList.unshift(map.get(key))
+                    map.delete(key)
+                }
+            })
+            allUsersList.value = usersList.concat(Array.from(map.values()))
+        })
+    }
     getUserPage({pageSize: 1000, pageNum: 1}).then((res: any) => {
+        // chatHistoryDb.setItem('chatUsers', JSON.stringify(allUsers.value))
+        res.records?.forEach(item => {
+            usersMap.set(item.username, item)
+        })
         websocketClient.publish({
             destination: '/app/getOnlineUsers',
             body: useUserStore().userInfo.username
         })
-        const users: any[] = []
-        res.records?.forEach(item => {
-            users.push({
-                id: item.key,
-                username: item.username,
-                nickname: item.nickname,
-                email: item.email,
-                phone: item.phone,
-                roles: item.roles,
-                isOnline: true,
-                chatHistory: []
-            })
-        })
-        allUsers.value = users
+        getChatHistories()
     })
     const addNewMessage = (message) => {
-        for (let user of allUsers.value) {
-            if (user.username === message.fromUsername) {
-                user.chatHistory.push({
-                    message: message.content,
-                    isMine: user.username === message.toUsername
-                })
-                break
-            }
-        }
+        chatHistoryDb.getItem(message.fromUsername).then((res: any) => {
+            chatHistoryDb.setItem(message.fromUsername, JSON.stringify([...JSON.parse(res || '[]'), message])).then(() => {
+                getChatHistories()
+            })
+        })
     }
     return {
         onlineUsers,
-        allUsers,
+        allUsersList,
         addNewMessage
     }
 })

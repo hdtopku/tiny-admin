@@ -1,7 +1,4 @@
 <script lang="ts" setup>
-import websocketClient from "@/utils/websocket"
-
-websocketClient.activate()
 
 </script>
 

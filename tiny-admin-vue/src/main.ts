@@ -7,6 +7,7 @@ import {createPinia} from 'pinia'
 import piniaPluginPersistedState from "pinia-plugin-persistedstate";
 import mitt from "mitt";
 import permission from "@/directive/permission.ts"
+import websocketClient from "@/utils/websocket.ts";
 
 const app = createApp(App)
 app.config.globalProperties.$bus = mitt()
@@ -18,3 +19,4 @@ app.directive('permission', {
         permission(el, binding)
     }
 })
+websocketClient.activate()
