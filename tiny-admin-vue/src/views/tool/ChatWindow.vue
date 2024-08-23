@@ -5,11 +5,17 @@
     >
       <a-menu v-model:selectedKeys="selectedKeys" theme="dark" mode="inline">
         <a-menu-item
-            v-for="(item, index) in useChatStore().allUsersList" :key="index">
-          <div class="flex justify-between items-center">
-            <span class="nav-text">{{ item.nickname }}</span>
-            <div :class="{'bg-green-500': item.isOnline, 'bg-gray-500':!item.isOnline}"
-                 class="w-2 h-2 rounded-full flex justify-center items-center"></div>
+            v-for="(item, index) in allUsersList" :key="index">
+          <div class="grid grid-cols-[130px_1fr] justify-between items-center">
+            <div class="flex justify-start items-center">
+              <span :class="{'bg-green-500': item.isOnline, 'bg-gray-500':!item.isOnline}"
+                    class="w-2 h-2 rounded-full mr-2"></span>
+              <span class="nav-text">{{ item.nickname }}</span>
+            </div>
+            <span v-if="unReadCountMap.get(item.username)>0"
+                  class="bg-red-500 rounded-full text-xs text-white text-center">{{
+                unReadCountMap.get(item.username)
+              }}</span>
           </div>
         </a-menu-item>
       </a-menu>
@@ -49,52 +55,45 @@
 <script lang="ts" setup>
 import {Ref, ref} from 'vue';
 import {useChatStore, useUserStore} from "@/store";
-import {chatHistoryDb} from "@/utils/localdb.ts";
+import {chatHistoryDb, unReadCountDb} from "@/utils/localdb.ts";
 import websocketClient from "@/utils/websocket.ts";
+import {getUserPage} from "@/api/user.ts";
 
-
-// let onlineUserSet = new Set()
-// const sortUsers = (users: any) => {
-//   const onlineUsers: any[] = [], offlineUsers: any[] = []
-//   for (const user of users) {
-//     if (onlineUserSet.has(user.username)) {
-//       user.isOnline = true
-//       onlineUsers.push(user)
-//     } else {
-//       user.isOnline = false
-//       offlineUsers.push(user)
-//     }
-//   }
-//   useChatStore().allUsers = onlineUsers.concat(offlineUsers)
-// }
-// getUserPage({pageSize: 1000, pageNum: 1}).then((res: any) => {
-//   websocketClient.publish({
-//     destination: getOnlineUsersUrl,
-//     body: useUserStore().userInfo.username
-//   })
-//   const users: any[] = []
-//   res.records?.forEach(item => {
-//     users.push({
-//       id: item.key,
-//       username: item.username,
-//       nickname: item.nickname,
-//       email: item.email,
-//       phone: item.phone,
-//       roles: item.roles,
-//       isOnline: onlineUserSet.has(item.username),
-//       chatHistory: []
-//     })
-//   })
-// sortUsers(users)
-// })
-
+const usersMap: any = new Map()
+const allUsersList: Ref<any> = ref([])
+const getChatHistories = () => {
+  const chatUsernames: Ref<string[]> = ref([])
+  const usersList: any[] = []
+  const map: any = new Map(usersMap)
+  chatHistoryDb.keys().then((keys: string[]) => {
+    chatUsernames.value = keys
+    keys.forEach(key => {
+      if (map.has(key)) {
+        usersList.push(map.get(key))
+        map.delete(key)
+      }
+    })
+    allUsersList.value = usersList.concat(Array.from(map.values()))
+  })
+}
+getUserPage({pageSize: 1000, pageNum: 1}).then((res: any) => {
+  // chatHistoryDb.setItem('chatUsers', JSON.stringify(allUsers.value))
+  res.records?.forEach(item => {
+    usersMap.set(item.username, item)
+  })
+  websocketClient.publish({
+    destination: '/app/getOnlineUsers',
+    body: useUserStore().userInfo.username
+  })
+  getChatHistories()
+})
 
 const currentMessage = ref('')
 
 const handleSendMessage = () => {
   const message = {
     fromUsername: useUserStore().userInfo.username,
-    toUsername: useChatStore().allUsersList[selectedKeys.value[0]].username,
+    toUsername: allUsersList.value[selectedKeys.value[0]].username,
     content: currentMessage.value,
   }
   websocketClient.publish({
@@ -102,7 +101,7 @@ const handleSendMessage = () => {
     body: JSON.stringify(message)
   })
   const localMessage = {
-    fromUsername: useChatStore().allUsersList[selectedKeys.value[0]].username,
+    fromUsername: allUsersList.value[selectedKeys.value[0]].username,
     toUsername: useUserStore().userInfo.username,
     content: currentMessage.value,
     isMine: true,
@@ -113,20 +112,38 @@ const handleSendMessage = () => {
 
 const selectedKeys = ref<number[]>([0])
 const currentChatHistory: Ref<any[]> = ref<any[]>([])
-watch(selectedKeys, () => {
-  chatHistoryDb.getItem(useChatStore().allUsersList[selectedKeys.value[0] || 0]?.username).then((res: any) => {
+const unReadCountMap: any = ref(new Map())
+const dealMessages = () => {
+  chatHistoryDb.getItem(allUsersList.value[selectedKeys.value[0] || 0]?.username).then((res: any) => {
     currentChatHistory.value = JSON.parse(res || '[]')
   })
-})
+  unReadCountDb.keys().then((keys: string[]) => {
+    unReadCountMap.value.clear()
+    keys.forEach(key => {
+      unReadCountMap.value.set(key, unReadCountDb.getItem(key) || 0)
+      unReadCountDb.getItem(key).then((res: any) => {
+        if (res) {
+          unReadCountMap.value.set(key, res)
+        }
+      })
+    })
+  })
+}
+watch(selectedKeys, () => {
+  if (!allUsersList.value.length) return
+  const username = allUsersList.value[selectedKeys.value[0] || 0]?.username
+  if (!username.length) return
+  unReadCountDb.removeItem(username)
+  dealMessages()
+}, {immediate: true})
 
 const chatStore = useChatStore()
 watch(chatStore, () => {
-  const username = useChatStore().allUsersList[selectedKeys.value[0] || 0]?.username || ''
+  getChatHistories()
+  const username = allUsersList.value[selectedKeys.value[0] || 0]?.username || ''
   if (!username.length) return
-  chatHistoryDb.getItem(username).then((res: any) => {
-    currentChatHistory.value = JSON.parse(res || '[]')
-  })
-})
+  dealMessages()
+}, {immediate: true})
 
 </script>
 <style scoped>

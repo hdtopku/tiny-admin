@@ -10,6 +10,16 @@ const chatHistoryDb =
         driver: [localforage.INDEXEDDB, localforage.WEBSQL, localforage.LOCALSTORAGE],
         size: 4980736,
     })
+const unReadCountDb =
+    localforage.createInstance({
+        name: 'chat',
+        storeName: 'unReadCount',
+        version: 1.0,
+        description: 'localforage chat store',
+        driver: [localforage.INDEXEDDB, localforage.WEBSQL, localforage.LOCALSTORAGE],
+        size: 4980736,
+    })
 export {
-    chatHistoryDb
+    chatHistoryDb,
+    unReadCountDb
 }
