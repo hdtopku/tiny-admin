@@ -1,6 +1,8 @@
 import {Client} from "@stomp/stompjs";
 import {useChatStore, useUserStore} from '@/store'
 
+import { notification } from 'ant-design-vue'
+
 const websocketClient = new Client({
     brokerURL: 'ws://localhost:8080/websocket',
 })
@@ -12,8 +14,21 @@ websocketClient.onConnect = () => {
     websocketClient.subscribe(getOnlineUsersTopicUrl, (users) => {
         useChatStore().onlineUsers = JSON.parse(users.body) || []
     })
-    websocketClient.subscribe('/user/' + useUserStore().userInfo.username + receivePrivateMessageTopicUrl, (message) => {
-        useChatStore().addNewMessage(JSON.parse(message.body))
+    websocketClient.subscribe('/user/' + useUserStore().userInfo.username + receivePrivateMessageTopicUrl, (msg) => {
+        const m = JSON.parse(msg.body)
+        useChatStore().addNewMessage(m)
+        const openNotification = () => {
+            notification.open({
+                message: 'You have a new message from: ' + m.fromUsername,
+                description:
+                    m.content,
+                onClick: () => {
+                    console.log('Notification Clicked!');
+                },
+            });
+        };
+        openNotification()
+
     })
     websocketClient.publish({
         destination: getOnlineUsersUrl,

@@ -12,9 +12,9 @@
                     class="w-2 h-2 rounded-full mr-2"></span>
               <span class="nav-text">{{ item.nickname }}</span>
             </div>
-            <span v-if="unReadCountMap.get(item.username)>0"
+            <span v-if="unReadCountMap.get(useUserStore().userInfo.username+':'+item.username)>0"
                   class="bg-red-500 rounded-full text-xs text-white text-center">{{
-                unReadCountMap.get(item.username)
+                unReadCountMap.get(useUserStore().userInfo.username+":"+item.username)
               }}</span>
           </div>
         </a-menu-item>
@@ -79,7 +79,7 @@ const getChatHistories = () => {
 getUserPage({pageSize: 1000, pageNum: 1}).then((res: any) => {
   // chatHistoryDb.setItem('chatUsers', JSON.stringify(allUsers.value))
   res.records?.forEach(item => {
-    usersMap.set(item.username, item)
+    usersMap.set(useUserStore().userInfo.username+":"+item.username, item)
   })
   websocketClient.publish({
     destination: '/app/getOnlineUsers',
@@ -114,7 +114,7 @@ const selectedKeys = ref<number[]>([0])
 const currentChatHistory: Ref<any[]> = ref<any[]>([])
 const unReadCountMap: any = ref(new Map())
 const dealMessages = () => {
-  chatHistoryDb.getItem(allUsersList.value[selectedKeys.value[0] || 0]?.username).then((res: any) => {
+  chatHistoryDb.getItem(useUserStore().userInfo.username+":"+allUsersList.value[selectedKeys.value[0] || 0]?.username).then((res: any) => {
     currentChatHistory.value = JSON.parse(res || '[]')
   })
   unReadCountDb.keys().then((keys: string[]) => {
@@ -133,7 +133,12 @@ watch(selectedKeys, () => {
   if (!allUsersList.value.length) return
   const username = allUsersList.value[selectedKeys.value[0] || 0]?.username
   if (!username.length) return
-  unReadCountDb.removeItem(username)
+  const  key = useUserStore().userInfo.username+":"+username
+  unReadCountDb.getItem(key).then((res: any)=>{
+    if(res) {
+      unReadCountDb.removeItem(key)
+    }
+  })
   dealMessages()
 }, {immediate: true})
 

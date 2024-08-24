@@ -6,17 +6,20 @@ export const chatStore = defineStore('chat', () => {
     const onlineUsers: Ref<string[]> = ref([])
     const messageCount = ref(0)
     const addNewMessage = (message) => {
-        chatHistoryDb.getItem(message.fromUsername).then((res: any) => {
+        const key = message.toUsername+ ':' + message.fromUsername
+        chatHistoryDb.getItem(key).then((res: any) => {
             const originalMessage = JSON.parse(res || '[]')
             originalMessage.push(message)
-            chatHistoryDb.setItem(message.fromUsername, JSON.stringify(originalMessage)).then(() => {
-                messageCount.value++
+            chatHistoryDb.removeItem(key).then(() => {
+                chatHistoryDb.setItem(key, JSON.stringify(originalMessage)).then(() => {
+                    messageCount.value++
+                })
             })
         })
         if (!message.isMine) {
-            unReadCountDb.getItem(message.fromUsername).then((res: any) => {
+            unReadCountDb.getItem(key).then((res: any) => {
                 const count = JSON.parse(res || '0')
-                unReadCountDb.setItem(message.fromUsername, JSON.stringify(count + 1))
+                unReadCountDb.setItem(key, JSON.stringify(count + 1))
             })
         }
     }

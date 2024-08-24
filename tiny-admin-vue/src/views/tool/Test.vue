@@ -4,6 +4,7 @@ import useGlobal from "@/hooks/useGlobal.ts";
 
 const {$bus} = useGlobal()
 $bus.emit('newMessage')
+
 </script>
 
 
