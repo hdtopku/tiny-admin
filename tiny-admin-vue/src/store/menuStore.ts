@@ -7,6 +7,7 @@ export const menuStore = defineStore('menu', () => {
     const sidebarOpenKeys = ref([])
     const sidebarSelectedKeys: Ref<string[]> = ref([])
     const sidebarCollapsed = ref(false)
+    const widthLessThanMiddle = ref(false)
     const getBreadcrumb = (url: any) => {
         const breadcrumb: any = []
         const menuTree = useUserStore().userInfo.menuTree
@@ -93,6 +94,7 @@ export const menuStore = defineStore('menu', () => {
         sidebarOpenKeys,
         sidebarSelectedKeys,
         sidebarCollapsed,
+        widthLessThanMiddle,
         openedTabs,
         activeTab,
         addTab,

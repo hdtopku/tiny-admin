@@ -1,7 +1,8 @@
 import {Client} from "@stomp/stompjs";
 import {useChatStore, useUserStore} from '@/store'
 
-import { notification } from 'ant-design-vue'
+import {notification} from 'ant-design-vue'
+import router from "@/router";
 
 const websocketClient = new Client({
     brokerURL: 'ws://localhost:8080/websocket',
@@ -23,7 +24,7 @@ websocketClient.onConnect = () => {
                 description:
                     m.content,
                 onClick: () => {
-                    console.log('Notification Clicked!');
+                    router.push('/tool/test')
                 },
             });
         };

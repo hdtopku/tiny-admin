@@ -6,6 +6,10 @@
 body {
     font-family: 'Open Sans', sans-serif;
 }
+
+* {
+    transition: all 0.15s ease-in-out;
+}
 /**::-webkit-scrollbar {*/
 /*    width: 2px;*/
 /*}*/
