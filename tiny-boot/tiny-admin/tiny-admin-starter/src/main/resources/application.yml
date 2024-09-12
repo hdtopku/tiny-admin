@@ -52,3 +52,7 @@ mybatis-plus:
 constant:
   redis-users-token-map-key: tiny-admin-users-token-map
 
+firebase.bucket-name:
+  tiny-blog-1a77f.appspot.com
+firebase.image-url:
+  https://storage.googleapis.com/${firebase.bucket-name}/%s

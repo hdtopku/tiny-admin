@@ -1,18 +1,19 @@
 <script lang="ts" setup>
 import {useDark} from "@vueuse/core";
+import {theme} from "ant-design-vue";
 
 const isDark = useDark()
 </script>
 
 <template>
   <Page>
-    <!--  <a-config-provider-->
-    <!--      :theme="{-->
-    <!--      algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,-->
-    <!--    }"-->
-    <!--  >-->
-    <router-view/>
-    <!--  </a-config-provider>-->
+    <a-config-provider
+        :theme="{
+          algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
+        }"
+    >
+      <router-view/>
+    </a-config-provider>
   </Page>
 </template>
 

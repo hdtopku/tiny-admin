@@ -36,6 +36,7 @@
         <mybatis-spring.version>3.0.3</mybatis-spring.version>
         <springdoc.version>2.5.0</springdoc.version>
         <netty.version>4.1.73.Final</netty.version>
+        <firebase.version>9.3.0</firebase.version>
     </properties>
 
     <dependencyManagement>
@@ -111,6 +112,12 @@
                 <artifactId>redisson-spring-boot-starter</artifactId>
                 <version>${redisson.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.google.firebase</groupId>
+                <artifactId>firebase-admin</artifactId>
+                <version>${firebase.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 </project>

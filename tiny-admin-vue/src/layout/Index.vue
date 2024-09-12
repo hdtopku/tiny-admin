@@ -27,15 +27,16 @@
       <a-layout-header :class="getHeaderClass()" class="fixed z-[12] border-b border-gray-200">
         <div class="relative flex justify-between items-center px-4">
           <Breadcrumb/>
-          <div>
+          <div class="flex items-center">
+            <DarkToggle/>
             <a-dropdown>
               <template #overlay>
                 <a-menu>
                   <a-menu-item>
-                    <a-button ghost href="javascript:;" size="small" type="link">个人中心</a-button>
+                    <a-button href="javascript:;" size="small" type="link">个人中心</a-button>
                   </a-menu-item>
                   <a-menu-item>
-                    <a-button danger size="small" type="link">退出登录</a-button>
+                    <a-button danger size="small" type="link" @click="logout">退出登录</a-button>
                   </a-menu-item>
                 </a-menu>
               </template>
@@ -51,7 +52,7 @@
       </a-layout-header>
       <a-layout-content :class="getHeaderClass()" class="mt-[80px]">
         <Tabs class="bg-white fixed z-10 pt-11 top-0 px-2"/>
-        <router-view #default="{ Component, route }">
+        <router-view #default="{ Component }">
           <transition :duration="{ enter: 250, leave: 150 }"
                       appear
                       appear-active-class="animate__animated animate__fadeInLeft"
@@ -76,6 +77,9 @@ import Sidebar from "@/layout/Sidebar.vue";
 import Breadcrumb from "@/layout/Breadcrumb.vue";
 import {DownOutlined} from '@ant-design/icons-vue';
 import {useRoute} from "vue-router";
+import router from "@/router";
+import {message} from "ant-design-vue";
+import DarkToggle from "@/components/DarkToggle.vue";
 
 const {sidebarCollapsed, widthLessThanMiddle} = storeToRefs(useMenuStore())
 
@@ -123,6 +127,11 @@ const getHeaderClass = () => {
 const closeMask = () => {
   showMask.value = false;
   sidebarCollapsed.value = true;
+}
+const logout = () => {
+  localStorage.clear()
+  message.success('已退出登录！')
+  router.replace('/login')
 }
 </script>
 <style scoped>

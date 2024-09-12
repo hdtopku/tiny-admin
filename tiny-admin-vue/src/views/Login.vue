@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import DarkToggle from "@/components/DarkToggle.vue";
 import {useUserStore} from "@/store";
 import {message} from "ant-design-vue";
 import router from "@/router";
@@ -25,7 +24,6 @@ const handleLogin = () => {
 </script>
 
 <template>
-  <DarkToggle/>
   <div class="flex items-center justify-center h-screen p-4 ">
     <div
         class=" border dark:border-gray-600 bg-white dark:bg-gray-800 shadow-sm hover:shadow-lg w-full max-w-lg px-6 py-12 rounded-md">
