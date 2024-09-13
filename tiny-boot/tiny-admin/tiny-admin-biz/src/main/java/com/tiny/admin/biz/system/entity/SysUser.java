@@ -37,6 +37,9 @@ public class SysUser implements Serializable {
     @Schema(description = "昵称")
     private String nickname;
 
+    @Schema(description = "头像")
+    private String avatar;
+
     @Schema(description = "密码")
     private String password;
 

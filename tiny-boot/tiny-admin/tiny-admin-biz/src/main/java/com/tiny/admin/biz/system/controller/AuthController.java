@@ -1,15 +1,13 @@
 package com.tiny.admin.biz.system.controller;
 
 import com.tiny.admin.biz.system.dto.UserInfo;
+import com.tiny.admin.biz.system.entity.SysUser;
 import com.tiny.admin.biz.system.service.AuthService;
 import com.tiny.admin.biz.system.vo.LoginForm;
 import com.tiny.core.web.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -17,6 +15,7 @@ import java.util.Map;
  * Created by lxh at 2024-05-31 23:54:34
  */
 @RestController
+@RequestMapping("/auth")
 public class AuthController {
     @Resource
     private AuthService authService;
@@ -31,5 +30,11 @@ public class AuthController {
     @Operation(summary = "获取用户信息")
     public Result<UserInfo> getSelfInfo() {
         return Result.success(authService.getSelfInfo());
+    }
+
+    @PostMapping("/updateSelfInfo")
+    @Operation(summary = "更新用户信息")
+    public Result<Boolean> updateSelfInfo(@RequestBody SysUser sysUser) {
+        return Result.success(authService.updateSelfInfo(sysUser));
     }
 }

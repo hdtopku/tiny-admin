@@ -11,9 +11,11 @@ import java.util.Set;
 */
 @Data
 public class SysUserDto {
+    private String id;
     private String key;
     private String username;
     private String nickname;
+    private String avatar;
     private String email;
     private String phone;
     private Boolean status;

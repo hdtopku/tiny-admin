@@ -74,9 +74,10 @@ public class GlobalExceptionHandler implements ErrorController {
         if (e instanceof DuplicateKeyException) {
             String message = e.getMessage();
             if (message.contains("Duplicate entry")) {
-                return Result.failure(message.split(" ")[2] + "已存在，请修改！");
+                return Result.failure(message.split(" ")[2] + "已被占用，请修改！");
             }
         }
+        log.error("服务器内部异常", e);
         return Result.failure(e.getMessage());
     }
 
@@ -84,7 +85,7 @@ public class GlobalExceptionHandler implements ErrorController {
     public Result<Object> handleSqlException(DuplicateKeyException e) {
         String message = e.getCause().getMessage();
         if (message.contains("Duplicate entry")) {
-            return Result.failure(message.split(" ")[2] + " 已被占用，请修改！");
+            return Result.failure(message.split(" ")[2] + "已被占用，请修改！");
         }
         return Result.failure(message);
     }

@@ -1,28 +1,26 @@
 <script setup lang="ts">
 import {useUserStore} from "@/store";
-
-const open = ref<boolean>(true);
-
-const showModal = () => {
-  open.value = true;
-};
-const handleOk = () => {
-
-}
-
 import {LoadingOutlined, PlusOutlined} from '@ant-design/icons-vue';
 import type {UploadChangeParam, UploadProps} from 'ant-design-vue';
 import {message} from 'ant-design-vue';
+import {updateSelfInfo} from "@/api/auth.ts";
+import useGlobal from "@/hooks/useGlobal.ts";
 
-function getBase64(img: Blob, callback: (base64Url: string) => void) {
-  const reader = new FileReader();
-  reader.addEventListener('load', () => callback(reader.result as string));
-  reader.readAsDataURL(img);
+const open = ref<boolean>(false);
+
+const {$bus} = useGlobal()
+$bus.on('show-my-info-modal', () => {
+  open.value = true;
+})
+const handleOk = () => {
+  updateSelfInfo(personalInfo).then(() => {
+    message.success('保存成功')
+    $bus.emit('update-user-info')
+  })
 }
 
 const fileList = ref([]);
 const loading = ref<boolean>(false);
-const imageUrl = ref<string>('');
 
 const handleChange = (info: UploadChangeParam) => {
   if (info.file.status === 'uploading') {
@@ -31,10 +29,8 @@ const handleChange = (info: UploadChangeParam) => {
   }
   if (info.file.status === 'done') {
     // Get this url from response in real world.
-    getBase64(info.file.originFileObj, (base64Url: string) => {
-      imageUrl.value = base64Url;
-      loading.value = false;
-    });
+    personalInfo.avatar = info.file.response.data;
+    loading.value = false;
   }
   if (info.file.status === 'error') {
     loading.value = false;
@@ -53,7 +49,7 @@ const beforeUpload = (file: UploadProps['fileList'][number]) => {
   }
   return isJpgOrPng && isLt2M;
 }
-const personalInfo=useUserStore().userInfo
+const {menuTree, publicMenuList, ...personalInfo} = useUserStore().userInfo
 </script>
 
 <template>
@@ -64,11 +60,11 @@ const personalInfo=useUserStore().userInfo
           list-type="picture-card"
           class="mx-auto"
           :show-upload-list="false"
-          action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+          action="http://localhost:3000/api/file/upload"
           :before-upload="beforeUpload"
           @change="handleChange"
       >
-        <img v-if="imageUrl" :src="imageUrl" alt="avatar"/>
+        <img v-if="personalInfo.avatar" :src="personalInfo.avatar" alt="avatar"/>
         <div v-else>
           <loading-outlined v-if="loading"></loading-outlined>
           <plus-outlined v-else></plus-outlined>
@@ -76,21 +72,18 @@ const personalInfo=useUserStore().userInfo
         </div>
       </a-upload>
     </div>
-    <a-form :model="personalInfo">
+    <a-form :label-col="{style: { width: '60px' }}" :model="personalInfo">
       <a-form-item label="用户名" name="username">
-        <a-input v-model:value="personalInfo.username"></a-input>
+        <a-input v-model:value="personalInfo.username" allow-clear></a-input>
       </a-form-item>
       <a-form-item label="昵称">
-        <a-input v-model:value="personalInfo.nickname"></a-input>
-      </a-form-item>
-      <a-form-item label="密码">
-        <a-input></a-input>
+        <a-input v-model:value="personalInfo.nickname" allow-clear></a-input>
       </a-form-item>
       <a-form-item label="手机号">
-        <a-input v-model:value="personalInfo.phone"></a-input>
+        <a-input v-model:value="personalInfo.phone" allow-clear></a-input>
       </a-form-item>
       <a-form-item label="邮箱">
-        <a-input v-model:value="personalInfo.email"></a-input>
+        <a-input v-model:value="personalInfo.email" allow-clear></a-input>
       </a-form-item>
     </a-form>
   </a-modal>

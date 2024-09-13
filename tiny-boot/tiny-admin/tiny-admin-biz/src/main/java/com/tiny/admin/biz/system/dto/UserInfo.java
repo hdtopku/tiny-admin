@@ -10,9 +10,12 @@ import java.util.List;
  */
 @Data
 public class UserInfo {
+    private String id;
     private String username;
-    private String avatar;
     private String nickname;
+    private String avatar;
+    private String email;
+    private String phone;
     private List<SysMenuTree> menuTree;
     private List<SysMenu> publicMenuList;
 }

@@ -13,9 +13,12 @@ import {UserType} from "@/store/userStore.ts";
 
 /** 登录接口 */
 export const postLogin = (data?: object): Promise<{token: string, userInfo: UserType}> => {
-    return http.post("/login", data)
+    return http.post("/auth/login", data)
 };
 
 export const getSelfInfo = () => {
-    return http.get("/getSelfInfo")
+    return http.get("/auth/getSelfInfo")
+}
+export const updateSelfInfo = (data?: object) => {
+    return http.post("/auth/updateSelfInfo", data)
 }

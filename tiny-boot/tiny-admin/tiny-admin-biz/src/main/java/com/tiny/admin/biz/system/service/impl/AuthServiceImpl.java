@@ -5,7 +5,9 @@ import cn.hutool.core.map.MapUtil;
 import com.tiny.admin.biz.config.security.AdminUserDetails;
 import com.tiny.admin.biz.system.dto.UserInfo;
 import com.tiny.admin.biz.system.entity.SysMenu;
+import com.tiny.admin.biz.system.entity.SysUser;
 import com.tiny.admin.biz.system.service.AuthService;
+import com.tiny.admin.biz.system.service.ISysUserService;
 import com.tiny.admin.biz.websocket.service.MemberService;
 import com.tiny.core.redis.service.RedisService;
 import com.tiny.core.util.JwtTokenUtil;
@@ -43,6 +45,9 @@ public class AuthServiceImpl implements AuthService {
     private MemberService memberService;
     @Resource
     private SimpMessagingTemplate simpMessagingTemplate;
+    @Resource
+    private ISysUserService iSysUserService;
+
     private static final String GET_ONLINE_USERS_TOPIC = "/topic/onlineUsers";
 
     private static final String TOKEN_KEY = "user-token";
@@ -99,6 +104,22 @@ public class AuthServiceImpl implements AuthService {
         addUnauthorizedMenuList(sysUserDetails, userInfo);
         redisService.set(TOKEN_KEY + ":" + sysUserDetails.getUsername(), sysUserDetails);
         return userInfo;
+    }
+
+    @Override
+    public Boolean updateSelfInfo(SysUser sysUser) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            throw new UsernameNotFoundException("未登录");
+        }
+        AdminUserDetails sysUserDetails = (AdminUserDetails) userDetailsService.loadUserByUsername(authentication.getName());
+        BeanUtil.copyProperties(sysUser, sysUserDetails);
+        sysUser.setId(sysUserDetails.getId());
+        sysUser.setPassword(null);
+        sysUser.setCreateTime(null);
+        sysUser.setDelFlag(null);
+        sysUser.setStatus(null);
+        return iSysUserService.updateById(sysUser);
     }
 
     private void addUnauthorizedMenuList(AdminUserDetails sysUserDetails, UserInfo userInfo) {

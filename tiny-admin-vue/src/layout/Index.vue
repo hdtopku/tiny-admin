@@ -33,7 +33,7 @@
               <template #overlay>
                 <a-menu>
                   <a-menu-item>
-                    <a-button href="javascript:;" size="small" type="link">个人中心</a-button>
+                    <a-button size="small" type="link" @click="showMyInfo">个人中心</a-button>
                   </a-menu-item>
                   <a-menu-item>
                     <a-button danger size="small" type="link" @click="logout">退出登录</a-button>
@@ -80,6 +80,7 @@ import {useRoute} from "vue-router";
 import router from "@/router";
 import {message} from "ant-design-vue";
 import DarkToggle from "@/components/DarkToggle.vue";
+import useGlobal from "@/hooks/useGlobal.ts";
 
 const {sidebarCollapsed, widthLessThanMiddle} = storeToRefs(useMenuStore())
 
@@ -132,6 +133,10 @@ const logout = () => {
   localStorage.clear()
   message.success('已退出登录！')
   router.replace('/login')
+}
+const {$bus} = useGlobal()
+const showMyInfo = () => {
+  $bus.emit('show-my-info-modal')
 }
 </script>
 <style scoped>

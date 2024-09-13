@@ -12,6 +12,8 @@ export type UserType = {
     avatar?: string,
     username?: string,
     nickname?: string,
+    email?: string,
+    phone?: string,
     menuTree?: any[],
     publicMenuList?: any[]
 }
@@ -55,7 +57,7 @@ export const userStore = defineStore('user', () => {
                 return menu
             }) || [];
         }
-        return  dfs(userInfo.value?.menuTree)
+        return dfs(userInfo.value?.menuTree)
     };
     const getRouteList = (): any[] => {
         const routeList: any[] = []
