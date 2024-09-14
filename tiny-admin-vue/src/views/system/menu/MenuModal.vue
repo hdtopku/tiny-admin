@@ -38,7 +38,7 @@ const defaultForm =
       hidden: false,
       keepAlive: true,
       parentId: null,
-      type: 0,
+      type: 1,
       unauthorizedStrategy: 0,
       permission: '',
     }
@@ -79,6 +79,9 @@ const handleOk = async () => {
     loading.value = true
     if (!isUpdate.value && form.value.type === 2) {
       form.value.component = null
+    }
+    if (!form.value.icon?.length) {
+      form.value.icon = null
     }
     saveOrUpdateMenu(form.value).then(() => {
       message.success('操作成功')

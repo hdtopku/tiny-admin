@@ -20,6 +20,15 @@ const searchForm = ref({
   pageSize: pagination.value.pageSize,
 })
 const columns: any = [{
+  title: '序号',
+  key: 'index',
+  width: 60,
+}, {
+  title: '头像',
+  dataIndex: 'avatar',
+  key: 'avatar',
+  width: 80,
+}, {
   title: '用户名',
   dataIndex: 'username',
   key: 'username',
@@ -159,7 +168,14 @@ const handleDeleteUser = (id: string) => {
              @change="handleTableChange"
              :columns="columns"
              :dataSource="dataSource">
-      <template #bodyCell="{record, column}">
+
+      <template #bodyCell="{record,index, column}">
+        <template v-if="column.key === 'index'">
+          {{ index + 1 }}
+        </template>
+        <template v-if="column.dataIndex === 'avatar'">
+          <a-avatar :src="record.avatar" shape="square" size="large"/>
+        </template>
         <template v-if="column.dataIndex === 'roleNames'">
           <span v-if="record.roleNames?.length">
           <a-tag v-for="item in record.roleNames" :key="item">

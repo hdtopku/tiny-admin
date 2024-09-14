@@ -16,6 +16,7 @@ const handleOk = () => {
   updateSelfInfo(personalInfo).then(() => {
     message.success('保存成功')
     $bus.emit('update-user-info')
+    open.value = false;
   })
 }
 
