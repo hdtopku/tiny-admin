@@ -9,10 +9,10 @@ import com.tiny.admin.biz.pms.service.IPmsBrandService;
 import com.tiny.admin.biz.system.vo.BaseQueryParam;
 import com.tiny.core.web.Result;
 import io.swagger.v3.oas.annotations.Operation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import jakarta.validation.Valid;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -42,5 +42,23 @@ public class PmsBrandController {
         }
         IPage<PmsBrand> iPage = iPmsBrandService.page(new Page<>(param.getPageNum(), param.getPageSize()), wrapper);
         return Result.success(iPage);
+    }
+    @PostMapping("/saveOrUpdate")
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Boolean> saveOrUpdate(@Valid @RequestBody PmsBrand pmsBrand, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Result.failure(bindingResult.getFieldError().getDefaultMessage());
+        }
+        iPmsBrandService.saveOrUpdate(pmsBrand);
+        return Result.success();
+    }
+    @GetMapping("/delete/{id}")
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Boolean> delete(@PathVariable Long id) {
+        if (id == null) {
+            return Result.failure("id不能为空");
+        }
+        iPmsBrandService.removeById(id);
+        return Result.success();
     }
 }

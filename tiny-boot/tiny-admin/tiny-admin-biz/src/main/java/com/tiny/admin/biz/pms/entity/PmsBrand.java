@@ -2,8 +2,10 @@ package com.tiny.admin.biz.pms.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Length;
 
 import java.io.Serializable;
 
@@ -27,9 +29,13 @@ public class PmsBrand implements Serializable {
     private String id;
 
     @Schema(description = "品牌名称")
+    @NotNull(message = "品牌名称不能为空！")
+    @Length(min = 1, max = 50, message = "品牌名称长度不能超过50")
     private String brandName;
 
     @Schema(description = "品牌介绍")
+    @NotNull(message = "品牌介绍不能为空")
+    @Length(min = 1, max = 200, message = "品牌介绍长度不能超过200")
     private String brandDesc;
 
     @Schema(description = "品牌logo")

@@ -21,9 +21,11 @@ http.interceptors.response.use(
     response => {
         NProgress.done()
         const {msg, data, code} = response.data;
+        console.log(response.data)
         if (code === 200) {
             return data
         } else if (code === 500) {
+            message.error("操作失败，原因：" + msg)
             return Promise.reject(new Error(msg || "服务异常，请稍后再试"))
         } else if (code === 401) {
             useUserStore().logout()

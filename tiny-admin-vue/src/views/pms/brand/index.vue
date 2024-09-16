@@ -1,7 +1,9 @@
 <script lang="ts" setup>
-import {getBrandPage} from "@/api/brand.ts";
+import {deleteBrandById, getBrandPage} from "@/api/brand.ts";
 import {DownOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue";
 import {useDebounceFn} from "@vueuse/core";
+import BrandModal from "@/views/pms/brand/BrandModal.vue";
+import {message} from "ant-design-vue";
 
 const pagination = ref({
   current: 1,
@@ -15,9 +17,6 @@ const searchForm = ref({
   pageSize: pagination.value.pageSize,
 })
 const switchLoading = ref(false)
-const saveOrUpdateBrand = () => {
-
-}
 const queryList = () => {
   switchLoading.value = true
   getBrandPage(searchForm.value).then((res: any) => {
@@ -37,7 +36,7 @@ const queryByStatus = () => {
 }
 
 
-const columns = [
+const columns: any = [
   {
     title: '序号',
     key: 'index',
@@ -53,6 +52,7 @@ const columns = [
     title: '品牌名',
     dataIndex: 'brandName',
     key: 'brandName',
+    width: 150,
   },
   {
     title: '品牌简介',
@@ -74,14 +74,17 @@ const columns = [
   }
 ]
 const dataSource = ref([])
-const handleTableChange = (pagination: any, filters: any, sorter: any) => {
+const handleTableChange = (pagination: any) => {
   searchForm.value.pageNum = pagination.current
   searchForm.value.pageSize = pagination.pageSize
   queryList()
 }
 
 const deleteBrand = (id: any) => {
-
+  deleteBrandById(id).then(()=>{
+    message.success('删除成功')
+    queryList()
+  })
 }
 
 
@@ -90,6 +93,17 @@ watch(() => searchForm.value.keyword, debounceQuery)
 const changeStatus = (record: any) => {
   record.status = !record.status
 }
+
+const confirmChangeStatus = (record: any) => {
+
+}
+const brandModalRef = ref(null)
+const handleAddBrand=() => {
+  brandModalRef.value.showModal()
+}
+const handleEditBrand = (record: any, isEdit: boolean) => {
+  brandModalRef.value.showModal(record, isEdit)
+}
 </script>
 
 <template>
@@ -97,7 +111,7 @@ const changeStatus = (record: any) => {
     <div class="p-4">
       <div class="flex mb-4">
         <div class="flex items-center gap-4 mx-auto sm:w-[80%] w-full">
-          <a-button type="primary" @click="saveOrUpdateBrand">新增</a-button>
+          <a-button type="primary" @click="handleAddBrand">新增</a-button>
           <a-input id="keyword" v-model:value="searchForm.keyword" allow-clear
                    autocomplete="off" class="text-left"
                    placeholder="搜索品牌名、简介、品牌故事"
@@ -130,8 +144,8 @@ const changeStatus = (record: any) => {
             <template #title>
               <span>{{ record.brandDesc }}</span>
             </template>
-            <span>{{ record.brandDesc.substring(0, 10) }}</span>
-            <span v-if="record.brandDesc.length > 10">...</span>
+            <span>{{ record.brandDesc?.substring(0, 10) }}</span>
+            <span v-if="record.brandDesc?.length > 10">...</span>
           </a-tooltip>
         </template>
         <template v-else-if="column.dataIndex === 'brandStory'">
@@ -139,13 +153,13 @@ const changeStatus = (record: any) => {
             <template #title>
               <span>{{ record.brandStory }}</span>
             </template>
-            <span>{{ record.brandStory.substring(0, 10) }}</span>
-            <span v-if="record.brandStory.length > 10">...</span>
+            <span>{{ record.brandStory?.substring(0, 10) }}</span>
+            <span v-if="record.brandStory?.length > 10">...</span>
           </a-tooltip>
         </template>
         <template v-else-if="column.key === 'operation'">
           <div class="grid grid-cols-2 items-center justify-center">
-            <a-popconfirm :title="record.status ? '是否禁用该用户？' : ' 是否启用该用户？'"
+            <a-popconfirm :title="record.status ? '是否禁用该品牌？' : ' 是否启用该品牌？'"
                           cancel-text="否" ok-text="是"
                           @confirm="() => {confirmChangeStatus(record)}">
               <template #icon>
@@ -155,7 +169,7 @@ const changeStatus = (record: any) => {
                         class="flex-shrink-0"
                         size="small" un-checked-children="已禁用" @click="() => {changeStatus(record)}"/>
             </a-popconfirm>
-            <a-dropdown placement="bottomCenter" trigger="hover">
+            <a-dropdown placement="bottom" trigger="hover">
               <a-button class="flex items-center" size="small" type="link">
                 操作
                 <DownOutlined/>
@@ -163,12 +177,12 @@ const changeStatus = (record: any) => {
               <template #overlay>
                 <a-menu class="text-center">
                   <a-menu-item>
-                    <a-button type="link" @click="() => saveOrUpdateUserInfo(record, true)">编辑品牌</a-button>
+                    <a-button type="link" @click="() => handleEditBrand(record, true)">编辑品牌</a-button>
                   </a-menu-item>
                   <a-menu-item>
                     <a-popconfirm cancel-text="否" ok-text="是"
                                   ok-type="danger"
-                                  @confirm="() => {handleDeleteUser(record.key)}">
+                                  @confirm="() => {deleteBrand(record.id)}">
                       <template #icon>
                         <question-circle-outlined style="color: red"/>
                       </template>
@@ -186,6 +200,7 @@ const changeStatus = (record: any) => {
         </template>
       </template>
     </a-table>
+    <BrandModal @queryList="queryList" ref="brandModalRef"></BrandModal>
   </div>
 </template>
 
