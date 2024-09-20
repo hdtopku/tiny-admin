@@ -1,15 +1,12 @@
-<script lang="ts" setup>
-// import ChatWindow from "@/views/tool/ChatWindow.vue";
-import useGlobal from "@/hooks/useGlobal.ts";
-
-const {$bus} = useGlobal()
-$bus.emit('newMessage')
-
-</script>
-
-
 <template>
-  <div class="relative">
-<!--    <ChatWindow/>-->
-  </div>
+  <ImageUpload v-model:image-urls="imageUrls" :count="2"/>
 </template>
+<script lang="ts" setup>
+import {Ref} from "vue";
+
+const imageUrls: Ref<string[]> = ref([])
+watch(imageUrls, (newVal, oldVal) => {
+  console.log('newVal:', newVal)
+  console.log('oldVal:', oldVal)
+})
+</script>

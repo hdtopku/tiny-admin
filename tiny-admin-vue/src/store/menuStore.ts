@@ -52,6 +52,7 @@ export const menuStore = defineStore('menu', () => {
             keepTabsOrder = false
             return
         }
+        if (route.path === '/404' || route.path === '/404') return
         // remove tab, 把当前路由的tab移到最前面
         const index = openedTabs.value.findIndex((tab) => tab.key === route.path)
         if (index !== -1) {

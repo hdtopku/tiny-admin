@@ -1,10 +1,13 @@
 <script lang="ts" setup>
-import {deleteBrandById, getBrandPage} from "@/api/brand.ts";
 import {DownOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue";
+import {getGoodsPage} from "@/api/goods.ts";
+import ImageCarousel from "@/views/pms/goods/ImageCarousel.vue";
 import {useDebounceFn} from "@vueuse/core";
-import BrandModal from "@/views/pms/brand/BrandModal.vue";
-import {message} from "ant-design-vue";
+import GoodsModal from "@/views/pms/goods/GoodsModal.vue";
 
+const handleAdd = () => {
+
+}
 const pagination = ref({
   current: 1,
   pageSize: 10,
@@ -17,23 +20,17 @@ const searchForm = ref({
   pageSize: pagination.value.pageSize,
 })
 const switchLoading = ref(false)
+
 const queryList = () => {
-  switchLoading.value = true
-  getBrandPage(searchForm.value).then((res: any) => {
+  getGoodsPage(searchForm.value).then(res => {
     dataSource.value = res.records
-    pagination.value = {
-      current: res.current,
-      pageSize: res.size,
-      total: res.total,
-    }
-  }).finally(() => {
-    switchLoading.value = false
   })
 }
 queryList()
+const debounceQuery = useDebounceFn(queryList, 500)
+watch(() => searchForm.value.keyword, debounceQuery)
 const queryByStatus = () => {
 }
-
 
 const columns: any = [
   {
@@ -42,28 +39,34 @@ const columns: any = [
     width: 60,
   },
   {
-    title: '品牌logo',
-    dataIndex: 'logo',
-    key: 'logo',
+    title: '商品图册',
+    dataIndex: 'albumList',
+    key: 'albumList',
     width: 100,
   },
   {
-    title: '品牌名',
-    dataIndex: 'brandName',
-    key: 'brandName',
+    title: '商品名称',
+    dataIndex: 'goodsName',
+    key: 'goodsName',
     width: 150,
   },
   {
-    title: '品牌简介',
-    dataIndex: 'brandDesc',
-    key: 'brandDesc',
-    width: 200,
+    title: '商品简介',
+    dataIndex: 'goodsDesc',
+    key: 'goodsDesc',
+    width: 150,
   },
   {
-    title: '品牌故事',
-    dataIndex: 'brandStory',
-    key: 'brandStory',
-    width: 200,
+    title: '市场价格',
+    dataIndex: 'marketPrice',
+    key: 'marketPrice',
+    width: 100,
+  },
+  {
+    title: '促销价格',
+    dataIndex: 'promotionPrice',
+    key: 'promotionPrice',
+    width: 100,
   },
   {
     title: '操作',
@@ -79,29 +82,9 @@ const handleTableChange = (pagination: any) => {
   queryList()
 }
 
-const deleteBrand = (id: any) => {
-  deleteBrandById(id).then(()=>{
-    message.success('删除成功')
-    queryList()
-  })
-}
-
-
-const debounceQuery = useDebounceFn(queryList, 500)
-watch(() => searchForm.value.keyword, debounceQuery)
-const changeStatus = (record: any) => {
-  record.status = !record.status
-}
-
-const confirmChangeStatus = (record: any) => {
-
-}
-const brandModalRef = ref()
-const handleAddBrand=() => {
-  brandModalRef.value.showModal()
-}
-const handleEditBrand = (record: any, isEdit: boolean) => {
-  brandModalRef.value.showModal(record, isEdit)
+const goodsModalRef = ref()
+const handleEdit = (record: any) => {
+  goodsModalRef.value.showModal(record)
 }
 </script>
 
@@ -110,10 +93,10 @@ const handleEditBrand = (record: any, isEdit: boolean) => {
     <div class="p-4">
       <div class="flex mb-4">
         <div class="flex items-center gap-4 mx-auto sm:w-[80%] w-full">
-          <a-button type="primary" @click="handleAddBrand">新增</a-button>
+          <a-button type="primary" @click="handleAdd">新增</a-button>
           <a-input id="keyword" v-model:value="searchForm.keyword" allow-clear
                    autocomplete="off" class="text-left"
-                   placeholder="搜索品牌名、简介、品牌故事"
+                   placeholder="搜索商品名称、副标题、简介、品牌名"
                    type="text" @keyup.enter.native="queryList">
             <template #prefix>
               <a-switch v-model:checked="searchForm.status" :loading="switchLoading" checked-children="已启用"
@@ -126,34 +109,33 @@ const handleEditBrand = (record: any, isEdit: boolean) => {
         </div>
       </div>
     </div>
-
     <a-table :columns="columns" :dataSource="dataSource"
              :pagination="pagination"
              :scroll="{ x: 'max-content', y: 'calc(100vh - 200px)' }"
              @change="handleTableChange">
-      <template #bodyCell="{record, index,column}">
+      <template #bodyCell="{record, index, column}">
         <template v-if="column.key === 'index'">
           {{ index + 1 }}
         </template>
-        <template v-else-if="column.dataIndex === 'logo'">
-          <a-avatar :src="record.logo" shape="square" size="large"/>
+        <template v-else-if="column.dataIndex === 'albumList'">
+          <ImageCarousel :img-urls="record?.albumList || []"/>
         </template>
-        <template v-else-if="column.dataIndex === 'brandDesc'">
+        <template v-else-if="column.dataIndex === 'goodsName'">
           <a-tooltip :arrow="false">
             <template #title>
-              <span>{{ record.brandDesc }}</span>
+              <span>{{ record.goodsName }}</span>
             </template>
-            <span>{{ record.brandDesc?.substring(0, 10) }}</span>
-            <span v-if="record.brandDesc?.length > 10">...</span>
+            <span>{{ record.goodsName?.substring(0, 10) }}</span>
+            <span v-if="record.goodsName?.length > 10">...</span>
           </a-tooltip>
         </template>
-        <template v-else-if="column.dataIndex === 'brandStory'">
+        <template v-else-if="column.dataIndex === 'goodsDesc'">
           <a-tooltip :arrow="false">
             <template #title>
-              <span>{{ record.brandStory }}</span>
+              <span>{{ record.goodsDesc }}</span>
             </template>
-            <span>{{ record.brandStory?.substring(0, 10) }}</span>
-            <span v-if="record.brandStory?.length > 10">...</span>
+            <span>{{ record.goodsDesc?.substring(0, 10) }}</span>
+            <span v-if="record.goodsDesc?.length > 10">...</span>
           </a-tooltip>
         </template>
         <template v-else-if="column.key === 'operation'">
@@ -176,7 +158,7 @@ const handleEditBrand = (record: any, isEdit: boolean) => {
               <template #overlay>
                 <a-menu class="text-center">
                   <a-menu-item>
-                    <a-button type="link" @click="() => handleEditBrand(record, true)">编辑品牌</a-button>
+                    <a-button type="link" @click="() => handleEdit(record)">编辑商品</a-button>
                   </a-menu-item>
                   <a-menu-item>
                     <a-popconfirm cancel-text="否" ok-text="是"
@@ -199,10 +181,11 @@ const handleEditBrand = (record: any, isEdit: boolean) => {
         </template>
       </template>
     </a-table>
-    <BrandModal @queryList="queryList" ref="brandModalRef"></BrandModal>
+    <GoodsModal ref="goodsModalRef"/>
   </div>
 </template>
 
 <style scoped>
+
 
 </style>

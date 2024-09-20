@@ -21,7 +21,6 @@ http.interceptors.response.use(
     response => {
         NProgress.done()
         const {msg, data, code} = response.data;
-        console.log(response.data)
         if (code === 200) {
             return data
         } else if (code === 500) {

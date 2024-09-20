@@ -26,8 +26,8 @@ public class CodeGenerator {
                 .packageConfig((scanner, builder) -> builder.parent("com.tiny.admin.biz")
                         .moduleName("pms"))
                 // 策略配置
-//                .strategyConfig((scanner, builder) -> builder.addInclude(getTables(scanner.apply("请输入表名，多个英文逗号分隔？所有输入 all")))
-                .strategyConfig((scanner, builder) -> builder.addInclude(getTables("all"))
+                .strategyConfig((scanner, builder) -> builder.addInclude(getTables(scanner.apply("请输入表名，多个英文逗号分隔？所有输入 all")))
+//                .strategyConfig((scanner, builder) -> builder.addInclude(getTables("all"))
                         .entityBuilder()
                         .enableLombok()
                         .enableFileOverride()
