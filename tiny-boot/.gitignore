@@ -1,3 +1,4 @@
 /.vite/
 */target
 **/target
+/tiny-admin/tiny-admin-biz/src/main/resources/firebase.json
