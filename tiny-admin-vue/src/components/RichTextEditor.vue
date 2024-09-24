@@ -7,7 +7,8 @@
         :mode="mode"
     />
     <Editor
-        style="height: 500px; overflow-y: hidden;"
+        style="overflow-y: hidden;"
+        :style="{height: height}"
         v-model="valueHtml"
         :defaultConfig="editorConfig"
         :mode="mode"
@@ -32,17 +33,26 @@ interface EmitEvent {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  height: 550
+  height: '500px'
 })
 const emit = defineEmits<EmitEvent>()
-const valueHtml = computed({
+let valueHtml = computed({
   get() {
+    console.log(props.modelValue)
     return props.modelValue
   },
   set(value: string) {
     emit('update:modelValue', value)
   }
 })
+// let valueHtml = shallowRef(props.modelValue)
+// // 监听 valueHtml 变化，同步到 props.modelValue
+// watch(
+//     valueHtml,
+//   (value) => {
+//       console.log(value)
+//     emit('update:modelValue', value)
+//   })
 // 编辑器实例，必须用 shallowRef
 const editorRef = shallowRef()
 
@@ -60,7 +70,6 @@ editorConfig.MENU_CONF!['uploadImage'] = {
   },
   // 自定义插入图片
   customInsert(res: any, insertFn: any) {
-    console.log(res)
     insertFn(res.data, res.originalFilename, res.data)
   },
 }

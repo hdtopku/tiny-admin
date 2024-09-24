@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import {Ref, ref} from 'vue';
-import {saveOrUpdateBrand} from "@/api/brand.ts";
 import {message} from "ant-design-vue";
 import ImageUpload from "@/components/ImageUpload.vue";
+import RichTextEditor from "@/components/RichTextEditor.vue";
+import {saveOrUpdateGoods} from "@/api/goods.ts";
 
 const open = ref<boolean>(false);
 const isUpdate = ref<boolean>(false);
@@ -31,7 +32,7 @@ const emits = defineEmits(['queryList']);
 const handleOk = () => {
   formRef.value.validate().then(() => {
     formLoading.value = true;
-    saveOrUpdateBrand(goodsInfo.value).then(() => {
+    saveOrUpdateGoods(goodsInfo.value).then(() => {
       message.success("操作成功");
       open.value = false
       emits('queryList')
@@ -42,6 +43,7 @@ const handleOk = () => {
     console.log('error', err)
   })
 }
+const activeKey = ref('basicInfo');
 
 const showModal = (goods: any = {}) => {
   if (goods.id) {
@@ -57,6 +59,9 @@ defineExpose({
   showModal
 })
 
+watch(goodsInfo, (newVal)=>{
+  console.log(newVal)
+})
 </script>
 <template>
   <div>
@@ -69,7 +74,12 @@ defineExpose({
           <a-button key="submit" :loading="formLoading" type="primary" @click="handleOk">提交</a-button>
         </a-space>
       </template>
-      <a-form ref="formRef" :label-col="{span: 4}" :model="goodsInfo" :rules="rules">
+      <a-tabs v-model:activeKey="activeKey">
+        <a-tab-pane key="basicInfo" tab="基本信息"></a-tab-pane>
+        <a-tab-pane key="detailInfo" tab="商品详情" force-render></a-tab-pane>
+      </a-tabs>
+      <div style="height: 400px; overflow: auto;">
+      <a-form v-show="activeKey === 'basicInfo'" ref="formRef" :label-col="{span: 4}" :model="goodsInfo" :rules="rules">
         <a-form-item label="商品图册" name="logo">
           <div class="flex justify-center">
             <ImageUpload v-model:image-urls="goodsInfo.albumList" :count="2"></ImageUpload>
@@ -98,6 +108,9 @@ defineExpose({
           </a-form-item>
         </div>
       </a-form>
+      <!-- 商品详情 -->
+      <RichTextEditor v-show="activeKey === 'detailInfo'" v-model:model-value="goodsInfo.detailHtml"></RichTextEditor>
+      </div>
     </a-modal>
   </div>
 </template>

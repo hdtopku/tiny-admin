@@ -12,6 +12,8 @@
     "@ant-design/icons-vue": "^7.0.1",
     "@stomp/stompjs": "^7.0.0",
     "@vueuse/core": "^10.9.0",
+    "@wangeditor/editor": "^5.1.23",
+    "@wangeditor/editor-for-vue": "^5.1.12",
     "animate.css": "^4.1.1",
     "ant-design-vue": "~4.2.3",
     "axios": "^1.7.2",

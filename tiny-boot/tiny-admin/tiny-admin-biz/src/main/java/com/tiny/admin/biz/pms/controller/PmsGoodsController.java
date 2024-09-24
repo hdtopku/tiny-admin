@@ -1,6 +1,7 @@
 package com.tiny.admin.biz.pms.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -11,6 +12,9 @@ import com.tiny.admin.biz.pms.service.IPmsGoodsService;
 import com.tiny.admin.biz.system.vo.BaseQueryParam;
 import com.tiny.core.web.Result;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -56,5 +60,19 @@ public class PmsGoodsController {
             dtoPage.getRecords().add(dto);
         });
         return Result.success(dtoPage);
+    }
+
+    @PostMapping("/saveOrUpdate")
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Boolean> saveOrUpdate(@Valid @RequestBody PmsGoodsDto pmsGoodsDto, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Result.failure(bindingResult.getFieldError().getDefaultMessage());
+        }
+        PmsGoods pmsGoods = BeanUtil.copyProperties(pmsGoodsDto, PmsGoods.class);
+        if(CollUtil.isNotEmpty(pmsGoodsDto.getAlbumList())) {
+            pmsGoods.setAlbumPics(String.join(",", pmsGoodsDto.getAlbumList()));
+        }
+        iPmsGoodsService.saveOrUpdate(pmsGoods);
+        return Result.success();
     }
 }
