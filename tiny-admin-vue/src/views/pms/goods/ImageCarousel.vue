@@ -1,5 +1,5 @@
 <template>
-  <a-carousel arrows style="width: 200px">
+  <a-carousel arrows :style="{width: params.width + 'px', height: params.width + 'px'}">
     <template #prevArrow>
       <div class="custom-slick-arrow" style="left: 10px; z-index: 1">
         <left-circle-outlined/>
@@ -27,15 +27,17 @@ const params = defineProps({
   imgUrls: {
     type: Array,
     required: true,
-  }
+  },
+  width: {
+    type: Number,
+    default: 200,
+  },
 })
 
 </script>
 <style scoped>
 :deep(.slick-slide) {
   text-align: center;
-  height: 160px;
-  line-height: 160px;
   overflow: hidden;
 }
 

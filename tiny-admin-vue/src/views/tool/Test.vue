@@ -1,88 +1,116 @@
 <template>
-  <div style="border: 1px solid #ccc">
-    <Toolbar
-        style="border-bottom: 1px solid #ccc"
-        :editor="editorRef"
-        :defaultConfig="toolbarConfig"
-        :mode="mode"
-    />
-    <Editor
-        style="height: 500px; overflow-y: hidden;"
-        v-model="valueHtml"
-        :defaultConfig="editorConfig"
-        :mode="mode"
-        @onCreated="handleCreated"
-    />
-  </div>
+  <a-space align="center" style="margin-bottom: 16px">
+    CheckStrictly:
+    <a-switch v-model:checked="rowSelection.checkStrictly"></a-switch>
+  </a-space>
+  <a-table :columns="columns" :data-source="data" :row-selection="rowSelection" />
 </template>
-
 <script lang="ts" setup>
-import {computed, onBeforeUnmount, shallowRef} from 'vue'
-import '@wangeditor/editor/dist/css/style.css' // 引入 css
-import {Editor, Toolbar} from '@wangeditor/editor-for-vue'
-import {IEditorConfig} from '@wangeditor/editor'
+import { ref } from 'vue';
+const columns = [
+  {
+    title: 'Name',
+    dataIndex: 'name',
+    key: 'name',
+  },
+  {
+    title: 'Age',
+    dataIndex: 'age',
+    key: 'age',
+    width: '12%',
+  },
+  {
+    title: 'Address',
+    dataIndex: 'address',
+    width: '30%',
+    key: 'address',
+  },
+];
 
-interface Props {
-  modelValue: string
-  height?: number | string // 编辑器的高度
+interface DataItem {
+  key: number;
+  name: string;
+  age: number;
+  address: string;
+  children?: DataItem[];
 }
 
-interface EmitEvent {
-  (e: 'update:modelValue', params: string): void
-}
+const data: DataItem[] = [
+  {
+    key: 1,
+    name: 'John Brown sr.',
+    age: 60,
+    address: 'New York No. 1 Lake Park',
+    children: [
+      {
+        key: 11,
+        name: 'John Brown',
+        age: 42,
+        address: 'New York No. 2 Lake Park',
+      },
+      {
+        key: 12,
+        name: 'John Brown jr.',
+        age: 30,
+        address: 'New York No. 3 Lake Park',
+        children: [
+          {
+            key: 121,
+            name: 'Jimmy Brown',
+            age: 16,
+            address: 'New York No. 3 Lake Park',
+          },
+        ],
+      },
+      {
+        key: 13,
+        name: 'Jim Green sr.',
+        age: 72,
+        address: 'London No. 1 Lake Park',
+        children: [
+          {
+            key: 131,
+            name: 'Jim Green',
+            age: 42,
+            address: 'London No. 2 Lake Park',
+            children: [
+              {
+                key: 1311,
+                name: 'Jim Green jr.',
+                age: 25,
+                address: 'London No. 3 Lake Park',
+              },
+              {
+                key: 1312,
+                name: 'Jimmy Green sr.',
+                age: 18,
+                address: 'London No. 4 Lake Park',
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
+    key: 2,
+    name: 'Joe Black',
+    age: 32,
+    address: 'Sidney No. 1 Lake Park',
+  },
+];
 
-const props = withDefaults(defineProps<Props>(), {
-  height: 550
-})
-const emit = defineEmits<EmitEvent>()
-const valueHtml = computed({
-  get() {
-    return props.modelValue
+const rowSelection = ref({
+  checkStrictly: false,
+  onChange: (selectedRowKeys: (string | number)[], selectedRows: DataItem[]) => {
+    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
   },
-  set(value: string) {
-    emit('update:modelValue', value)
-  }
-})
-// 编辑器实例，必须用 shallowRef
-const editorRef = shallowRef()
-
-const mode = 'simple'
-const toolbarConfig = {}
-//上传图片的地址
-// const uploadFileUrl = import.meta.env.VITE_APP_BASE_API + "/common/upload";
-const editorConfig: Partial<IEditorConfig> = {placeholder: '请输入内容...', 'MENU_CONF': {}}
-editorConfig.MENU_CONF!['uploadImage'] = {
-  server: 'http://localhost:3000/api/file/upload',
-  maxFileSize: 5 * 1024 * 1024,
-  fieldName: 'file',
-  meta: {
-    source: 'sys_user_guide',
+  onSelect: (record: DataItem, selected: boolean, selectedRows: DataItem[]) => {
+    console.log(record, selected, selectedRows);
   },
-  // 自定义插入图片
-  customInsert(res: any, insertFn: any) {
-    console.log(res)
-    insertFn(res.data, res.originalFilename, res.data)
+  onSelectAll: (selected: boolean, selectedRows: DataItem[], changeRows: DataItem[]) => {
+    console.log(selected, selectedRows, changeRows);
   },
-}
-editorConfig.MENU_CONF!['uploadVideo'] = {
-  //   server: uploadFileUrl,
-  maxFileSize: 10 * 1024 * 1024,
-  fieldName: 'file',
-  meta: {
-    source: 'sys_user_guide',
-  },
-  // 自定义插入图片
-  customInsert(res: any, insertFn: any) {
-    insertFn(res.url, res.originalFilename, res.url)
-  },
-}
-// 组件销毁时，也及时销毁编辑器
-onBeforeUnmount(() => {
-  const {value} = editorRef
-  if (value === null) return
-  value.destroy()
-})
-const handleCreated = (editor: any) => {
-  editorRef.value = editor // 记录 editor 实例，重要！
-}
+});
 </script>
+

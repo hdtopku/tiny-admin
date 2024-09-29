@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import {deleteBrandById, getBrandPage} from "@/api/brand.ts";
+import {deleteBrandById, getBrandPage} from "@/api/pms/brand.ts";
 import {DownOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue";
 import {useDebounceFn} from "@vueuse/core";
 import BrandModal from "@/views/pms/brand/BrandModal.vue";

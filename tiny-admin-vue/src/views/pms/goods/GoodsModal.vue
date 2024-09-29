@@ -3,7 +3,7 @@ import {Ref, ref} from 'vue';
 import {message} from "ant-design-vue";
 import ImageUpload from "@/components/ImageUpload.vue";
 import RichTextEditor from "@/components/RichTextEditor.vue";
-import {saveOrUpdateGoods} from "@/api/goods.ts";
+import {saveOrUpdateGoods} from "@/api/pms/goods.ts";
 
 const open = ref<boolean>(false);
 const isUpdate = ref<boolean>(false);

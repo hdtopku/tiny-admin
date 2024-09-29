@@ -15,6 +15,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>
@@ -43,6 +44,15 @@ public class PmsBrandController {
         IPage<PmsBrand> iPage = iPmsBrandService.page(new Page<>(param.getPageNum(), param.getPageSize()), wrapper);
         return Result.success(iPage);
     }
+    @GetMapping("/all")
+    @Operation(summary = "查询所有品牌列表")
+    public Result<List<PmsBrand>> all() {
+        LambdaQueryWrapper<PmsBrand> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByAsc(PmsBrand::getSort);
+        wrapper.and(w -> w.eq(PmsBrand::getStatus, 1));
+        return Result.success(iPmsBrandService.list(wrapper));
+    }
+
     @PostMapping("/saveOrUpdate")
     @Transactional(rollbackFor = Exception.class)
     public Result<Boolean> saveOrUpdate(@Valid @RequestBody PmsBrand pmsBrand, BindingResult bindingResult) {

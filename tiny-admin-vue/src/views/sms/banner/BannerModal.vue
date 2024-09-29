@@ -2,7 +2,7 @@
 import {Ref, ref} from 'vue';
 import {message} from "ant-design-vue";
 import ImageUpload from "@/components/ImageUpload.vue";
-import {saveOrUpdateBanner} from "@/api/banner.ts";
+import {saveOrUpdateBanner} from "@/api/sms/banner.ts";
 
 const open = ref<boolean>(false);
 const isUpdate = ref<boolean>(false);

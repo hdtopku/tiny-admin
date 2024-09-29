@@ -41,6 +41,9 @@ public class PmsBrand implements Serializable {
     @Schema(description = "品牌logo")
     private String logo;
 
+    @Schema(description = "链接至")
+    private String linkTo;
+
     @Schema(description = "排序(数值越大越靠后)")
     private Integer sort;
 

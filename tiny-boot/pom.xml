@@ -26,7 +26,7 @@
         <hutool.version>5.8.27</hutool.version>
         <lombock.version>1.18.32</lombock.version>
         <redis.version>3.1.0</redis.version>
-        <redisson.version>3.32.0</redisson.version>
+        <redisson.version>3.35.0</redisson.version>
         <fastjson2.version>2.0.50</fastjson2.version>
         <devtools.version>3.2.5</devtools.version>
         <mybatis-plus.version>3.5.6</mybatis-plus.version>

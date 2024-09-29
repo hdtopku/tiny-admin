@@ -2,7 +2,7 @@
 
 import BannerModal from "@/views/sms/banner/BannerModal.vue";
 import {DownOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue";
-import {getBannerPage} from "@/api/banner.ts";
+import {getBannerPage} from "@/api/sms/banner.ts";
 import {useDebounceFn} from "@vueuse/core";
 
 const handleAdd = () => {

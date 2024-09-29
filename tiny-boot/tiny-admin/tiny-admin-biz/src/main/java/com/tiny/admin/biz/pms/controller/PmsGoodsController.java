@@ -46,7 +46,8 @@ public class PmsGoodsController {
         if (StringUtils.isNotBlank(param.getKeyword())) {
             wrapper.like(PmsGoods::getGoodsName, param.getKeyword())
                     .or().like(PmsGoods::getGoodsDesc, param.getKeyword())
-                    .or().like(PmsGoods::getBrandName, param.getKeyword());
+                    .or().like(PmsGoods::getBrandName, param.getKeyword())
+                    .or().eq(PmsGoods::getId, param.getKeyword());
         }
         IPage<PmsGoods> iPage = iPmsGoodsService.page(new Page<>(param.getPageNum(), param.getPageSize()), wrapper);
         IPage<PmsGoodsDto> dtoPage = new Page<>();
@@ -54,7 +55,7 @@ public class PmsGoodsController {
         dtoPage.setRecords(new ArrayList<>());
         iPage.getRecords().stream().forEach(item -> {
             PmsGoodsDto dto = BeanUtil.copyProperties(item, PmsGoodsDto.class);
-            if(StringUtils.isNotBlank(item.getAlbumPics())) {
+            if (StringUtils.isNotBlank(item.getAlbumPics())) {
                 dto.setAlbumList(Arrays.asList(item.getAlbumPics().split(",")));
             }
             dtoPage.getRecords().add(dto);
@@ -69,7 +70,7 @@ public class PmsGoodsController {
             return Result.failure(bindingResult.getFieldError().getDefaultMessage());
         }
         PmsGoods pmsGoods = BeanUtil.copyProperties(pmsGoodsDto, PmsGoods.class);
-        if(CollUtil.isNotEmpty(pmsGoodsDto.getAlbumList())) {
+        if (CollUtil.isNotEmpty(pmsGoodsDto.getAlbumList())) {
             pmsGoods.setAlbumPics(String.join(",", pmsGoodsDto.getAlbumList()));
         }
         iPmsGoodsService.saveOrUpdate(pmsGoods);

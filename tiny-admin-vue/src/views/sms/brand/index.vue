@@ -1,14 +1,14 @@
 <script setup lang="ts">
 
 import {DownOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue";
-import {getBannerPage} from "@/api/banner.ts";
 import {useDebounceFn} from "@vueuse/core";
+import {getAllBrands} from "@/api/pms/brand.ts";
+import {getSmsBrandPage} from "@/api/sms/brand.ts";
+import BrandModal from "@/views/sms/brand/BrandModal.vue";
+import {list} from "postcss";
 
-const handleAdd = () => {
-  bannerModalRef.value.showModal()
-}
 
-const switchLoading = ref(false)
+const switchLoading = ref(true)
 const pagination = ref({
   current: 1,
   pageSize: 10,
@@ -21,24 +21,46 @@ const searchForm = ref({
   pageSize: pagination.value.pageSize,
 })
 const dataSource = ref([])
-
+const brandMap = new Map()
 const queryList = () => {
   switchLoading.value = true
   searchForm.value.keyword = searchForm.value.keyword.trim()
-  getBannerPage(searchForm.value).then((res:any) => {
-    dataSource.value = res.records
+  getSmsBrandPage(searchForm.value).then((res: any) => {
+    const list: any = []
+    res.records?.forEach((item: any) => {
+      const brandInfo = brandMap.get(item.brandId)
+      Object.assign(brandInfo, item)
+      brandInfo.disabled = true
+      list.push(brandInfo)
+    })
+    brandList.sort((a: any, b: any) => {
+      if (!a.disabled && !b.disabled || a.disabled && b.disabled) {
+        return a.sort - b.sort
+      }
+      return -1
+    })
+    dataSource.value = list
   }).finally(() => {
     switchLoading.value = false
   })
 }
-queryList()
+let brandList: any = []
+getAllBrands().then((res: any) => {
+  brandList = res
+  res.forEach((item: any) => {
+    brandMap.set(item.id, item)
+    item.brandId = item.id
+    item.disabled = false
+  })
+  queryList()
+})
 const debounceQuery = useDebounceFn(queryList, 500)
 watch(() => searchForm.value.keyword, debounceQuery)
 const queryByStatus = () => {
 
 }
 
-const columns:any = [{
+const columns: any = [{
   title: '序号',
   dataIndex: 'index',
   key: 'index',
@@ -46,23 +68,17 @@ const columns:any = [{
   align: 'center',
 }, {
   title: '图片',
-  dataIndex: 'picUrl',
-  key: 'picUrl',
+  dataIndex: 'logo',
+  key: 'logo',
   width: 100,
   align: 'center',
 }, {
   title: '品牌名称',
-  dataIndex: 'bannerName',
-  key: 'bannerName',
+  dataIndex: 'brandName',
+  key: 'brandName',
   width: 200,
   align: 'center',
 }, {
-  title: '平台',
-  dataIndex: 'platform',
-  key: 'platform',
-  width: 100,
-  align: 'center',
-},{
   title: '备注',
   dataIndex: 'remark',
   key: 'remark',
@@ -70,8 +86,8 @@ const columns:any = [{
   align: 'center',
 }, {
   title: '排序',
-  dataIndex:'sort',
-  key:'sort',
+  dataIndex: 'sort',
+  key: 'sort',
   width: 100,
   align: 'center',
 }, {
@@ -84,9 +100,13 @@ const columns:any = [{
 const handleTableChange = (pagination, filters, sorter) => {
 
 }
-const bannerModalRef = ref()
+
+const brandModalRef = ref()
+const handleAdd = () => {
+  brandModalRef.value.showModal(brandList)
+}
 const handleEdit = (record) => {
-  bannerModalRef.value.showModal(record)
+  brandModalRef.value.showModal(brandList, record)
 }
 const handleDelete = (id) => {
 
@@ -98,17 +118,17 @@ const handleDelete = (id) => {
     <div class="p-4">
       <div class="flex mb-4">
         <div class="flex items-center gap-4 mx-auto sm:w-[80%] w-full">
-          <a-button type="primary" @click="handleAdd">新增</a-button>
+          <a-button :loading="switchLoading" type="primary" @click="handleAdd">新增</a-button>
           <a-input id="keyword" v-model:value="searchForm.keyword" allow-clear
                    autocomplete="off" class="text-left"
-                   placeholder="搜索品牌名、简介、品牌故事"
+                   placeholder="搜索备注"
                    type="text" @keyup.enter.native="queryList">
             <template #prefix>
               <a-switch v-model:checked="searchForm.status" :loading="switchLoading" checked-children="已启用"
                         class="flex-shrink-0" un-checked-children="已禁用" @change="queryByStatus"/>
             </template>
             <template #suffix>
-              <a-button type="primary" @click="queryList">搜索</a-button>
+              <a-button :loading="switchLoading" type="primary" @click="queryList">搜索</a-button>
             </template>
           </a-input>
         </div>
@@ -123,20 +143,20 @@ const handleDelete = (id) => {
         <template v-if="column.key === 'index'">
           {{ index + 1 }}
         </template>
-        <template v-else-if="column.dataIndex === 'picUrl'">
-          <img :src="record.picUrl"/>
+        <template v-else-if="column.dataIndex === 'logo'">
+          <a-avatar shape="square" size="large" :src="record.logo"></a-avatar>
         </template>
-        <template v-else-if="column.dataIndex === 'bannerName'">
+        <template v-else-if="column.dataIndex === 'brandName'">
           <a-tooltip :arrow="false">
             <template #title>
-              <span>{{ record.bannerName }}</span>
+              <span>{{ record.brandName }}</span>
             </template>
-            <span>{{ record.bannerName?.substring(0, 20) }}</span>
-            <span v-if="record.bannerName?.length > 20">...</span>
+            <span>{{ record.brandName?.substring(0, 20) }}</span>
+            <span v-if="record.brandName?.length > 20">...</span>
           </a-tooltip>
         </template>
         <template v-else-if="column.dataIndex === 'platform'">
-          {{record.platform === 1 ? '电脑端' : '移动端'}}
+          {{ record.platform === 1 ? '电脑端' : '移动端' }}
         </template>
         <template v-else-if="column.dataIndex === 'remark'">
           <a-tooltip :arrow="false">
@@ -171,7 +191,7 @@ const handleDelete = (id) => {
               <template #overlay>
                 <a-menu class="text-center">
                   <a-menu-item>
-                    <a-button type="link" @click="() => handleEdit(record)">编辑轮播卡片</a-button>
+                    <a-button type="link" @click="() => handleEdit(record)">编辑推荐品牌</a-button>
                   </a-menu-item>
                   <a-menu-item>
                     <a-popconfirm cancel-text="否" ok-text="是"
@@ -181,10 +201,10 @@ const handleDelete = (id) => {
                         <question-circle-outlined style="color: red"/>
                       </template>
                       <template #title>
-                        <div>是否删除轮播卡片？</div>
+                        <div>是否删除推荐品牌？</div>
                         <a-tag class="my-2" color="red">{{ record.brandName }}</a-tag>
                       </template>
-                      <a-button danger type="link">删除轮播卡片</a-button>
+                      <a-button danger type="link">删除推荐品牌</a-button>
                     </a-popconfirm>
                   </a-menu-item>
                 </a-menu>
@@ -194,7 +214,7 @@ const handleDelete = (id) => {
         </template>
       </template>
     </a-table>
-
+    <BrandModal @query-list="queryList" ref="brandModalRef"></BrandModal>
   </div>
 </template>
 

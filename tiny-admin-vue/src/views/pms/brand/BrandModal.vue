@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import {Ref, ref} from 'vue';
-import {saveOrUpdateBrand} from "@/api/brand.ts";
+import {saveOrUpdateBrand} from "@/api/pms/brand.ts";
 import {message} from "ant-design-vue";
 import ImageUpload from "@/components/ImageUpload.vue";
 
