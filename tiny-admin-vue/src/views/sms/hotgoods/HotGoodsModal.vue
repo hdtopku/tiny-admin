@@ -3,8 +3,8 @@ import {ref} from 'vue';
 import {message} from "ant-design-vue";
 import ImageCarousel from "@/views/pms/goods/ImageCarousel.vue";
 import {getGoodsPage} from "@/api/pms/goods.ts";
-import {saveNewGoods} from "@/api/sms/newGoods.ts";
 import {useDebounceFn} from "@vueuse/core";
+import {saveHotGoods} from "@/api/sms/hotGoods.ts";
 
 const open = ref<boolean>(false);
 const isUpdate = ref<boolean>(false);
@@ -24,7 +24,7 @@ const columns: any = [
     dataIndex: 'goodsName',
     key: 'goodsName',
     width: 150,
-  },{
+  }, {
     title: '商品id',
     dataIndex: 'goodsId',
     key: 'goodsId',
@@ -100,7 +100,7 @@ const handleOk = () => {
     })
   })
   formLoading.value = true
-  saveNewGoods(newGoodsList).then(() => {
+  saveHotGoods(newGoodsList).then(() => {
     message.success("操作成功");
     open.value = false
     emits('queryList')
@@ -133,7 +133,7 @@ watch(brandInfo, (newVal) => {
 </script>
 <template>
   <div>
-    <a-modal v-model:open="open" :title="isUpdate? '编辑推荐新品' : '新增推荐新品'" cancel-text="取消" destroy-on-close
+    <a-modal v-model:open="open" :title="isUpdate? '编辑热销商品' : '新增热销商品'" cancel-text="取消" destroy-on-close
              ok-text="提交"
              @ok="handleOk">
       <template #footer>
@@ -142,17 +142,17 @@ watch(brandInfo, (newVal) => {
           <a-button key="submit" :loading="formLoading" type="primary" @click="handleOk">提交</a-button>
         </a-space>
       </template>
-      <a-input v-model:value="searchForm.keyword" placeholder="请输入商品名称、商品id、描述" allow-clear>
+      <a-input v-model:value="searchForm.keyword" allow-clear placeholder="请输入商品名称、商品id、描述">
         <template #suffix>
           <a-button type="primary" @click="queryList">搜索</a-button>
         </template>
       </a-input>
-      <a-table class="mt-4" :row-selection="rowSelection" :columns="columns" :dataSource="dataSource"
-               :pagination="pagination" :scroll="{ x: 'max-content', y: 'calc(100vh - 200px)' }"
+      <a-table :columns="columns" :dataSource="dataSource" :pagination="pagination" :row-selection="rowSelection"
+               :scroll="{ x: 'max-content', y: 'calc(100vh - 200px)' }" class="mt-4"
                @change="handleTableChange">
         <template #bodyCell="{record, column}">
           <template v-if="column.dataIndex === 'albumList'">
-            <ImageCarousel :width="100" :img-urls="record?.albumList || []"/>
+            <ImageCarousel :img-urls="record?.albumList || []" :width="100"/>
           </template>
           <template v-else-if="column.dataIndex === 'goodsName'">
             <a-tooltip :arrow="false">

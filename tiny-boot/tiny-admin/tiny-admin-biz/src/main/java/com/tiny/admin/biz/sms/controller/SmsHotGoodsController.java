@@ -6,8 +6,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.tiny.admin.biz.sms.entity.SmsNewGoods;
-import com.tiny.admin.biz.sms.service.ISmsNewGoodsService;
+import com.tiny.admin.biz.sms.entity.SmsHotGoods;
+import com.tiny.admin.biz.sms.service.ISmsHotGoodsService;
 import com.tiny.admin.biz.system.vo.BaseQueryParam;
 import com.tiny.core.web.Result;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,54 +26,54 @@ import java.util.stream.Collectors;
 
 /**
  * <p>
- * 新品推荐表 前端控制器
+ * 热销商品推荐表 前端控制器
  * </p>
  *
  * @author lxh
- * @since 2024-09-28
+ * @since 2024-09-30
  */
 @RestController
-@RequestMapping("/sms/newGoods")
-public class SmsNewGoodsController {
+@RequestMapping("/sms/hotGoods")
+public class SmsHotGoodsController {
     @Resource
-    private ISmsNewGoodsService iSmsNewGoodsService;
+    private ISmsHotGoodsService iSmsHotGoodsService;
     @PostMapping("/page")
     @Operation(summary = "分页查询品牌列表")
-    public Result<IPage<SmsNewGoods>> page(@RequestBody(required = false) BaseQueryParam param) {
-        LambdaQueryWrapper<SmsNewGoods> wrapper = new LambdaQueryWrapper<>();
-        wrapper.orderByAsc(SmsNewGoods::getSort);
+    public Result<IPage<SmsHotGoods>> page(@RequestBody(required = false) BaseQueryParam param) {
+        LambdaQueryWrapper<SmsHotGoods> wrapper = new LambdaQueryWrapper<>();
+        wrapper.orderByAsc(SmsHotGoods::getSort);
         if (StringUtils.isNotBlank(param.getKeyword())) {
-            wrapper.like(SmsNewGoods::getRemark, param.getKeyword());
-            wrapper.or().eq(SmsNewGoods::getGoodsId, param.getKeyword());
+            wrapper.like(SmsHotGoods::getRemark, param.getKeyword());
+            wrapper.or().eq(SmsHotGoods::getGoodsId, param.getKeyword());
         }
-        IPage<SmsNewGoods> iPage = iSmsNewGoodsService.page(new Page<>(param.getPageNum(), param.getPageSize()), wrapper);
+        IPage<SmsHotGoods> iPage = iSmsHotGoodsService.page(new Page<>(param.getPageNum(), param.getPageSize()), wrapper);
         return Result.success(iPage);
     }
 
     @PostMapping("/save")
     @Transactional(rollbackFor = Exception.class)
-    public Result<Boolean> save(@Valid @RequestBody List<SmsNewGoods> smsNewGoodsList, BindingResult bindingResult) {
+    public Result<Boolean> save(@Valid @RequestBody List<SmsHotGoods> smsHotGoodsList, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return Result.failure(bindingResult.getFieldError().getDefaultMessage());
         }
-        QueryWrapper<SmsNewGoods> queryWrapper = new QueryWrapper<>();
-        Set<String> goodsIds = smsNewGoodsList.stream().map(SmsNewGoods::getGoodsId).collect(Collectors.toSet());
+        QueryWrapper<SmsHotGoods> queryWrapper = new QueryWrapper<>();
+        Set<String> goodsIds = smsHotGoodsList.stream().map(SmsHotGoods::getGoodsId).collect(Collectors.toSet());
         queryWrapper.in("goods_id", goodsIds);
-        List<SmsNewGoods> oldList = iSmsNewGoodsService.list(queryWrapper);
+        List<SmsHotGoods> oldList = iSmsHotGoodsService.list(queryWrapper);
         if (CollUtil.isNotEmpty(oldList)) {
-            Set<String> ids = oldList.stream().map(SmsNewGoods::getId).collect(Collectors.toSet());
-            iSmsNewGoodsService.removeByIds(ids);
+            Set<String> ids = oldList.stream().map(SmsHotGoods::getId).collect(Collectors.toSet());
+            iSmsHotGoodsService.removeByIds(ids);
         }
-        iSmsNewGoodsService.saveBatch(smsNewGoodsList);
+        iSmsHotGoodsService.saveBatch(smsHotGoodsList);
         return Result.success();
     }
     @PostMapping("/update")
     @Transactional(rollbackFor = Exception.class)
-    public Result<Boolean> update(@Valid @RequestBody SmsNewGoods smsNewGoods, BindingResult bindingResult) {
+    public Result<Boolean> update(@Valid @RequestBody SmsHotGoods smsHotGoods, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return Result.failure(bindingResult.getFieldError().getDefaultMessage());
         }
-        iSmsNewGoodsService.updateById(smsNewGoods);
+        iSmsHotGoodsService.updateById(smsHotGoods);
         return Result.success();
     }
 }

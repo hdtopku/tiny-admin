@@ -4,6 +4,7 @@ import {DownOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue";
 import {useDebounceFn} from "@vueuse/core";
 import NewGoodsModal from "@/views/sms/newgoods/NewGoodsModal.vue";
 import {getSmsNewGoodsPage} from "@/api/sms/newGoods.ts";
+import EditNewGoodsModal from "@/views/sms/newgoods/EditNewGoodsModal.vue";
 
 const switchLoading = ref(true)
 const pagination = ref({
@@ -41,19 +42,19 @@ const columns: any = [{
   title: '序号',
   dataIndex: 'index',
   key: 'index',
-  width: 80,
+  width: 60,
+  align: 'center',
+}, {
+  title: '商品id',
+  dataIndex: 'goodsId',
+  key: 'goodsId',
+  width: 100,
   align: 'center',
 }, {
   title: '备注',
   dataIndex: 'remark',
   key: 'remark',
   width: 200,
-  align: 'center',
-},{
-  title: '商品id',
-  dataIndex: 'goodsId',
-  key: 'goodsId',
-  width: 100,
   align: 'center',
 }, {
   title: '排序',
@@ -76,8 +77,9 @@ const modalRef = ref()
 const handleAdd = () => {
   modalRef.value.showModal(brandList)
 }
+const editModalRef = ref()
 const handleEdit = (record) => {
-  modalRef.value.showModal(brandList, record)
+  editModalRef.value.showModal(record)
 }
 const handleDelete = (id) => {
 
@@ -114,15 +116,6 @@ const handleDelete = (id) => {
         <template v-if="column.key === 'index'">
           {{ index + 1 }}
         </template>
-        <template v-else-if="column.dataIndex === 'brandName'">
-          <a-tooltip :arrow="false">
-            <template #title>
-              <span>{{ record.brandName }}</span>
-            </template>
-            <span>{{ record.brandName?.substring(0, 20) }}</span>
-            <span v-if="record.brandName?.length > 20">...</span>
-          </a-tooltip>
-        </template>
         <template v-else-if="column.dataIndex === 'goodsId'">
           <a-typography-text copyable>{{ record.goodsId }}</a-typography-text>
         </template>
@@ -131,8 +124,8 @@ const handleDelete = (id) => {
             <template #title>
               <span>{{ record.remark }}</span>
             </template>
-            <span>{{ record.remark?.substring(0, 10) }}</span>
-            <span v-if="record.remark?.length > 10">...</span>
+            <span>{{ record.remark?.substring(0, 20) }}</span>
+            <span v-if="record.remark?.length > 20">...</span>
           </a-tooltip>
         </template>
         <template v-else-if="column.dataIndex === 'sort'">
@@ -159,7 +152,7 @@ const handleDelete = (id) => {
               <template #overlay>
                 <a-menu class="text-center">
                   <a-menu-item>
-                    <a-button type="link" @click="() => handleEdit(record)">编辑推荐品牌</a-button>
+                    <a-button type="link" @click="() => handleEdit(record)">编辑推荐新品</a-button>
                   </a-menu-item>
                   <a-menu-item>
                     <a-popconfirm cancel-text="否" ok-text="是"
@@ -169,7 +162,7 @@ const handleDelete = (id) => {
                         <question-circle-outlined style="color: red"/>
                       </template>
                       <template #title>
-                        <div>是否删除推荐品牌？</div>
+                        <div>是否删除推荐新品？</div>
                         <a-tag class="my-2" color="red">{{ record.brandName }}</a-tag>
                       </template>
                       <a-button danger type="link">删除推荐品牌</a-button>
@@ -183,6 +176,7 @@ const handleDelete = (id) => {
       </template>
     </a-table>
     <NewGoodsModal @query-list="queryList" ref="modalRef"></NewGoodsModal>
+    <EditNewGoodsModal ref="editModalRef" @query-list="queryList"></EditNewGoodsModal>
   </div>
 </template>
 
