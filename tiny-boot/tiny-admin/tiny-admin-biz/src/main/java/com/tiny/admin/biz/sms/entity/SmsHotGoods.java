@@ -3,11 +3,12 @@ package com.tiny.admin.biz.sms.entity;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
-import java.time.LocalDateTime;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -34,7 +35,7 @@ public class SmsHotGoods implements Serializable {
     @Schema(description = "排序(值越大越靠后)")
     private Integer sort;
 
-    @Schema(description = "品牌名称")
+    @Schema(description = "备注")
     private String remark;
 
     @Schema(description = "是否生效(0:未生效,1:已生效)")

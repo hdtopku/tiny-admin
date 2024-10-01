@@ -120,7 +120,8 @@ const handleDelete = (id) => {
           <a-typography-text copyable>{{ record.goodsId }}</a-typography-text>
         </template>
         <template v-else-if="column.dataIndex === 'remark'">
-          <a-tooltip :arrow="false">
+          <span v-if="record.remark?.length <= 20">{{ record.remark }}</span>
+          <a-tooltip v-else :arrow="false">
             <template #title>
               <span>{{ record.remark }}</span>
             </template>

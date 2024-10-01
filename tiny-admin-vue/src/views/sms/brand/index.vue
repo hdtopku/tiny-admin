@@ -5,8 +5,6 @@ import {useDebounceFn} from "@vueuse/core";
 import {getAllBrands} from "@/api/pms/brand.ts";
 import {getSmsBrandPage} from "@/api/sms/brand.ts";
 import BrandModal from "@/views/sms/brand/BrandModal.vue";
-import {list} from "postcss";
-
 
 const switchLoading = ref(true)
 const pagination = ref({
