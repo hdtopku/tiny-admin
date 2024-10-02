@@ -2,6 +2,7 @@
 import FlashSaleModal from "@/views/sms/flashsale/FlashSaleModal.vue";
 import {getFlashSalePage} from "@/api/sms/flashSale.ts";
 import {DownOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue";
+import AddGoodsModal from "@/views/sms/flashsale/AddGoodsModal.vue";
 
 const loading = ref(false)
 const pagination = ref({
@@ -36,6 +37,11 @@ const queryByStatus = () => {
 
 }
 
+const addModalRef = ref()
+const assignGoods = (record: any) => {
+  addModalRef.value.openModal(record)
+}
+
 const columns: any = [{
   title: '序号',
   dataIndex: 'index',
@@ -55,13 +61,25 @@ const columns: any = [{
   title: '开始时间',
   dataIndex: 'startTime',
   key: 'startTime',
-  width: 100,
+  width: 120,
   align: 'center',
 }, {
   title: '结束时间',
   dataIndex: 'endTime',
   key: 'endTime',
-  width: 100,
+  width: 120,
+  align: 'center',
+}, {
+  title: '创建时间',
+  dataIndex: 'createTime',
+  key: 'createTime',
+  width: 120,
+  align: 'center',
+}, {
+  title: '修改时间',
+  dataIndex: 'updateTime',
+  key: 'updateTime',
+  width: 120,
   align: 'center',
 }, {
   title: '操作',
@@ -87,7 +105,7 @@ const columns: any = [{
                         class="flex-shrink-0" un-checked-children="已禁用" @change="queryByStatus"/>
             </template>
             <template #suffix>
-              <a-button :loading="loading" type="primary" @click="queryList">搜索</a-button>
+              <a-button type="primary" @click="queryList">搜索</a-button>
             </template>
           </a-input>
         </div>
@@ -160,11 +178,16 @@ const columns: any = [{
               </template>
             </a-dropdown>
           </div>
+          <div>
+            <a-button type="link" @click="assignGoods(record)">添加商品</a-button>
+            <a-button danger type="text" @click="assignGoods(record)">移除商品</a-button>
+          </div>
         </template>
       </template>
     </a-table>
 
     <FlashSaleModal ref="modalRef" @query-list="queryList"></FlashSaleModal>
+    <AddGoodsModal ref="addModalRef" @query-list="queryList"></AddGoodsModal>
   </div>
 </template>
 

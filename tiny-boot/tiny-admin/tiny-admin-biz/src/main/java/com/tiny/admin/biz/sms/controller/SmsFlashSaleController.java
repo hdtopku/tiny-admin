@@ -2,9 +2,12 @@ package com.tiny.admin.biz.sms.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.tiny.admin.biz.sms.entity.SmsFlashGoodsRel;
 import com.tiny.admin.biz.sms.entity.SmsFlashSale;
+import com.tiny.admin.biz.sms.service.ISmsFlashGoodsRelService;
 import com.tiny.admin.biz.sms.service.ISmsFlashSaleService;
 import com.tiny.admin.biz.system.vo.BaseQueryParam;
 import com.tiny.core.web.Result;
@@ -18,6 +21,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -32,6 +39,8 @@ import javax.annotation.Resource;
 public class SmsFlashSaleController {
     @Resource
     private ISmsFlashSaleService iSmsFlashSaleService;
+    @Resource
+    private ISmsFlashGoodsRelService iSmsFlashGoodsRelService;
 
     @PostMapping("/saveOrUpdate")
     @Transactional(rollbackFor = Exception.class)
@@ -52,6 +61,15 @@ public class SmsFlashSaleController {
                     .or().like(SmsFlashSale::getActivityName, param.getKeyword());
         }
         IPage<SmsFlashSale> iPage = iSmsFlashSaleService.page(new Page<>(param.getPageNum(), param.getPageSize()), wrapper);
+        HashMap<String, Set<String>> map = new HashMap<>();
+        if(CollectionUtils.isNotEmpty(iPage.getRecords())) {
+            iPage.getRecords().forEach(smsFlashSale -> map.put(smsFlashSale.getId(), new HashSet<>()));
+            List<SmsFlashGoodsRel> smsFlashGoodsRels = iSmsFlashGoodsRelService.list(new LambdaQueryWrapper<SmsFlashGoodsRel>().in(SmsFlashGoodsRel::getFlashId, map.keySet()));
+            if(CollectionUtils.isNotEmpty(smsFlashGoodsRels)) {
+                smsFlashGoodsRels.forEach(smsFlashGoodsRel -> map.get(smsFlashGoodsRel.getFlashId()).add(smsFlashGoodsRel.getGoodsId()));
+                iPage.getRecords().forEach(smsFlashSale -> smsFlashSale.setGoodsIds(map.get(smsFlashSale.getId())));
+            }
+        }
         return Result.success(iPage);
     }
 }

@@ -9,6 +9,7 @@ import lombok.Setter;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 /**
  * <p>
@@ -53,4 +54,7 @@ public class SmsFlashSale implements Serializable {
 
     @Schema(description = "更新时间")
     private LocalDateTime updateTime;
+
+    @TableField(exist = false)
+    private Set<String> goodsIds;
 }

@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import * as dayjs from "dayjs"
-import {Dayjs} from "dayjs"
+import dayjs, {Dayjs} from "dayjs"
 import {saveOrUpdateFlashSale} from "@/api/sms/flashSale.ts";
 import {message} from "ant-design-vue";
 
