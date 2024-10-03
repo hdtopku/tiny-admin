@@ -7,3 +7,7 @@ export const getGoodsPage = async (data: any) => {
 export const saveOrUpdateGoods = async (data: any) => {
     return http.post("/pms/goods/saveOrUpdate", data)
 }
+
+export const getGoodsListByIds = async (data: any) => {
+    return http.post("/pms/goods/listByIds", data)
+}

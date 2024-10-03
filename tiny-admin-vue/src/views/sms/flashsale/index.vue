@@ -3,6 +3,7 @@ import FlashSaleModal from "@/views/sms/flashsale/FlashSaleModal.vue";
 import {getFlashSalePage} from "@/api/sms/flashSale.ts";
 import {DownOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue";
 import AddGoodsModal from "@/views/sms/flashsale/AddGoodsModal.vue";
+import RemoveGoodsModal from "@/views/sms/flashsale/RemoveGoodsModal.vue";
 
 const loading = ref(false)
 const pagination = ref({
@@ -41,16 +42,22 @@ const addModalRef = ref()
 const assignGoods = (record: any) => {
   addModalRef.value.openModal(record)
 }
+const removeModalRef = ref()
+const removeGoods = (record: any) => {
+  removeModalRef.value.openModal(record)
+}
 
 const columns: any = [{
   title: '序号',
   dataIndex: 'index',
   key: 'index',
+  align: 'center',
   width: 60,
 }, {
   title: '活动名称',
   dataIndex: 'activityName',
   key: 'activityName',
+  align: 'center',
   width: 120,
 }, {
   title: '备注',
@@ -84,7 +91,7 @@ const columns: any = [{
 }, {
   title: '操作',
   key: 'operation',
-  width: 120,
+  width: 160,
   align: 'center',
   fixed: 'right',
 }]
@@ -119,7 +126,7 @@ const columns: any = [{
           {{ index + 1 }}
         </template>
         <template v-if="column.key === 'activityName'">
-          <span v-if="record.remark?.length <= 20">{{ record.activityName }}</span>
+          <span v-if="record.activityName?.length <= 20">{{ record.activityName }}</span>
           <a-tooltip v-else :arrow="false">
             <template #title>
               <span>{{ record.activityName }}</span>
@@ -127,6 +134,7 @@ const columns: any = [{
             <span>{{ record.activityName?.substring(0, 20) }}</span>
             <span v-if="record.activityName?.length > 20">...</span>
           </a-tooltip>
+          <a-tag>活动共包含<b class="text-red-500">{{ record.goodsIds.length }}</b>件商品</a-tag>
         </template>
         <template v-if="column.key === 'remark'">
           <span v-if="record.remark?.length <= 20">{{ record.remark }}</span>
@@ -180,7 +188,7 @@ const columns: any = [{
           </div>
           <div>
             <a-button type="link" @click="assignGoods(record)">添加商品</a-button>
-            <a-button danger type="text" @click="assignGoods(record)">移除商品</a-button>
+            <a-button danger type="text" @click="removeGoods(record)">移除商品</a-button>
           </div>
         </template>
       </template>
@@ -188,6 +196,7 @@ const columns: any = [{
 
     <FlashSaleModal ref="modalRef" @query-list="queryList"></FlashSaleModal>
     <AddGoodsModal ref="addModalRef" @query-list="queryList"></AddGoodsModal>
+    <RemoveGoodsModal ref="removeModalRef" @query-list="queryList"></RemoveGoodsModal>
   </div>
 </template>
 

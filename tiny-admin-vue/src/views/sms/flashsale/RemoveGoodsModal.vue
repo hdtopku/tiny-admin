@@ -2,12 +2,10 @@
 import {ref} from 'vue';
 import {message} from "ant-design-vue";
 import ImageCarousel from "@/views/pms/goods/ImageCarousel.vue";
-import {getGoodsPage} from "@/api/pms/goods.ts";
-import {useDebounceFn} from "@vueuse/core";
-import {assignGoods} from "@/api/sms/flashGoodsRel.ts";
+import {getGoodsListByIds} from "@/api/pms/goods.ts";
+import {removeGoods} from "@/api/sms/flashGoodsRel.ts";
 
 const open = ref<boolean>(false);
-const isUpdate = ref<boolean>(false);
 const flashInfo: Ref<any> = ref({});
 const formLoading = ref(false)
 const emits = defineEmits(['queryList'])
@@ -44,69 +42,20 @@ const columns: any = [
     width: 100,
   }
 ]
-const pagination = ref({
-  current: 1,
-  pageSize: 10,
-  total: 0,
-})
-const searchForm = ref({
-  keyword: '',
-  status: true,
-  pageNum: pagination.value.current,
-  pageSize: pagination.value.pageSize,
-})
 const dataSource = ref([])
 
+const selectedRowKeys: Ref<string[]> = ref([])
+let originalGoodsIdSet
 const queryList = () => {
-  getGoodsPage(searchForm.value).then((res: any) => {
-    res.records.forEach((item: any) => {
-      item.disabled = originalSelectedGoodsIdSet.value.has(item.id)
-    })
-    res.records.sort((a, b) => {
-      if (!a.sort) a.sort = 99999
-      if (!b.sort) b.sort = 99999
-      if (a.disabled && b.disabled || !a.disabled && !b.disabled) {
-        return a.sort - b.sort
-      }
-      if (a.disabled) return 1
-      return -1
-    })
-    dataSource.value = res.records
-    pagination.value.total = res.total
-    pagination.value.current = res.current
+  getGoodsListByIds(flashInfo.value.goodsIds).then((res: any) => {
+    dataSource.value = res
   })
 }
 
-const handleTableChange = (pagination: any) => {
-  searchForm.value.pageNum = pagination.current
-  searchForm.value.pageSize = pagination.pageSize
-  queryList()
-}
-
-const debounceQuery = useDebounceFn(queryList, 500)
-watch(() => searchForm.value.keyword, debounceQuery)
-
-const originalSelectedGoodsIds: Ref<string[]> = ref([])
-const originalSelectedGoodsIdSet = ref()
-
-const selectedRowKeys: Ref<string[]> = originalSelectedGoodsIds
-const rowSelection: any = computed(() => {
-  return {
-    selectedRowKeys: unref(selectedRowKeys),
-    getCheckboxProps: (record: any) => ({
-      disabled: originalSelectedGoodsIdSet.value.has(record.id), // Column configuration not to be checked
-      name: record.name,
-    }),
-    onChange: (allSelectedRowKeys: string[]) => {
-      selectedRowKeys.value = allSelectedRowKeys
-    },
-    preserveSelectedRowKeys: true,
-  };
-});
-
 const handleOk = () => {
   formLoading.value = true
-  assignGoods(flashInfo.value.id, selectedRowKeys.value).then(() => {
+  selectedRowKeys.value.forEach(id => originalGoodsIdSet.delete(id))
+  removeGoods(flashInfo.value.id, [...originalGoodsIdSet]).then(() => {
     message.success("操作成功")
     open.value = false
     emits('queryList')
@@ -117,10 +66,7 @@ const handleOk = () => {
 
 const openModal = (data: any = {}) => {
   if (data.id) {
-    isUpdate.value = true;
     flashInfo.value = Object.assign({}, data)
-    originalSelectedGoodsIds.value = data.goodsIds
-    originalSelectedGoodsIdSet.value = new Set(data.goodsIds)
   } else {
     flashInfo.value = {
       brandId: null,
@@ -128,17 +74,36 @@ const openModal = (data: any = {}) => {
       sort: 9999,
       activityName: '',
       remark: '',
+      goodsIds: [],
     }
   }
   open.value = true
-  if (dataSource.value.length === 0) queryList()
+  selectedRowKeys.value = [...flashInfo.value.goodsIds]
+  originalGoodsIdSet = new Set(flashInfo.value.goodsIds)
+  queryList()
 }
+const rowSelection: any = computed(() => {
+  return {
+    selectedRowKeys: unref(selectedRowKeys),
+    getCheckboxProps: (record: any) => ({
+      disabled: false,
+      name: record.name,
+    }),
+    onChange: (allSelectedRowKeys: string[]) => {
+      selectedRowKeys.value = allSelectedRowKeys
+    },
+    preserveSelectedRowKeys: true,
+  };
+})
 defineExpose({
   openModal
 })
 const popConfirmVisible = ref(false)
 const confirmClear = () => {
-  selectedRowKeys.value = [...originalSelectedGoodsIdSet.value]
+  selectedRowKeys.value = []
+}
+const handleTableChange = () => {
+
 }
 </script>
 <template>
@@ -147,7 +112,7 @@ const confirmClear = () => {
              ok-text="提交"
              @ok="handleOk">
       <template #title>
-        添加秒杀商品 - {{ flashInfo.activityName }}
+        移除秒杀商品 - {{ flashInfo.activityName }}
       </template>
       <template #footer>
         <a-space class="flex justify-end">
@@ -156,36 +121,35 @@ const confirmClear = () => {
         </a-space>
       </template>
       <div class="mb-4">
-        <a-tag>原有秒杀商品数：{{ originalSelectedGoodsIdSet.size }}</a-tag>
-        +
-        <a-tag v-if="selectedRowKeys.length - originalSelectedGoodsIdSet.size === 0" color="red"
+        <a-tag>原有秒杀商品数：{{ flashInfo?.goodsIds?.length }}</a-tag>
+        -
+        <a-tag v-if="flashInfo.goodsIds.length - selectedRowKeys.length === 0" color="red"
                @close.prevent="popConfirmVisible = true">
-          当前添加商品数：{{ selectedRowKeys.length - originalSelectedGoodsIdSet.size }}
+          当前移除商品数：{{ flashInfo.goodsIds.length - selectedRowKeys.length }}
         </a-tag>
         <a-popconfirm
             v-else
             v-model:open="popConfirmVisible"
+            :title="'是否重新选择想移除的商品？'"
             cancel-text="否"
             ok-text="是"
-            :title="'是否清空'+ (selectedRowKeys.length - originalSelectedGoodsIdSet.size)  +'件已选商品?'"
             @cancel="popConfirmVisible = false"
             @confirm="confirmClear"
         >
           <a-tag closable color="red" @close.prevent="popConfirmVisible = true">
-            当前添加商品数：{{ selectedRowKeys.length - originalSelectedGoodsIdSet.size }}
+            当前移除商品数：{{ flashInfo.goodsIds.length - selectedRowKeys.length }}
           </a-tag>
         </a-popconfirm>
         =
-        <a-tag color="blue">合计关联商品数：{{ selectedRowKeys.length }}</a-tag>
+        <a-tag color="blue">剩余关联商品数：{{ selectedRowKeys.length }}</a-tag>
       </div>
-      <a-input v-model:value="searchForm.keyword" allow-clear placeholder="请输入商品名称、商品id、描述">
+      <a-input allow-clear placeholder="请输入商品名称、商品id、描述">
         <template #suffix>
           <a-button type="primary" @click="queryList">搜索</a-button>
         </template>
       </a-input>
-      <a-table :columns="columns" :dataSource="dataSource" :pagination="pagination" :row-selection="rowSelection"
-               row-key="id"
-               :scroll="{ x: 'max-content', y: 'calc(100vh - 200px)' }" class="mt-4"
+      <a-table :columns="columns" :dataSource="dataSource" :row-selection="rowSelection" :scroll="{ x: 'max-content', y: 'calc(100vh - 200px)' }"
+               class="mt-4" row-key="id"
                @change="handleTableChange">
         <template #bodyCell="{record, column}">
           <template v-if="column.dataIndex === 'albumList'">

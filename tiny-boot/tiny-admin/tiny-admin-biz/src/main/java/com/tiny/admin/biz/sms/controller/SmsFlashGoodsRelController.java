@@ -31,11 +31,11 @@ public class SmsFlashGoodsRelController {
     @PostMapping("/assignGoodsIds/{flashId}")
     @Transactional(rollbackFor = Exception.class)
     @Operation(summary = "更新闪购商品关系")
-    public Result<Boolean> updateFlashGoodsRel(@PathVariable("flashId") String flashId, @RequestBody Set<String> goodsIds) {
-        if(CollectionUtils.isEmpty(goodsIds)) return Result.success(true);
+    public Result<Boolean> addFlashGoodsRel(@PathVariable("flashId") String flashId, @RequestBody Set<String> goodsIds) {
+        if (CollectionUtils.isEmpty(goodsIds)) return Result.success(true);
         // 删除原有关系
         List<SmsFlashGoodsRel> oldRel = iSmsFlashGoodsRelService.list(new LambdaQueryWrapper<>(SmsFlashGoodsRel.class).in(SmsFlashGoodsRel::getGoodsId, goodsIds));
-        if(!CollectionUtils.isEmpty(oldRel)) {
+        if (!CollectionUtils.isEmpty(oldRel)) {
             iSmsFlashGoodsRelService.removeByIds(oldRel.stream().map(SmsFlashGoodsRel::getId).toList());
         }
         // 新增关系
@@ -49,4 +49,21 @@ public class SmsFlashGoodsRelController {
         iSmsFlashGoodsRelService.saveOrUpdateBatch(flashGoodsRelList);
         return Result.success(true);
     }
+
+    @PostMapping("/removeGoodsIds/{flashId}")
+    @Transactional(rollbackFor = Exception.class)
+    @Operation(summary = "更新闪购商品关系")
+    public Result<Boolean> removeFlashGoodsRel(@PathVariable("flashId") String flashId, @RequestBody Set<String> goodsIds) {
+        LambdaQueryWrapper<SmsFlashGoodsRel> query = new LambdaQueryWrapper<>(SmsFlashGoodsRel.class).eq(SmsFlashGoodsRel::getFlashId, flashId);
+        if (!CollectionUtils.isEmpty(goodsIds)) {
+            query.and(i -> i.in(SmsFlashGoodsRel::getGoodsId, goodsIds));
+        }
+        List<SmsFlashGoodsRel> list = iSmsFlashGoodsRelService.list(query);
+        if (!CollectionUtils.isEmpty(list)) {
+            iSmsFlashGoodsRelService.removeByIds(list.stream().map(SmsFlashGoodsRel::getId).toList());
+        }
+        return Result.success(true);
+    }
+
+
 }

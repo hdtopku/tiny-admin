@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 /**
  * <p>
@@ -75,5 +77,22 @@ public class PmsGoodsController {
         }
         iPmsGoodsService.saveOrUpdate(pmsGoods);
         return Result.success();
+    }
+
+    @PostMapping("/listByIds")
+    public Result<ArrayList<PmsGoodsDto>> listByIds(@RequestBody Set<String> ids) {
+        ArrayList<PmsGoodsDto> result = new ArrayList<>();
+        if (CollUtil.isEmpty(ids)) return Result.success(result);
+        List<PmsGoods> pmsGoods = iPmsGoodsService.listByIds(ids);
+        if (!CollUtil.isEmpty(pmsGoods)) {
+            pmsGoods.forEach(item -> {
+                PmsGoodsDto dto = BeanUtil.copyProperties(item, PmsGoodsDto.class);
+                if (StringUtils.isNotBlank(item.getAlbumPics())) {
+                    dto.setAlbumList(Arrays.asList(item.getAlbumPics().split(",")));
+                }
+                result.add(dto);
+            });
+        }
+        return Result.success(result);
     }
 }
