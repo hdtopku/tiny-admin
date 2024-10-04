@@ -9,13 +9,14 @@ const isDark = useDark()
   <Page>
     <a-config-provider
         :theme="{
+        // token: {
+        //   colorPrimary: '#00b96b',
+        //   colorLink: '#00b96b',
+        // },
           algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
-        }"
+      }"
     >
       <router-view/>
     </a-config-provider>
   </Page>
 </template>
-
-<style scoped>
-</style>

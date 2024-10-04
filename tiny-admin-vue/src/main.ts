@@ -2,12 +2,13 @@ import {createApp} from 'vue'
 import './style.css'
 import App from './App.vue'
 import router from './router'
-import 'ant-design-vue/dist/reset.css'
+// import 'ant-design-vue/dist/reset.css'
 import {createPinia} from 'pinia'
 import piniaPluginPersistedState from "pinia-plugin-persistedstate";
 import mitt from "mitt";
 import permission from "@/directive/permission.ts"
 import websocketClient from "@/utils/websocket.ts";
+import 'virtual:windi.css'
 
 const app = createApp(App)
 app.config.globalProperties.$bus = mitt()

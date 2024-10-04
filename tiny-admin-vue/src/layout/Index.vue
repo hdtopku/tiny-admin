@@ -22,13 +22,12 @@
           d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"/></svg>
         </span>
     </a-layout-sider>
-    <a-layout
-    >
-      <a-layout-header :class="getHeaderClass()" class="fixed z-[12] border-b border-gray-200">
-        <div class="relative flex justify-between items-center px-4">
+    <a-layout>
+      <a-layout-header :class="getContentClass()"
+                       class="fixed z-10 py-2 border-l border-b border-gray-800 flex justify-between items-center">
           <Breadcrumb/>
           <div class="flex items-center">
-            <DarkToggle/>
+            <DarkToggle class="mr-4 cursor-pointer"/>
             <a-dropdown>
               <template #overlay>
                 <a-menu>
@@ -40,30 +39,29 @@
                   </a-menu-item>
                 </a-menu>
               </template>
-              <a-button size="large" type="link">
-                <div class="flex items-center gap-1">
-                  {{ useUserStore().userInfo.username }}
-                  <DownOutlined/>
-                </div>
-              </a-button>
+              <div class="flex items-center gap-1 cursor-pointer">
+                <a-avatar :size="30" :src="useUserStore().userInfo.avatar" class="" shape="circle"/>
+                <DownOutlined/>
+              </div>
             </a-dropdown>
           </div>
-        </div>
       </a-layout-header>
-      <a-layout-content :class="getHeaderClass()" class="mt-[80px]">
-        <Tabs class="bg-white fixed z-10 pt-11 top-0 px-2"/>
-        <router-view #default="{ Component }">
-          <transition :duration="{ enter: 250, leave: 150 }"
-                      appear
-                      appear-active-class="animate__animated animate__fadeInLeft"
-                      enter-active-class="animate__animated animate__fadeIn fade-enter-active"
-                      leave-active-class="animate__animated animate__fadeOut"
-                      mode="out-in">
-            <keep-alive>
-              <component :is="Component" :key="getKey()"/>
-            </keep-alive>
-          </transition>
-        </router-view>
+      <a-layout-content :class="getContentClass()" class="pt-[46px]">
+        <Tabs class="fixed z-100 pt-[2px]"/>
+        <div class="mt-6">
+          <router-view #default="{ Component }">
+            <transition :duration="{ enter: 250, leave: 150 }"
+                        appear
+                        appear-active-class="animate__animated animate__fadeInLeft"
+                        enter-active-class="animate__animated animate__fadeIn fade-enter-active"
+                        leave-active-class="animate__animated animate__fadeOut"
+                        mode="out-in">
+              <keep-alive>
+                <component :is="Component" :key="getKey()"/>
+              </keep-alive>
+            </transition>
+          </router-view>
+        </div>
       </a-layout-content>
     </a-layout>
   </a-layout>
@@ -74,13 +72,13 @@ import {storeToRefs} from "pinia";
 import {useMenuStore, useUserStore} from "@/store";
 import Tabs from "@/layout/Tabs.vue";
 import Sidebar from "@/layout/Sidebar.vue";
-import Breadcrumb from "@/layout/Breadcrumb.vue";
 import {DownOutlined} from '@ant-design/icons-vue';
 import {useRoute} from "vue-router";
 import router from "@/router";
 import {message} from "ant-design-vue";
 import DarkToggle from "@/components/DarkToggle.vue";
 import useGlobal from "@/hooks/useGlobal.ts";
+import Breadcrumb from "@/layout/Breadcrumb.vue";
 
 const {sidebarCollapsed, widthLessThanMiddle} = storeToRefs(useMenuStore())
 
@@ -120,7 +118,7 @@ const getSidebarClass = () => {
   }
   return 'left-[200px]'
 }
-const getHeaderClass = () => {
+const getContentClass = () => {
   if (widthLessThanMiddle.value) return 'w-full'
   if (sidebarCollapsed.value) return 'w-[calc(100%-80px)] ml-[80px]'
   return 'w-[calc(100%-200px)] ml-[200px]'
@@ -140,18 +138,8 @@ const showMyInfo = () => {
 }
 </script>
 <style scoped>
-::v-deep(.ant-layout-sider-zero-width-trigger) {
-  display: none;
-}
-
 ::v-deep(.ant-layout-header) {
-  height: auto;
-  padding: 0;
-}
-
-.ant-layout .ant-layout-header {
-  background-color: #fff;
-  line-height: 40px;
+  height: 46px;
 }
 
 .mask {

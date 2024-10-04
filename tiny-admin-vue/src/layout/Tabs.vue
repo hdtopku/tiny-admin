@@ -24,7 +24,7 @@ watch(() => useMenuStore().activeTab, (newVal) => {
 
 
 <template>
-  <div class="w-full">
+  <div class="w-full bg-gray-100 dark:bg-gray-900">
     <a-tabs v-model:activeKey="activeKey" hide-add type="editable-card" @edit="onEdit">
       <a-tab-pane v-for="pane in panes" :key="pane.key" :closable="panes.length > 1 && pane.closable"
                   :tab="pane.title">

@@ -7,17 +7,6 @@ body {
     font-family: 'Open Sans', sans-serif;
 }
 
-* {
-    transition: all 0.1s ease-in-out;
-}
-/**::-webkit-scrollbar {*/
-/*    width: 2px;*/
-/*}*/
-/**::-webkit-scrollbar-track {*/
-/*    background: #000c16;*/
-/*    margin-top: 2px;*/
-/*    margin-bottom: 3.2rem;*/
-/*}*/
-/**::-webkit-scrollbar-thumb {*/
-/*    background: #888;*/
+/** {*/
+/*    transition: all 0.1s ease-in-out;*/
 /*}*/
