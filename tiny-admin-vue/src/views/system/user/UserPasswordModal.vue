@@ -3,6 +3,7 @@
 import {Rule} from "ant-design-vue/es/form";
 import {updatePassword} from "@/api/user.ts";
 import {message} from "ant-design-vue";
+
 const passwordModalVisible = ref(false)
 const passwordItem = ref({
   id: '',
@@ -33,7 +34,7 @@ defineExpose({
 </script>
 
 <template>
-  <a-modal ok-text="提交" cancel-text="取消" @ok="handleChangePassword" @cancel="()=>passwordItem = {}"
+  <a-modal cancel-text="取消" ok-text="提交" @cancel="() => passwordModalVisible = false" @ok="handleChangePassword"
            v-model:open="passwordModalVisible" :title="`修改密码_${username}`">
     <a-form @keydown.enter="handleChangePassword" :model="passwordItem" ref="passwordFormRef" :rules="passwordRules">
       <a-form-item name="password" required>

@@ -24,10 +24,10 @@
     </a-layout-sider>
     <a-layout>
       <a-layout-header :class="getContentClass()"
-                       class="fixed z-10 py-2 border-l border-b border-gray-800 flex justify-between items-center">
+                       class="fixed z-10 border-l border-b border-gray-800 flex justify-between items-center">
           <Breadcrumb/>
           <div class="flex items-center">
-            <DarkToggle class="mr-4 cursor-pointer"/>
+            <DarkToggle class="mr-6 cursor-pointer"/>
             <a-dropdown>
               <template #overlay>
                 <a-menu>
@@ -46,9 +46,9 @@
             </a-dropdown>
           </div>
       </a-layout-header>
-      <a-layout-content :class="getContentClass()" class="pt-[46px]">
+      <a-layout-content :class="getContentClass()" class="pt-[40px]">
         <Tabs class="fixed z-100 pt-[2px]"/>
-        <div class="mt-6">
+        <div class="mt-10">
           <router-view #default="{ Component }">
             <transition :duration="{ enter: 250, leave: 150 }"
                         appear
@@ -139,7 +139,7 @@ const showMyInfo = () => {
 </script>
 <style scoped>
 ::v-deep(.ant-layout-header) {
-  height: 46px;
+  height: 40px;
 }
 
 .mask {

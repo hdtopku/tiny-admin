@@ -87,6 +87,15 @@ const goodsModalRef = ref()
 const handleEdit = (record: any) => {
   goodsModalRef.value.showModal(record)
 }
+const changeStatus = (record) => {
+  console.log(record)
+}
+const confirmChangeStatus = () => {
+
+}
+const deleteBrand = () => {
+
+}
 </script>
 
 <template>
@@ -143,7 +152,7 @@ const handleEdit = (record: any) => {
           <div class="grid grid-cols-2 items-center justify-center">
             <a-popconfirm :title="record.status ? '是否禁用该品牌？' : ' 是否启用该品牌？'"
                           cancel-text="否" ok-text="是"
-                          @confirm="() => {confirmChangeStatus(record)}">
+                          @confirm="() => {confirmChangeStatus()}">
               <template #icon>
                 <question-circle-outlined style="color: red"/>
               </template>
@@ -164,7 +173,7 @@ const handleEdit = (record: any) => {
                   <a-menu-item>
                     <a-popconfirm cancel-text="否" ok-text="是"
                                   ok-type="danger"
-                                  @confirm="() => {deleteBrand(record.id)}">
+                                  @confirm="() => {deleteBrand}">
                       <template #icon>
                         <question-circle-outlined style="color: red"/>
                       </template>

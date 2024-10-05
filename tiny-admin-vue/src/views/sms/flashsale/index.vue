@@ -95,6 +95,15 @@ const columns: any = [{
   align: 'center',
   fixed: 'right',
 }]
+const deleteBrand = (id) => {
+  console.log(id)
+}
+const confirmChangeStatus = (record) => {
+  console.log(record)
+}
+const changeStatus = (record) => {
+  console.log(record)
+}
 </script>
 
 <template>

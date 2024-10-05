@@ -69,10 +69,6 @@ const columns: any = [{
   fixed: 'right',
 }]
 
-const handleTableChange = (pagination, filters, sorter) => {
-
-}
-
 const modalRef = ref()
 const handleAdd = () => {
   modalRef.value.showModal(brandList)
@@ -81,8 +77,17 @@ const editModalRef = ref()
 const handleEdit = (record) => {
   editModalRef.value.showModal(record)
 }
-const handleDelete = (id) => {
-
+const deleteBrand = (id) => {
+  console.log(id)
+}
+const confirmChangeStatus = (record) => {
+  console.log(record)
+}
+const changeStatus = (record) => {
+  console.log(record)
+}
+const handleTableChange = (pagination, filters, sorter) => {
+  console.log(pagination, filters, sorter)
 }
 </script>
 

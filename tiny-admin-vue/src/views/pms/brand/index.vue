@@ -93,15 +93,15 @@ const changeStatus = (record: any) => {
   record.status = !record.status
 }
 
-const confirmChangeStatus = (record: any) => {
-
-}
 const brandModalRef = ref()
 const handleAddBrand=() => {
   brandModalRef.value.showModal()
 }
 const handleEditBrand = (record: any, isEdit: boolean) => {
   brandModalRef.value.showModal(record, isEdit)
+}
+const confirmChangeStatus = (record) => {
+  console.log(record)
 }
 </script>
 
