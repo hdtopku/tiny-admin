@@ -9,5 +9,5 @@ const useChatStore = () => chatStore()
 export {
     useMenuStore,
     useUserStore,
-    useChatStore
+    useChatStore,
 }

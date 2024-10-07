@@ -52,11 +52,14 @@
           class="fixed z-10 border-l border-b border-gray-800 flex justify-between items-center"
       >
         <Breadcrumb/>
-        <div class="flex items-center">
-          <a-button class="mr-6" type="primary" @click="toggleLocale">
-            {{ $t('点击切换语言') }}
+        <div class="flex items-center gap-3">
+          <a-button class="group" ghost size="small" type="primary" @click="toggleLocale">
+            <div class="group-hover:scale-105 duration-300 flex items-center gap-[2px]">
+              <span class="rounded-full">{{ getLanguageText() === 'ENG' ? '🇬🇧' : '🇨🇳' }}</span>
+              {{ getLanguageText() }}
+            </div>
           </a-button>
-          <DarkToggle class="mr-6 cursor-pointer"/>
+          <DarkToggle/>
           <a-dropdown>
             <template #overlay>
               <a-menu>
@@ -74,14 +77,13 @@
                 </a-menu-item>
               </a-menu>
             </template>
-            <div class="flex items-center gap-1 cursor-pointer">
+            <div class="hover:scale-105 duration-300 flex items-center gap-1 cursor-pointer">
               <a-avatar
-                  :size="30"
+                  :size="32"
                   :src="useUserStore().userInfo.avatar"
-                  class=""
+                  class="border-2 border-l-orange-400 border-t-amber-600 border-b-fuchsia-500 border-r-purple-500"
                   shape="circle"
               />
-              <DownOutlined/>
             </div>
           </a-dropdown>
         </div>
@@ -110,13 +112,11 @@
 </template>
 <script lang="ts" setup>
 import i18n, {t} from '@/utils/i18n.ts'
-
 import {ref} from 'vue'
 import {storeToRefs} from 'pinia'
 import {useMenuStore, useUserStore} from '@/store'
 import Tabs from '@/layout/Tabs.vue'
 import Sidebar from '@/layout/Sidebar.vue'
-import {DownOutlined} from '@ant-design/icons-vue'
 import {useRoute} from 'vue-router'
 import router from '@/router'
 import {message} from 'ant-design-vue'
@@ -128,7 +128,6 @@ const {sidebarCollapsed, widthLessThanMiddle} = storeToRefs(useMenuStore())
 
 const collapsedWidth = ref<number>(80)
 const showMask = ref<boolean>(false)
-
 const onCollapse = (collapsed: boolean) => {
   collapsedWidth.value = widthLessThanMiddle.value && collapsed ? 0.01 : 80
 }
@@ -188,6 +187,10 @@ const toggleLocale = () => {
   i18n.locale = locale === 'zh-CN' ? 'en-US' : 'zh-CN'
   localStorage.setItem('locale', i18n.locale)
   location.reload()
+}
+const getLanguageText = () => {
+  const locale: string = localStorage.getItem('locale') || ''
+  return locale === 'zh-CN' ? 'ENG' : '中文'
 }
 </script>
 <style scoped>

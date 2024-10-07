@@ -1,6 +1,5 @@
 import {createApp} from 'vue'
 import './style.css'
-import i18n from '@/utils/i18n.ts'
 import App from './App.vue'
 import router from './router'
 // import 'ant-design-vue/dist/reset.css'
@@ -10,6 +9,7 @@ import mitt from "mitt";
 import permission from "@/directive/permission.ts"
 import websocketClient from "@/utils/websocket.ts";
 import 'virtual:windi.css'
+import i18n from "@/utils/i18n.ts";
 
 const app = createApp(App)
 app.config.globalProperties.$bus = mitt()
