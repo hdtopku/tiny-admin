@@ -1,49 +1,72 @@
-<script setup lang="ts">
+<template>
+  <a-modal
+      v-model:open="passwordModalVisible"
+      :cancel-text="$t('取消')"
+      :ok-text="$t('提交')"
+      :title="$t('修改密码_{username}', { username: username })"
+      @cancel="() => (passwordModalVisible = false)"
+      @ok="handleChangePassword"
+  >
+    <a-form
+        ref="passwordFormRef"
+        :model="passwordItem"
+        :rules="passwordRules"
+        @keydown.enter="handleChangePassword"
+    >
+      <a-form-item name="password" required>
+        <a-input
+            v-model:value="passwordItem.password"
+            :placeholder="$t('请输入新密码')"
+            allow-clear
+            autocomplete="off"
+        ></a-input>
+      </a-form-item>
+    </a-form>
+  </a-modal>
+</template>
+<script lang="ts" setup>
+import {t} from '@/utils/i18n.ts'
 
-import {Rule} from "ant-design-vue/es/form";
-import {updatePassword} from "@/api/user.ts";
-import {message} from "ant-design-vue";
+import {Rule} from 'ant-design-vue/es/form'
+import {updatePassword} from '@/api/user.ts'
+import {message} from 'ant-design-vue'
 
 const passwordModalVisible = ref(false)
 const passwordItem = ref({
   id: '',
   password: '',
 })
-const username=ref('')
+const username = ref('')
 const passwordRules: Record<string, Rule[]> = reactive({
   password: [
-    {required: true, message: '请输入新密码', trigger: ['blur'], whitespace: false},
-    {min: 6, max: 20, message: '密码长度在 6 到 20 个字符', trigger: ['change', 'blur']},]
+    {
+      required: true,
+      message: t('请输入新密码'),
+      trigger: ['blur'],
+      whitespace: false,
+    },
+    {
+      min: 6,
+      max: 20,
+      message: t('密码长度在 6 到 20 个字符'),
+      trigger: ['change', 'blur'],
+    },
+  ],
 })
-const passwordFormRef=ref()
+const passwordFormRef = ref()
 const handleChangePassword = () => {
   passwordFormRef.value.validate().then(() => {
-    updatePassword({...passwordItem.value}).then(()=>{
+    updatePassword({...passwordItem.value}).then(() => {
       passwordModalVisible.value = false
-      message.success('密码更新成功')
+      message.success(t('密码更新成功'))
     })
   })
 }
 defineExpose({
   showModal: (item: any) => {
     passwordModalVisible.value = true
-    passwordItem.value = {id:item.key, password: item.password}
-    username.value=item.username
-  }
+    passwordItem.value = {id: item.key, password: item.password}
+    username.value = item.username
+  },
 })
 </script>
-
-<template>
-  <a-modal cancel-text="取消" ok-text="提交" @cancel="() => passwordModalVisible = false" @ok="handleChangePassword"
-           v-model:open="passwordModalVisible" :title="`修改密码_${username}`">
-    <a-form @keydown.enter="handleChangePassword" :model="passwordItem" ref="passwordFormRef" :rules="passwordRules">
-      <a-form-item name="password" required>
-        <a-input allow-clear placeholder="请输入新密码" v-model:value="passwordItem.password" autocomplete="off"></a-input>
-      </a-form-item>
-    </a-form>
-  </a-modal>
-</template>
-
-<style scoped>
-
-</style>

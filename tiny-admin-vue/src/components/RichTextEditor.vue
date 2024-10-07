@@ -7,8 +7,8 @@
         :mode="mode"
     />
     <Editor
-        style="overflow-y: hidden;"
-        :style="{height: height}"
+        :style="{ height: height }"
+        style="overflow-y: hidden"
         v-model="valueHtml"
         :defaultConfig="editorConfig"
         :mode="mode"
@@ -16,8 +16,9 @@
     />
   </div>
 </template>
-
 <script lang="ts" setup>
+import {t} from '@/utils/i18n.ts'
+
 import {computed, onBeforeUnmount, shallowRef} from 'vue'
 import '@wangeditor/editor/dist/css/style.css' // 引入 css
 import {Editor, Toolbar} from '@wangeditor/editor-for-vue'
@@ -33,7 +34,7 @@ interface EmitEvent {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  height: '500px'
+  height: '500px',
 })
 const emit = defineEmits<EmitEvent>()
 let valueHtml = computed({
@@ -43,7 +44,7 @@ let valueHtml = computed({
   },
   set(value: string) {
     emit('update:modelValue', value)
-  }
+  },
 })
 // let valueHtml = shallowRef(props.modelValue)
 // // 监听 valueHtml 变化，同步到 props.modelValue
@@ -60,7 +61,10 @@ const mode = 'simple'
 const toolbarConfig = {}
 //上传图片的地址
 // const uploadFileUrl = import.meta.env.VITE_APP_BASE_API + "/common/upload";
-const editorConfig: Partial<IEditorConfig> = {placeholder: '请输入内容...', 'MENU_CONF': {}}
+const editorConfig: Partial<IEditorConfig> = {
+  placeholder: t('请输入内容...'),
+  MENU_CONF: {},
+}
 editorConfig.MENU_CONF!['uploadImage'] = {
   server: 'http://localhost:3000/api/file/upload',
   maxFileSize: 5 * 1024 * 1024,
