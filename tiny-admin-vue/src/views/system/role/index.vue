@@ -143,13 +143,13 @@
 <script lang="ts" setup>
 import {t} from '@/utils/i18n.ts'
 
-import {deleteById, getRolePage, saveOrUpdate} from '@/api/role.ts'
+import {deleteById, getRolePage, saveOrUpdate} from '@/api/system/role.ts'
 import {DownOutlined, QuestionCircleOutlined} from '@ant-design/icons-vue'
 import RoleModal from '@/views/system/role/RoleModal.vue'
 import {useDebounceFn} from '@vueuse/core'
 import {message} from 'ant-design-vue'
 import AssignRole from '@/views/system/role/AssignRole.vue'
-import {getMenuTree} from '@/api/menu.ts'
+import {getMenuTree} from '@/api/system/menu.ts'
 import Auth from '@/components/Auth.vue'
 
 const pagination = ref({

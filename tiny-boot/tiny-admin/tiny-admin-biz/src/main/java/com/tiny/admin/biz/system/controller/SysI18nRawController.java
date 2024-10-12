@@ -1,7 +1,13 @@
 package com.tiny.admin.biz.system.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.tiny.admin.biz.system.dto.I18nTranslationDto;
+import com.tiny.admin.biz.system.service.ISysI18nRawService;
+import com.tiny.admin.biz.system.vo.BaseQueryParam;
+import com.tiny.core.web.Result;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 /**
  * <p>
@@ -14,5 +20,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/system/sysI18nRaw")
 public class SysI18nRawController {
+    @Resource
+    private ISysI18nRawService iSysI18nRawService;
 
+    @GetMapping("/list")
+    public Result<Object> list() {
+        return Result.success(iSysI18nRawService.getTranslation());
+    }
+
+    @PostMapping("/page")
+    public Result<IPage<I18nTranslationDto>> page(@RequestBody(required = false) BaseQueryParam param) {
+        IPage<I18nTranslationDto> page = iSysI18nRawService.getTranslationPage(param);
+        return Result.success(page);
+    }
 }

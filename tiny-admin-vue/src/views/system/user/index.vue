@@ -162,11 +162,11 @@
 <script lang="ts" setup>
 import {t} from '@/utils/i18n.ts'
 
-import {deleteUser, getUserPage, saveOrUpdate} from '@/api/user.ts'
+import {deleteUser, getUserPage, saveOrUpdate} from '@/api/system/user.ts'
 import {useDebounceFn} from '@vueuse/core'
 import {DownOutlined, QuestionCircleOutlined} from '@ant-design/icons-vue'
 import {message} from 'ant-design-vue'
-import {getRoleList} from '@/api/role.ts'
+import {getRoleList} from '@/api/system/role.ts'
 
 const UserModal = defineAsyncComponent(
     () => import('@/views/system/user/UserModal.vue')

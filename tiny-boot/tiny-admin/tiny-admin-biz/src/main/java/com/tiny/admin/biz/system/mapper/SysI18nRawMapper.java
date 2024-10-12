@@ -1,7 +1,7 @@
 package com.tiny.admin.biz.system.mapper;
 
+import com.github.yulichang.base.MPJBaseMapper;
 import com.tiny.admin.biz.system.entity.SysI18nRaw;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author lxh
  * @since 2024-10-10
  */
-public interface SysI18nRawMapper extends BaseMapper<SysI18nRaw> {
+public interface SysI18nRawMapper extends MPJBaseMapper<SysI18nRaw> {
 
 }

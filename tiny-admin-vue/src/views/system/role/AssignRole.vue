@@ -79,7 +79,7 @@
 <script lang="ts" setup>
 import {ref} from 'vue'
 import {TreeProps} from 'ant-design-vue'
-import {assignMenu} from '@/api/role.ts'
+import {assignMenu} from '@/api/system/role.ts'
 import {useUserStore} from '@/store'
 import useGlobal from '@/hooks/useGlobal.ts'
 

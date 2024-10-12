@@ -1,7 +1,12 @@
 package com.tiny.admin.biz.system.service;
 
-import com.tiny.admin.biz.system.entity.SysI18nRaw;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.tiny.admin.biz.system.dto.I18nTranslationDto;
+import com.tiny.admin.biz.system.entity.SysI18nRaw;
+import com.tiny.admin.biz.system.vo.BaseQueryParam;
+
+import java.util.Map;
 
 /**
  * <p>
@@ -13,4 +18,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ISysI18nRawService extends IService<SysI18nRaw> {
 
+    Map<String, Map<String, String>> getTranslation();
+
+    IPage<I18nTranslationDto> getTranslationPage(BaseQueryParam param);
 }

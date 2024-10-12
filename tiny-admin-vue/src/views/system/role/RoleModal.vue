@@ -40,7 +40,7 @@
 import {t} from '@/utils/i18n.ts'
 
 import {Rule} from 'ant-design-vue/es/form'
-import {saveOrUpdate} from '@/api/role.ts'
+import {saveOrUpdate} from '@/api/system/role.ts'
 import {message} from 'ant-design-vue'
 
 const rules: Record<string, Rule[]> = {

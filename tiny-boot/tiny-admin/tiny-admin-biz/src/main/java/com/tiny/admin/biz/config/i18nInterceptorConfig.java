@@ -20,6 +20,6 @@ public class i18nInterceptorConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         InterceptorRegistration interceptorRegistration = registry.addInterceptor(requestInterceptor);
         // 指定拦截匹配模式
-        interceptorRegistration.addPathPatterns("/**");
+        interceptorRegistration.addPathPatterns("/system/**", "/sms/**", "/pms/**");
     }
 }

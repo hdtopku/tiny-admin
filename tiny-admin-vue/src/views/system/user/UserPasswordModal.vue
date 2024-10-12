@@ -28,7 +28,7 @@
 import {t} from '@/utils/i18n.ts'
 
 import {Rule} from 'ant-design-vue/es/form'
-import {updatePassword} from '@/api/user.ts'
+import {updatePassword} from '@/api/system/user.ts'
 import {message} from 'ant-design-vue'
 
 const passwordModalVisible = ref(false)

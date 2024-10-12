@@ -1,5 +1,5 @@
 import {defineStore} from "pinia";
-import {getSelfInfo, postLogin} from "@/api/auth.ts";
+import {getSelfInfo, postLogin} from "@/api/system/auth.ts";
 import router from "@/router";
 import {removeToken, setToken} from "@/utils/token.ts";
 import {ItemType} from 'ant-design-vue';

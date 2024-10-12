@@ -3,11 +3,12 @@ package com.tiny.admin.biz.system.entity;
 import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
-import java.time.LocalDateTime;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * <p>
@@ -30,9 +31,6 @@ public class SysI18nRaw implements Serializable {
 
     @Schema(description = "原始数据表")
     private String rawContent;
-
-    @Schema(description = "原始数据的md5")
-    private String rawContentMd5;
 
     @Schema(description = "创建时间")
     @TableField(fill = FieldFill.INSERT)

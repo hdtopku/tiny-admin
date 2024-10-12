@@ -51,7 +51,7 @@ import {useUserStore} from '@/store'
 import {LoadingOutlined, PlusOutlined} from '@ant-design/icons-vue'
 import type {UploadChangeParam, UploadProps} from 'ant-design-vue'
 import {message} from 'ant-design-vue'
-import {updateSelfInfo} from '@/api/auth.ts'
+import {updateSelfInfo} from '@/api/system/auth.ts'
 import useGlobal from '@/hooks/useGlobal.ts'
 
 const open = ref<boolean>(false)

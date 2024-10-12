@@ -57,7 +57,7 @@ import {Ref, ref} from 'vue';
 import {useChatStore, useUserStore} from "@/store";
 import {chatHistoryDb, unReadCountDb} from "@/utils/localdb.ts";
 import websocketClient from "@/utils/websocket.ts";
-import {getUserPage} from "@/api/user.ts";
+import {getUserPage} from "@/api/system/user.ts";
 
 const usersMap: any = new Map()
 const allUsersList: Ref<any> = ref([])

@@ -94,7 +94,7 @@
 <script lang="ts" setup>
 import {t} from '@/utils/i18n.ts'
 
-import {deleteMenuById, getMenuTree} from '@/api/menu.ts'
+import {deleteMenuById, getMenuTree} from '@/api/system/menu.ts'
 import MenuModal from '@/views/system/menu/MenuModal.vue'
 import {QuestionCircleOutlined} from '@ant-design/icons-vue'
 import {message} from 'ant-design-vue'

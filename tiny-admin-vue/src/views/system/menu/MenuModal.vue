@@ -293,7 +293,7 @@
 <script lang="ts" setup>
 import {t} from '@/utils/i18n.ts'
 
-import {saveOrUpdateMenu} from '@/api/menu.ts'
+import {saveOrUpdateMenu} from '@/api/system/menu.ts'
 import {message} from 'ant-design-vue'
 import IconSelector from '@/components/IconSelector.vue'
 import {useUserStore} from '@/store'
