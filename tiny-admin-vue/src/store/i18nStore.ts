@@ -9,7 +9,7 @@ export const i18nStore = defineStore('i18n', () => {
         ['CN', 'zh-CN'],
         ['JP', 'ja-JP'],
         ['KR', 'ko-KR'],
-        ['TC', 'zh-TW']
+        ['TC', 'zh-CHT']
     ])
     // 获取浏览器默认语言
     // const getBrowserLang = function () {
@@ -23,6 +23,7 @@ export const i18nStore = defineStore('i18n', () => {
     //     return defaultBrowserLang
     // }
     const toggleLocale = (languageCode: string) => {
+        console.log(languageCode)
         if (!localeMap.has(languageCode)) return
         locale.value = languageCode
         localeCode.value = localeMap.get(languageCode) || 'EN'

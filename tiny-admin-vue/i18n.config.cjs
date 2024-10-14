@@ -86,14 +86,14 @@ module.exports = {
         },
     },
     prettier: {semi: false, singleQuote: true},
-    incremental: false,
+    incremental: true,
     skipExtract: false,
     localePath: './locales/zh-CN.json',
     localeFileType: 'json',
     excelPath: './locales.xlsx',
     exportExcel: false,
     skipTranslate: false,
-    locales: ['en-US'],
+    locales: ['en-US', 'zh-CN', 'zh-CHT', 'ja-JP', 'ko-KR'],
     globalRule: {ignoreMethods: []},
     adjustKeyMap: function (allKeyValue, currentFileKeyMap, currentFilePath) {
         return allKeyValue
