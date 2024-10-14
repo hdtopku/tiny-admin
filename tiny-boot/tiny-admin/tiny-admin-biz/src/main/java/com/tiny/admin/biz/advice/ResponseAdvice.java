@@ -47,11 +47,6 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
         ServletRequestAttributes servletRequestAttributes = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes());
         if (servletRequestAttributes != null) {
             HttpServletRequest httpServletRequest = servletRequestAttributes.getRequest();
-            // 将响应数据body序列化为JsonNode
-//            ObjectMapper objectMapper = new ObjectMapper();
-//            objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-//            objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-//            objectMapper.registerModule(new JavaTimeModule());
             String stringBody = objectMapper.writeValueAsString(body);
             JsonNode node = objectMapper.readTree(stringBody);
             String language = httpServletRequest.getHeader("language");
@@ -93,7 +88,9 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
                         }
                     } else if(!fieldName.equals("rawContent")) {
                         if (languageUtil.containsTranslation(fieldValue.asText())) {
-                            objectNode.put(fieldName, languageUtil.getTranslation(fieldValue.asText(), "EN"));
+                            if(StringUtils.hasText(languageUtil.getTranslation(fieldValue.asText(), "EN"))) {
+                                objectNode.put(fieldName, languageUtil.getTranslation(fieldValue.asText(), "EN"));
+                            }
                         }
                     }
                 }
