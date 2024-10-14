@@ -53,12 +53,8 @@
       >
         <Breadcrumb/>
         <div class="flex items-center gap-3">
-          <a-button class="group" ghost size="small" type="primary" @click="toggleLocale">
-            <div class="group-hover:scale-105 duration-300 flex items-center gap-[2px]">
-              <span class="rounded-full">{{ getLanguageText() === 'ENG' ? '🇬🇧' : '🇨🇳' }}</span>
-              {{ getLanguageText() }}
-            </div>
-          </a-button>
+          <I18nButton></I18nButton>
+
           <DarkToggle/>
           <a-dropdown>
             <template #overlay>
@@ -111,7 +107,7 @@
   </a-layout>
 </template>
 <script lang="ts" setup>
-import i18n, {t} from '@/utils/i18n.ts'
+import {t} from '@/utils/i18n.ts'
 import {ref} from 'vue'
 import {storeToRefs} from 'pinia'
 import {useMenuStore, useUserStore} from '@/store'
@@ -181,16 +177,6 @@ const logout = () => {
 const {$bus} = useGlobal()
 const showMyInfo = () => {
   $bus.emit('show-my-info-modal')
-}
-const toggleLocale = () => {
-  const locale: string = localStorage.getItem('locale') || ''
-  i18n.locale = locale === 'zh-CN' ? 'en-US' : 'zh-CN'
-  localStorage.setItem('locale', i18n.locale)
-  location.reload()
-}
-const getLanguageText = () => {
-  const locale: string = localStorage.getItem('locale') || ''
-  return locale === 'zh-CN' ? 'ENG' : '中文'
 }
 </script>
 <style scoped>

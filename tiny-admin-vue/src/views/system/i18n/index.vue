@@ -7,7 +7,7 @@ import {
   saveOrUpdateRawContent,
   saveOrUpdateTranslation
 } from "@/api/system/sysI18n.ts";
-import {DeleteOutlined, DownOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue";
+import {DeleteOutlined} from "@ant-design/icons-vue";
 import {message} from "ant-design-vue";
 
 const pagination = ref({
@@ -43,11 +43,6 @@ const columns = [
     dataIndex: 'translationList',
     width: 200,
   },
-  {
-    title: '操作',
-    key: 'action',
-    width: 100,
-  }
 ]
 const dataSource = ref([])
 const editContent = ref('')
@@ -86,7 +81,7 @@ const handleDeleteTranslation = (id: string) => {
   <div>
     <Search :search-form="searchForm"/>
     <a-table :columns="columns" :data-source="dataSource" :pagination="pagination" row-key="id">
-      <template #bodyCell="{ record, index, column }">
+      <template #bodyCell="{ record, column }">
         <template v-if="column.dataIndex === 'rawContent'">
           <div class="flex items-start gap-1">
             <a-button class="group" danger shape="circle" size="small" type="primary">
@@ -107,7 +102,6 @@ const handleDeleteTranslation = (id: string) => {
                 </a-popconfirm>
               </template>
             </a-button>
-
             <a-typography-paragraph v-model:content="record.rawContent" :ellipsis="{ rows: 2, expandable: true, symbol: 'more' }"
                                     copyable>
             </a-typography-paragraph>
@@ -170,101 +164,6 @@ const handleDeleteTranslation = (id: string) => {
                 },
                 }" content="">
             </a-typography-paragraph>
-          </div>
-        </template>
-        <template v-if="column.dataIndex ==='status'">
-          <a-switch :checked="record.status" @change="() => { record.status =!record.status; }"></a-switch>
-        </template>
-        <template v-if="column.key === 'action'">
-          <div class="grid grid-cols-2 items-center justify-center">
-            <a-popconfirm
-                :cancel-text="$t('否')"
-                :ok-text="$t('是')"
-                :title="
-                  record.status
-                    ? $t('是否禁用该用户？')
-                    : $t(' 是否启用该用户？')
-                "
-                @confirm="
-                  () => {
-                    confirmChangeStatus(record)
-                  }
-                "
-            >
-              <template #icon>
-                <question-circle-outlined style="color: red"/>
-              </template>
-              <a-switch
-                  v-model:checked="record.status"
-                  :checked-children="$t('已启用')"
-                  :loading="record.loading"
-                  :un-checked-children="$t('已禁用')"
-                  class="flex-shrink-0"
-                  size="small"
-                  @click="
-                    () => {
-                      changeStatus(record)
-                    }
-                  "
-              />
-            </a-popconfirm>
-            <a-dropdown>
-              <a-button class="flex items-center" size="small" type="link"
-              >{{ $t('操作') }}
-                <DownOutlined/>
-              </a-button>
-              <template #overlay>
-                <a-menu class="text-center">
-                  <a-menu-item>
-                    <a-button
-                        type="link"
-                        @click="() => saveOrUpdateUserInfo(record, true)"
-                    >编辑文本
-                    </a-button
-                    >
-                  </a-menu-item>
-                  <a-menu-item>
-                    <a-button
-                        class="text-orange-300"
-                        type="link"
-                        @click="handleChangePassword(record)"
-                    >{{ $t('重置密码') }}
-                    </a-button
-                    >
-                  </a-menu-item>
-                  <a-menu-item>
-                    <a-button type="link">{{ $t('更换头像') }}</a-button>
-                  </a-menu-item>
-                  <a-menu-item>
-                    <a-popconfirm
-                        :cancel-text="$t('否')"
-                        :ok-text="$t('是')"
-                        ok-type="danger"
-                        @confirm="
-                          () => {
-                            handleDeleteUser(record.key)
-                          }
-                        "
-                    >
-                      <template #icon>
-                        <question-circle-outlined style="color: red"/>
-                      </template>
-                      <template #title>
-                        <div>{{ $t('是否删除用户？') }}</div>
-                        <a-tag class="my-2" color="red"
-                        >{{ record.username }}_{{ record.nickname }}
-                        </a-tag
-                        >
-                      </template>
-                      <a-button danger type="link">{{
-                          $t('删除用户')
-                        }}
-                      </a-button>
-                    </a-popconfirm>
-                  </a-menu-item>
-                </a-menu>
-              </template>
-            </a-dropdown>
           </div>
         </template>
       </template>
