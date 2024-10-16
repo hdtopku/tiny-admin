@@ -93,7 +93,7 @@ module.exports = {
     excelPath: './locales.xlsx',
     exportExcel: false,
     skipTranslate: false,
-    locales: ['en-US', 'zh-CN', 'zh-CHT', 'ja-JP', 'ko-KR'],
+    locales: ['en-US', 'zh-CN', 'zh-CHT', 'ko', 'ja'],
     globalRule: {ignoreMethods: []},
     adjustKeyMap: function (allKeyValue, currentFileKeyMap, currentFilePath) {
         return allKeyValue

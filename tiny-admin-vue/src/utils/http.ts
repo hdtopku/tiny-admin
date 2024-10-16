@@ -3,7 +3,7 @@ import axios from 'axios'
 import {getToken} from '@/utils/token.ts'
 import NProgress from '@/utils/NProgress.ts'
 import {message} from 'ant-design-vue'
-import {useUserStore} from '@/store'
+import {useI18nStore, useUserStore} from '@/store'
 
 const http = axios.create({
     timeout: 30000,
@@ -16,6 +16,11 @@ http.interceptors.request.use((config) => {
     NProgress.start()
     const token = getToken()
     token && (config.headers.Authorization = `Bearer ${token}`)
+    if (config.url !== '/system/sysI18nRaw/page') {
+        config.headers.language = useI18nStore().locale
+    } else {
+        config.headers.language = 'NoTranslation'
+    }
     return config
 })
 http.interceptors.response.use(

@@ -36,9 +36,10 @@ export const userStore = defineStore('user', () => {
     };
     const refreshUserInfo = async () => {
         return getSelfInfo().then((res: any) => {
-            userInfo.value = res;
-            return res;
-        });
+            userInfo.value = res
+            getSidebar()
+            return res
+        })
     };
     const getSidebar = (): ItemType[] => {
         const dfs = (menuTree: any[] | undefined) => {

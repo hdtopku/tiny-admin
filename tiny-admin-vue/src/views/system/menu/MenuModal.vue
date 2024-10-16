@@ -406,7 +406,6 @@ const buttonRules: any = {
 }
 const loading = ref(false)
 const emits = defineEmits(['queryList'])
-const {$bus} = useGlobal()
 const btnFormRef = ref()
 const handleOk = async () => {
   const submitForm = () => {
@@ -425,7 +424,6 @@ const handleOk = async () => {
           useUserStore()
               .refreshUserInfo()
               .then(() => {
-                $bus.emit('update-user-info')
               })
         })
         .finally(() => {

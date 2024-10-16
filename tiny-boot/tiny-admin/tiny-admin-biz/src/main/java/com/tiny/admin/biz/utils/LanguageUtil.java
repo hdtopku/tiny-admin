@@ -38,6 +38,7 @@ public class LanguageUtil {
     public String getTranslation(String rawContent, String languageCode) {
         if (TRANSLATION_MAP.containsKey(rawContent)) {
             Map<String, String> translationMap = TRANSLATION_MAP.get(rawContent);
+            if(translationMap == null) return null;
             return translationMap.get(languageCode);
         }
         return rawContent;

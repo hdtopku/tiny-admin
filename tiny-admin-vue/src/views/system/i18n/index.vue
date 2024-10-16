@@ -1,6 +1,94 @@
+<script lang="ts" setup>
+import {t} from '@/utils/i18n.ts'
+
+import Search from '@/components/Search.vue'
+import {
+  deleteRawContent,
+  deleteTranslation,
+  getI18nPage,
+  saveOrUpdateRawContent,
+  saveOrUpdateTranslation,
+} from '@/api/system/sysI18n.ts'
+import {DeleteOutlined} from '@ant-design/icons-vue'
+import {message} from 'ant-design-vue'
+
+const pagination = ref({
+  current: 1,
+  pageSize: 10,
+  total: 0,
+})
+const searchForm = ref({
+  keyword: '',
+  status: true,
+  pageNum: pagination.value.current,
+  pageSize: pagination.value.pageSize,
+})
+const queryList = () => {
+  getI18nPage(searchForm.value).then((res: any) => {
+    dataSource.value = res.records
+    pagination.value = {
+      current: res.current,
+      pageSize: res.size,
+      total: res.total,
+    }
+  })
+}
+queryList()
+const columns = [
+  {
+    title: t('待翻译文本'),
+    dataIndex: 'rawContent',
+    width: 100,
+  },
+  {
+    title: t('已翻译'),
+    dataIndex: 'translationList',
+    width: 200,
+  },
+]
+
+const dataSource = ref([])
+const editContent = ref('')
+const languageList = ['CN', 'EN', 'JP', 'KR', 'TW']
+const open = ref(false)
+const form = ref({
+  rawContent: '',
+})
+const rules = {
+  rawContent: [
+    {
+      required: true,
+      message: t('请输入待翻译文本'),
+      trigger: ['blur', 'change'],
+    },
+  ],
+}
+const handleSubmit = () => {
+  saveOrUpdateRawContent({rawContent: form.value.rawContent}).then(() => {
+    message.success(t('操作成功'))
+    queryList()
+    open.value = false
+  })
+}
+const handleDeleteRawContent = (id: string) => {
+  deleteRawContent(id).then(() => {
+    message.success(t('删除成功'))
+    queryList()
+  })
+}
+const handleDeleteTranslation = (id: string) => {
+  deleteTranslation(id).then(() => {
+    message.success(t('删除成功'))
+    queryList()
+  })
+}
+const handleAdd = () => {
+  open.value = true
+}
+</script>
 <template>
   <div>
-    <Search :search-form="searchForm"/>
+    <Search :search-form="searchForm" @handle-add="handleAdd" @handle-search="queryList" @handle-submit="handleSubmit"/>
     <a-table
         :columns="columns"
         :data-source="dataSource"
@@ -148,90 +236,6 @@
     </a-modal>
   </div>
 </template>
-<script lang="ts" setup>
-import {t} from '@/utils/i18n.ts'
-
-import Search from '@/components/Search.vue'
-import {
-  deleteRawContent,
-  deleteTranslation,
-  getI18nPage,
-  saveOrUpdateRawContent,
-  saveOrUpdateTranslation,
-} from '@/api/system/sysI18n.ts'
-import {DeleteOutlined} from '@ant-design/icons-vue'
-import {message} from 'ant-design-vue'
-
-const pagination = ref({
-  current: 1,
-  pageSize: 10,
-  total: 0,
-})
-const searchForm = ref({
-  keyword: '',
-  status: true,
-  pageNum: pagination.value.current,
-  pageSize: pagination.value.pageSize,
-})
-const queryList = () => {
-  getI18nPage(searchForm.value).then((res: any) => {
-    dataSource.value = res.records
-    pagination.value = {
-      current: res.current,
-      pageSize: res.size,
-      total: res.total,
-    }
-  })
-}
-queryList()
-const columns = [
-  {
-    title: t('待翻译文本'),
-    dataIndex: 'rawContent',
-    width: 100,
-  },
-  {
-    title: t('已翻译'),
-    dataIndex: 'translationList',
-    width: 200,
-  },
-]
-
-const dataSource = ref([])
-const editContent = ref('')
-const languageList = ['CN', 'EN', 'JP', 'KR', 'TW']
-const open = ref(false)
-const form = ref({
-  rawContent: '',
-})
-const rules = {
-  rawContent: [
-    {
-      required: true,
-      message: t('请输入待翻译文本'),
-      trigger: ['blur', 'change'],
-    },
-  ],
-}
-const handleSubmit = () => {
-  saveOrUpdateRawContent({rawContent: form.value.rawContent}).then(() => {
-    message.success(t('操作成功'))
-    queryList()
-  })
-}
-const handleDeleteRawContent = (id: string) => {
-  deleteRawContent(id).then(() => {
-    message.success(t('删除成功'))
-    queryList()
-  })
-}
-const handleDeleteTranslation = (id: string) => {
-  deleteTranslation(id).then(() => {
-    message.success(t('删除成功'))
-    queryList()
-  })
-}
-</script>
 <style scoped>
 ::v-deep(.ant-typography) {
   margin: 0;

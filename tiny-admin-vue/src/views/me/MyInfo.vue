@@ -63,7 +63,6 @@ $bus.on('show-my-info-modal', () => {
 const handleOk = () => {
   updateSelfInfo(personalInfo).then(() => {
     message.success(t('保存成功'))
-    $bus.emit('update-user-info')
     open.value = false
   })
 }

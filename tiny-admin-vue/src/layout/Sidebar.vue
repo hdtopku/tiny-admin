@@ -10,7 +10,6 @@ import {useMenuStore, useUserStore} from "@/store/index.ts";
 import {storeToRefs} from 'pinia'
 
 import router from "@/router";
-import useGlobal from "@/hooks/useGlobal.ts";
 
 const menus = ref(useUserStore().getSidebar())
 const handleClick = ({key}) => {
@@ -25,12 +24,6 @@ watch(sidebarOpenKeys, (_val, oldVal) => {
 watch(sidebarCollapsed, (val) => {
   if (!val) sidebarOpenKeys.value = preOpenKeys
 },)
-const {$bus} = useGlobal()
-$bus.on('update-user-info', () => {
-  menus.value = useUserStore().getSidebar()
-  useUserStore().refreshUserInfo()
-  // location.reload()
-})
 </script>
 <style scoped>
 </style>

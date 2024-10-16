@@ -1,5 +1,6 @@
 import {defineStore} from "pinia";
 import i18n from "@/utils/i18n.ts";
+import {useUserStore} from "@/store/index.ts";
 
 export const i18nStore = defineStore('i18n', () => {
     const localeCode = ref('en-US')
@@ -7,8 +8,8 @@ export const i18nStore = defineStore('i18n', () => {
     const localeMap = new Map([
         ['EN', 'en-US'],
         ['CN', 'zh-CN'],
-        ['JP', 'ja-JP'],
-        ['KR', 'ko-KR'],
+        ['JP', 'ja'],
+        ['KR', 'ko'],
         ['TC', 'zh-CHT']
     ])
     // 获取浏览器默认语言
@@ -22,13 +23,12 @@ export const i18nStore = defineStore('i18n', () => {
     //     }
     //     return defaultBrowserLang
     // }
-    const toggleLocale = (languageCode: string) => {
-        console.log(languageCode)
+    const toggleLocale = async (languageCode: string, needFetchInfo = false) => {
         if (!localeMap.has(languageCode)) return
         locale.value = languageCode
         localeCode.value = localeMap.get(languageCode) || 'EN'
         i18n.locale = localeMap.get(languageCode)
-        location.reload()
+        if (needFetchInfo) await useUserStore().refreshUserInfo()
     }
     return {
         locale,

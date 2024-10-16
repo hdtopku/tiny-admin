@@ -53,9 +53,7 @@
       >
         <Breadcrumb/>
         <div class="flex items-center gap-3">
-          <I18nButton></I18nButton>
-
-          <DarkToggle/>
+          <HeadLink></HeadLink>
           <a-dropdown>
             <template #overlay>
               <a-menu>
@@ -121,6 +119,7 @@ import useGlobal from '@/hooks/useGlobal.ts'
 import Breadcrumb from '@/layout/Breadcrumb.vue'
 
 const {sidebarCollapsed, widthLessThanMiddle} = storeToRefs(useMenuStore())
+const {$bus} = useGlobal()
 
 const collapsedWidth = ref<number>(80)
 const showMask = ref<boolean>(false)
@@ -174,7 +173,6 @@ const logout = () => {
   message.success(t('已退出登录！'))
   router.replace('/login')
 }
-const {$bus} = useGlobal()
 const showMyInfo = () => {
   $bus.emit('show-my-info-modal')
 }

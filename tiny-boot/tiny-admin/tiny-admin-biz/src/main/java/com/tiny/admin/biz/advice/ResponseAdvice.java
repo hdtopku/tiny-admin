@@ -20,8 +20,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import javax.annotation.Resource;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by lxh at 2024-10-10 18:38:51
@@ -53,6 +52,7 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
             if (!StringUtils.hasText(language)) {
                 language = "CN";
             }
+            LanguageUtil.setLanguage(language);
             responseDataParseAndRemove(node, language);
             return node;
         }
@@ -67,6 +67,9 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
      * @description: 通过解析Json结构的响应数据、移除指定前缀字段、以达到动态数据在不同语言环境下的动态切换
      **/
     public void responseDataParseAndRemove(JsonNode node, String language) {
+        HashMap<Integer, ArrayList<Integer>> map=new HashMap<Integer, ArrayList<Integer>>();
+        map.computeIfAbsent(1000, k ->new ArrayList<Integer>()).add(3);
+        if (StringUtils.hasText(languageUtil.getLanguage()) && "notranslation".equals(languageUtil.getLanguage().toLowerCase())) return;
         // 节点只有两种：容器节点和非容器节点
         if (node.isContainerNode()) {
             // 判断该节点是对象还是数组
@@ -86,10 +89,14 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
                         for (JsonNode element : arrayNode) {
                             responseDataParseAndRemove(element, language);
                         }
-                    } else if(!fieldName.equals("rawContent")) {
+                    } else {
                         if (languageUtil.containsTranslation(fieldValue.asText())) {
-                            if(StringUtils.hasText(languageUtil.getTranslation(fieldValue.asText(), "EN"))) {
-                                objectNode.put(fieldName, languageUtil.getTranslation(fieldValue.asText(), "EN"));
+                            String translationText = languageUtil.getTranslation(fieldValue.asText(), language);
+                            if(fieldName.equals("商品管理")) {
+                                System.out.println(fieldValue);
+                            }
+                            if(StringUtils.hasText(translationText)) {
+                                objectNode.put(fieldName, translationText);
                             }
                         }
                     }

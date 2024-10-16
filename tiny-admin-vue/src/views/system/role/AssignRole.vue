@@ -106,7 +106,6 @@ const handleSubmit = () => {
     useUserStore()
         .refreshUserInfo()
         .then(() => {
-          $bus.emit('update-user-info')
         })
   })
 }

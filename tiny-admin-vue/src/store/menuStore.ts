@@ -52,7 +52,6 @@ export const menuStore = defineStore('menu', () => {
             keepTabsOrder = false
             return
         }
-        console.log('addTab',route.path)
         if (route.path === '/') {
             router.push('/home')
             return

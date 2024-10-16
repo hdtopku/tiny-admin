@@ -1,15 +1,49 @@
+<script lang="ts" setup>
+import {t} from '@/utils/i18n.ts'
+
+import {useUserStore} from '@/store'
+import {message} from 'ant-design-vue'
+import router from '@/router'
+import {GithubOutlined, ReadOutlined} from '@ant-design/icons-vue'
+
+const loginForm = ref({
+  username: '',
+  password: '',
+})
+const loginLoading = ref(false)
+const handleLogin = () => {
+  loginLoading.value = true
+  const userStore = useUserStore()
+  userStore
+      .login(loginForm.value)
+      .then(() => {
+        router.push('/home')
+        message.success(t('登录成功！'))
+      })
+      .catch((error) => {
+        console.log(error)
+        message.error(error)
+      })
+      .finally(() => {
+        loginLoading.value = false
+      })
+}
+
+</script>
+
 <template>
-  <div class="flex items-center justify-center h-screen p-4">
+  <div class="dark:bg-gray-800 bg-gray-100 duration-300 flex items-center justify-center h-screen p-4 login">
     <div
-        class="border dark:border-gray-600 bg-white dark:bg-gray-800 shadow-sm hover:shadow-lg w-full max-w-lg px-6 py-12 rounded-md"
+        class="border dark:shadow-blue-500/30 shadow-sm hover:shadow-lg w-full max-w-lg px-6 pt-6 pb-12 rounded-md"
     >
+      <HeadLink></HeadLink>
       <h1
-          class="sm:text-3xl text-2xl font-bold mb-8 text-center dark:text-gray-200"
+          class="sm:text-3xl text-2xl font-bold mt-4 mb-8 text-center dark:text-gray-200 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"
       >
         Tiny Admin
       </h1>
       <a-form
-          :label-col="{ span: 3 }"
+          :label-col="{ span: 5 }"
           :model="loginForm"
           :rules="{}"
           auto-complete="off"
@@ -36,33 +70,6 @@
     </div>
   </div>
 </template>
-<script lang="ts" setup>
-import {t} from '@/utils/i18n.ts'
 
-import {useUserStore} from '@/store'
-import {message} from 'ant-design-vue'
-import router from '@/router'
-
-const loginForm = ref({
-  username: '',
-  password: '',
-})
-const loginLoading = ref(false)
-const handleLogin = () => {
-  loginLoading.value = true
-  const userStore = useUserStore()
-  userStore
-      .login(loginForm.value)
-      .then(() => {
-        router.push('/home')
-        message.success(t('登录成功！'))
-      })
-      .catch((error) => {
-        console.log(error)
-        message.error(error)
-      })
-      .finally(() => {
-        loginLoading.value = false
-      })
-}
-</script>
+<style scoped>
+</style>

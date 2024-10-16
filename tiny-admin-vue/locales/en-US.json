@@ -22,9 +22,9 @@
   "对不起，你访问的页面不存在！": "Sorry, the page you are looking for does not exist.",
   "回到首页，": "Back to the home page,",
   "秒后自动跳转": "Automatic jump in seconds",
-  "用户名": "username",
-  "密码": "cipher",
-  "登录": "Log in",
+  "用户名": "Username",
+  "密码": "Password",
+  "登录": "LOG IN",
   "登录成功！": "Login successful!",
   "提交": "submit",
   "取消": "Cancel",
@@ -269,11 +269,18 @@
       }
     }
   },
-  "🇨🇳 中文": "🇨🇳 Chinese",
-  "🇯🇵 日語": "🇯🇵 Japanese",
-  "🇭🇰 繁体": "🇭🇰 Traditional",
   "新增待翻译文本": "Added the text to be translated",
   "待翻译文本": "Text to be translated",
   "已翻译": "Translated",
-  "请输入待翻译文本": "Please enter the text to be translated"
+  "请输入待翻译文本": "Please enter the text to be translated",
+  "打开Github": "Open Github",
+  "打开文档": "Open document",
+  "切换语言": "Switch language",
+  "切换至白天模式": "Switch to day mode",
+  "切换至夜间模式": "Switch to night mode",
+  "🇨🇳 中文": "🇨🇳 中文",
+  "🇯🇵 日語": "🇯🇵 日語",
+  "🇭🇰 繁体": "🇭🇰 繁体",
+  "🇰🇷 한국어": "🇰🇷 한국어",
+  "🇺🇸 ENG": "🇺🇸 ENG"
 }
