@@ -53,7 +53,7 @@
       >
         <Breadcrumb/>
         <div class="flex items-center gap-3">
-          <HeadLink></HeadLink>
+          <HeadTools></HeadTools>
           <a-dropdown>
             <template #overlay>
               <a-menu>
@@ -114,7 +114,6 @@ import Sidebar from '@/layout/Sidebar.vue'
 import {useRoute} from 'vue-router'
 import router from '@/router'
 import {message} from 'ant-design-vue'
-import DarkToggle from '@/components/DarkToggle.vue'
 import useGlobal from '@/hooks/useGlobal.ts'
 import Breadcrumb from '@/layout/Breadcrumb.vue'
 

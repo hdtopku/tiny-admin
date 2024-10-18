@@ -5,9 +5,13 @@
     <div
         class="grid-cols-1 max-sm:grid-rows-3 sm:grid-cols-3 md:grid-cols-2 w-11/12 max-w-4xl grid gap-4"
     >
+      <!--    Illustration  -->
       <div class="drawing"></div>
+
       <div class="max-sm:row-span-2 max-md:col-span-2 ">
-        <HeadLink class="mb-2 mr-6"></HeadLink>
+        <HeadTools class="mb-2 mr-6"></HeadTools>
+
+        <!--        Login form -->
         <div
             class="dark:shadow-blue-500/30 hover:shadow-xl shadow-md border overflow-hidden rounded-xl p-4"
         >
@@ -31,7 +35,7 @@
             <a-form-item name="username">
               <a-input
                   v-model:value="loginForm.username"
-                  :placeholder="$t('用户名')"
+                  :placeholder="'Username'"
                   allow-clear autocomplete>
                 <template #prefix>
                   <UserOutlined/>
@@ -41,7 +45,7 @@
             <a-form-item name="password">
               <a-input-password
                   v-model:value="loginForm.password"
-                  :placeholder="$t('密码')"
+                  :placeholder="'Password'"
                   allow-clear
                   autocomplete="current-password"
                   type="password"
@@ -73,7 +77,6 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {t} from '@/utils/i18n.ts'
 import {LockOutlined, UserOutlined} from '@ant-design/icons-vue'
 import {useUserStore} from '@/store'
 import {message} from 'ant-design-vue'
@@ -85,11 +88,11 @@ const loginForm = ref({
 })
 const rules = {
   username: [
-    {required: true, message: t('请输入用户名'), trigger: ['blur', 'change']},
+    {required: true, message: 'Please input username', trigger: ['blur', 'change']},
   ],
 
   password: [
-    {required: true, message: t('请输入密码'), trigger: ['blur', 'change']},
+    {required: true, message: 'Please input password', trigger: ['blur', 'change']},
   ],
 }
 const formRef = ref()
@@ -103,7 +106,7 @@ const handleLogin = () => {
         .login(loginForm.value)
         .then(() => {
           router.push('/home')
-          message.success(t('登录成功！'))
+          message.success('Login success')
         })
         .catch(() => {
           loginError.value = true
@@ -112,7 +115,7 @@ const handleLogin = () => {
           loginLoading.value = false
           setTimeout(() => {
             loginError.value = false
-          }, 600)
+          }, 700)
         })
   })
 }
