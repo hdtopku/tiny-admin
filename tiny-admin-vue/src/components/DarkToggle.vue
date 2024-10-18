@@ -19,11 +19,10 @@
           <svg
               v-if="!isDark"
               key="sun"
-              class="group-hover:scale-105 duration-300 text-indigo-400 inline-flex absolute right-1 bottom-1"
+              class="group-hover:scale-110 duration-300 text-indigo-400 group-hover:text-indigo-500 inline-flex absolute right-1 bottom-1"
               fill="currentColor"
               height="22px"
               viewBox="0 -960 960 960"
-              width="22px"
               xmlns="http://www.w3.org/2000/svg"
           >
             <path
@@ -33,11 +32,10 @@
           <svg
               v-else
               key="moon"
-              class="group-hover:scale-105 duration-300 text-amber-400 inline-flex absolute right-1 bottom-1"
+              class="group-hover:scale-110 duration-300 text-amber-400 group-hover:text-amber-500 inline-flex absolute right-1 bottom-1"
               fill="currentColor"
               height="22px"
               viewBox="0 -960 960 960"
-              width="22px"
               xmlns="http://www.w3.org/2000/svg"
           >
             <path
@@ -58,10 +56,11 @@ const isDark = useDark({
   valueDark: 'dark',
   valueLight: 'light',
   onChanged(dark: boolean) {
-    // console.log(localStorage.getItem("vueuse-color-scheme"))
+    localStorage.getItem("vueuse-color-scheme") // when refresh the page, it will get the last color scheme from local storage
     useTitle(() => (dark ? `🌙Tiny Admin` : `☀️Tiny Admin`))
   },
 })
+
 const toggleDark = () => {
   setTimeout(() => {
     useToggle(isDark)()
