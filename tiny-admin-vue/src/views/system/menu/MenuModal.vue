@@ -297,7 +297,6 @@ import {saveOrUpdateMenu} from '@/api/system/menu.ts'
 import {message} from 'ant-design-vue'
 import IconSelector from '@/components/IconSelector.vue'
 import {useUserStore} from '@/store'
-import useGlobal from '@/hooks/useGlobal.ts'
 import {DefaultOptionType} from 'ant-design-vue/es/vc-tree-select/TreeSelect'
 
 const props = defineProps({

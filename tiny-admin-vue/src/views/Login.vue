@@ -27,15 +27,15 @@ const handleLogin = () => {
     userStore
         .login(loginForm.value)
         .then(() => {
-          router.push('/home')
-          message.success('Login success')
+          router.push('/')
+          message.success('登录成功！')
         })
         .catch(() => {
           loginError.value = true
         })
         .finally(() => {
           loginLoading.value = false
-          setTimeout(() => {
+          loginError.value && setTimeout(() => {
             loginError.value = false
           }, 700)
         })
@@ -80,7 +80,7 @@ const handleLogin = () => {
             <a-form-item name="username">
               <a-input
                   v-model:value="loginForm.username"
-                  :placeholder="'Username'"
+                  :placeholder="$t('用户名')"
                   allow-clear autocomplete>
                 <template #prefix>
                   <UserOutlined/>
@@ -90,7 +90,7 @@ const handleLogin = () => {
             <a-form-item name="password">
               <a-input-password
                   v-model:value="loginForm.password"
-                  :placeholder="'Password'"
+                  :placeholder="$t('密码')"
                   allow-clear
                   autocomplete="current-password"
                   type="password"

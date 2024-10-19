@@ -2,11 +2,11 @@
   <div>
     <a-breadcrumb :routes="routes">
       <template #itemRender="{ route }">
-        <div v-if="routes.indexOf(route) === routes.length - 1" class="text-gray-500">
+        <div v-if="routes.indexOf(route) === routes.length - 1">
           {{ route.breadcrumbName }}
         </div>
         <router-link v-else :to="`${route.path}`">
-          <span class="text-gray-300 bg-gray-700 px-2 py-1 rounded-md">{{ route.breadcrumbName }}</span>
+          <span>{{ route.breadcrumbName }}</span>
         </router-link>
       </template>
       <template #separator>

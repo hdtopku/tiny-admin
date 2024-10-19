@@ -1,7 +1,6 @@
 import {defineStore} from "pinia";
 import {getSelfInfo, postLogin} from "@/api/system/auth.ts";
-import router from "@/router";
-import {removeToken, setToken} from "@/utils/token.ts";
+import {setToken} from "@/utils/token.ts";
 import {ItemType} from 'ant-design-vue';
 import {GetIcon} from "@/components/CustomIcon.ts";
 import websocketClient from "@/utils/websocket.ts";
@@ -23,24 +22,22 @@ export const userStore = defineStore('user', () => {
     const routeList = ref<any>([]);
     const userInfo = ref<UserType>({})
     const login = async (data: any) => {
-        return postLogin(data).then((res) => {
-            setToken(res.token);
-            userInfo.value = res.userInfo;
-            router.push('/home');
+        return postLogin(data).then((res: any) => {
+            setToken(res.token)
+            userInfo.value = res.userInfo
             websocketClient.publish({
                 destination: setMyselfOnlineUrl,
                 body: userInfo.value.username
             })
-            return res;
         })
-    };
+    }
     const refreshUserInfo = async () => {
         return getSelfInfo().then((res: any) => {
             userInfo.value = res
             getSidebar()
             return res
         })
-    };
+    }
     const getSidebar = (): ItemType[] => {
         const dfs = (menuTree: any[] | undefined) => {
             return menuTree?.filter(item => !item.hidden && item.type === 1).map((item) => {
@@ -89,7 +86,7 @@ export const userStore = defineStore('user', () => {
             }
         }
         dfs(userInfo.value?.menuTree)
-        return routeList;
+        return routeList
     }
     const getBtnPermissionSet = () => {
         const permissionSet: Set<string> = new Set();
@@ -105,12 +102,10 @@ export const userStore = defineStore('user', () => {
         return dfs(userInfo.value?.menuTree)
     }
     const logout = () => {
-        removeToken()
-        localStorage.clear()
-        sessionStorage.clear()
-        setTimeout(() => {
-            router.push('/login')
-        }, 500)
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        localStorage.removeItem('menu')
+        location.reload()
     }
     return {
         userInfo,

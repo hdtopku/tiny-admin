@@ -14,7 +14,7 @@ export const menuStore = defineStore('menu', () => {
         const map: Map<string, any> = new Map()
         let parentId = ''
         const dfs = (url: string, menus: any) => {
-            for (let menu of menus) {
+            if (menus?.length) for (let menu of menus) {
                 if (!menu.url?.length) continue
                 if (menu.url === url) {
                     parentId = menu.parentId

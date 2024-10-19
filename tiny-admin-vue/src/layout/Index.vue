@@ -1,7 +1,7 @@
 <template>
   <a-layout class="min-h-screen">
     <div v-show="showMask" class="mask" @click="closeMask"></div>
-    <a-layout-sider
+    <a-layout-sider :theme="isDark? 'dark' : 'light'"
         v-model:collapsed="sidebarCollapsed"
         :collapsedWidth="collapsedWidth"
         :style="{
@@ -23,7 +23,7 @@
           'text-xs w-[80px]': sidebarCollapsed,
           'text-2xl w-[200px]': !sidebarCollapsed,
         }"
-          class="py-4 font-bold text-gray-400 float-left text-center"
+          class="py-4 font-bold dark:text-gray-300 text-gray-800 float-left text-center"
       >
         Tiny Admin
       </div>
@@ -48,8 +48,8 @@
     </a-layout-sider>
     <a-layout>
       <a-layout-header
-          :class="getContentClass()"
-          class="fixed z-10 border-l border-b border-gray-800 flex justify-between items-center"
+          :class="getContentClass()+(isDark ? ' !bg-gray-900' : ' !bg-white')"
+          class="fixed z-10 border-l border-b dark:border-gray-700 border-gray-200 flex justify-between items-center"
       >
         <Breadcrumb/>
         <div class="flex items-center gap-3">
@@ -112,14 +112,14 @@ import {useMenuStore, useUserStore} from '@/store'
 import Tabs from '@/layout/Tabs.vue'
 import Sidebar from '@/layout/Sidebar.vue'
 import {useRoute} from 'vue-router'
-import router from '@/router'
 import {message} from 'ant-design-vue'
 import useGlobal from '@/hooks/useGlobal.ts'
 import Breadcrumb from '@/layout/Breadcrumb.vue'
+import {useDark} from "@vueuse/core";
 
+const isDark = useDark()
 const {sidebarCollapsed, widthLessThanMiddle} = storeToRefs(useMenuStore())
 const {$bus} = useGlobal()
-useUserStore().refreshUserInfo()
 
 const collapsedWidth = ref<number>(80)
 const showMask = ref<boolean>(false)
@@ -169,9 +169,8 @@ const closeMask = () => {
   sidebarCollapsed.value = true
 }
 const logout = () => {
-  localStorage.clear()
+  useUserStore().logout()
   message.success(t('已退出登录！'))
-  router.replace('/login')
 }
 const showMyInfo = () => {
   $bus.emit('show-my-info-modal')
