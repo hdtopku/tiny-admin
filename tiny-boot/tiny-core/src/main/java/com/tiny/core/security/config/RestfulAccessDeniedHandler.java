@@ -14,6 +14,7 @@ import java.io.IOException;
 
 /**
  * Created by lxh at 2024-07-16 10:13:56
+ * Insufficient permissions to access the resource, return 403 error code and message.
  */
 @Component
 public class RestfulAccessDeniedHandler implements AccessDeniedHandler {

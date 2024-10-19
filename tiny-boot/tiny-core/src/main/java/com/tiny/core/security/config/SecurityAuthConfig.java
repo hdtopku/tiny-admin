@@ -10,6 +10,7 @@ import org.redisson.api.RMapCache;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -39,7 +40,6 @@ import java.util.Set;
 @EnableWebSecurity
 @EnableMethodSecurity
 public abstract class SecurityAuthConfig<T extends UserDetailsBo> implements UserDetailsService {
-    private static final String TOKEN_KEY = "user-token";
     @Resource
     private RestfulAuthenticationEntryPoint restfulAuthenticationEntryPoint;
     @Resource
@@ -50,17 +50,25 @@ public abstract class SecurityAuthConfig<T extends UserDetailsBo> implements Use
     private AuthorizationManager<RequestAuthorizationContext> authorizationManager;
     @Value("${constant.redis-users-token-map-key}")
     private String redisUsersTokenMapKey;
+    @Resource
+    private SecurityProperty securityProperty;
 
+    /**
+     * Ignore static resources
+     */
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         return web -> web.ignoring().requestMatchers("/css/**", "/js/**", "/img/**", "/images/**", "/favicon.ico");
     }
 
+    /**
+     * Filter chain
+     */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
         http.authorizeHttpRequests(authorize -> authorize
-                .requestMatchers("/login", "/error", "/websocket").permitAll()
+                .requestMatchers(securityProperty.getWhiteUrlList()).permitAll()
                 .anyRequest().access(authorizationManager)
         );
         http.exceptionHandling(exceptionHandling -> exceptionHandling
@@ -69,9 +77,9 @@ public abstract class SecurityAuthConfig<T extends UserDetailsBo> implements Use
         );
         http.addFilterBefore(new OncePerRequestFilter() {
             @Override
-            protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+            protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
                 String token = request.getHeader("Authorization");
-                if(token == null || !token.startsWith("Bearer ")) {
+                if (token == null || !token.startsWith("Bearer ")) {
                     filterChain.doFilter(request, response);
                     return;
                 }
@@ -97,7 +105,12 @@ public abstract class SecurityAuthConfig<T extends UserDetailsBo> implements Use
         return http.build();
     }
 
-
+    /**
+     * Authentication manager with DaoAuthenticationProvider
+     *
+     * @param userDetailsService user details service
+     * @return authentication manager
+     */
     @Bean
     public AuthenticationManager authenticationManager(UserDetailsService userDetailsService) {
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();

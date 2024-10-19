@@ -1,14 +1,59 @@
+<script lang="ts" setup>
+import {LockOutlined, UserOutlined} from '@ant-design/icons-vue'
+import {useUserStore} from '@/store'
+import {message} from 'ant-design-vue'
+import router from '@/router'
+
+const loginForm = ref({
+  username: '',
+  password: '',
+})
+
+const validateRules = {
+  username: [
+    {required: true, message: 'Please input username', trigger: ['blur', 'change']},
+  ],
+
+  password: [
+    {required: true, message: 'Please input password', trigger: ['blur', 'change']},
+  ],
+}
+const formRef = ref()
+const loginLoading = ref(false), loginError = ref(false)
+const handleLogin = () => {
+  formRef.value.validate().then(() => {
+    loginLoading.value = true
+    const userStore = useUserStore()
+    userStore
+        .login(loginForm.value)
+        .then(() => {
+          router.push('/home')
+          message.success('Login success')
+        })
+        .catch(() => {
+          loginError.value = true
+        })
+        .finally(() => {
+          loginLoading.value = false
+          setTimeout(() => {
+            loginError.value = false
+          }, 700)
+        })
+  })
+}
+</script>
+
 <template>
   <div
-      class="max-sm:pt-4 sm:items-center items-start dark:bg-gray-800 dark:text-gray-200 bg-gray-100 text-gray-800 flex justify-center duration-300 h-screen"
+      class="max-sm:pt-4 sm:items-center items-start dark:bg-gray-800 dark:text-gray-200 flex justify-center h-screen"
   >
     <div
-        class="grid-cols-1 max-sm:grid-rows-3 sm:grid-cols-3 md:grid-cols-2 w-11/12 max-w-4xl grid gap-4"
+        class="grid-cols-1 max-sm:grid-rows-3 sm:grid-cols-5 md:grid-cols-2 gap-2 md:gap-4 w-11/12 max-w-4xl grid"
     >
       <!--    Illustration  -->
-      <div class="drawing"></div>
+      <div class="drawing max-md:col-span-2 animate__animated animate__slideInLeft animate__slower"></div>
 
-      <div class="max-sm:row-span-2 max-md:col-span-2 ">
+      <div class="max-sm:row-span-2 max-md:col-span-3 ">
         <HeadTools class="mb-2 mr-6"></HeadTools>
 
         <!--        Login form -->
@@ -18,7 +63,7 @@
           <div>
             <div class="text-lg text-center">
             <span
-                class="inline-block italic animate__animated animate__lightSpeedInLeft animate__slower animate__delay-1s animate__repeat-3 tracking-tight">
+                class="inline-block italic animate__animated animate__lightSpeedInLeft animate__slower animate__delay-2s animate__repeat-3 tracking-tight">
             Welcome to
               </span>
               <span class="text-3xl font-bold tracking-wide ml-2">Tiny Admin</span>
@@ -27,7 +72,7 @@
           <a-form
               ref="formRef"
               :model="loginForm"
-              :rules="rules"
+              :rules="validateRules"
               auto-complete="off"
               class="grid sm:gap-4 items-center grid-cols-1 m-6"
               size="large"
@@ -64,9 +109,10 @@
                   type="primary"
                   @click="handleLogin"
               >
-              <span :class="loginLoading ? ' animate__animated animate__slideOutRight animate__infinite animate__slower' : ''"
-                    class="text-md tracking-widest">
-                {{ $t('登录') }}
+              <span
+                  :class="loginLoading ? ' animate__animated animate__slideOutRight animate__infinite animate__slower' : ''"
+                  class="text-md tracking-widest uppercase">
+                Login In
               </span>
               </a-button>
             </a-form-item>
@@ -76,50 +122,6 @@
     </div>
   </div>
 </template>
-<script lang="ts" setup>
-import {LockOutlined, UserOutlined} from '@ant-design/icons-vue'
-import {useUserStore} from '@/store'
-import {message} from 'ant-design-vue'
-import router from '@/router'
-
-const loginForm = ref({
-  username: '',
-  password: '',
-})
-const rules = {
-  username: [
-    {required: true, message: 'Please input username', trigger: ['blur', 'change']},
-  ],
-
-  password: [
-    {required: true, message: 'Please input password', trigger: ['blur', 'change']},
-  ],
-}
-const formRef = ref()
-const loginLoading = ref(false)
-const loginError = ref(false)
-const handleLogin = () => {
-  formRef.value.validate().then(() => {
-    loginLoading.value = true
-    const userStore = useUserStore()
-    userStore
-        .login(loginForm.value)
-        .then(() => {
-          router.push('/home')
-          message.success('Login success')
-        })
-        .catch(() => {
-          loginError.value = true
-        })
-        .finally(() => {
-          loginLoading.value = false
-          setTimeout(() => {
-            loginError.value = false
-          }, 700)
-        })
-  })
-}
-</script>
 <style lang="less" scoped>
 .drawing {
   background: url('/login_bg.svg') no-repeat center center;

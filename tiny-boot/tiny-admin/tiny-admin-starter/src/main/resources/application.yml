@@ -51,6 +51,19 @@ mybatis-plus:
 
 constant:
   redis-users-token-map-key: tiny-admin-users-token-map
+security:
+  white-url-list:
+    - /login
+    - /logout
+    - /register
+    - /error
+    - /actuator/**
+    - /v2/api-docs
+    - /swagger-ui.html
+    - /swagger-resources/**
+    - /webjars/**
+    - /csrf
+    - websocket/**
 
 firebase.bucket-name:
   tiny-blog-1a77f.appspot.com

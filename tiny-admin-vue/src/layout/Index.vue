@@ -119,6 +119,7 @@ import Breadcrumb from '@/layout/Breadcrumb.vue'
 
 const {sidebarCollapsed, widthLessThanMiddle} = storeToRefs(useMenuStore())
 const {$bus} = useGlobal()
+useUserStore().refreshUserInfo()
 
 const collapsedWidth = ref<number>(80)
 const showMask = ref<boolean>(false)

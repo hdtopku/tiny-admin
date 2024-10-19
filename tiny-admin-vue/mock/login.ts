@@ -21,7 +21,6 @@ export default [
             return {
                 code: 200,
                 data: {
-
                     avatar: faker.image.url(),
                     username: faker.word.noun(),
                     nickname: faker.person.fullName(),

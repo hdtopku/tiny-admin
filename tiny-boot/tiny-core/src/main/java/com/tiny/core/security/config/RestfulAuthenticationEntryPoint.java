@@ -11,6 +11,10 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.io.Serializable;
+
+/**
+ * The login has expired or not logged in, return 401 error.
+ */
 @Component
 public class RestfulAuthenticationEntryPoint implements AuthenticationEntryPoint, Serializable {
     @Override
