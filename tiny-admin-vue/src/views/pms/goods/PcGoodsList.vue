@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-
 import {DownOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue";
 import ImageCarousel from "@/views/pms/goods/ImageCarousel.vue"
 import {t} from "@/utils/i18n.ts"
+import {Pagination} from "ant-design-vue"
+import {deleteGoodsById, saveOrUpdateGoods} from "@/api/pms/goods.ts";
 
 const columns: any = [
   {
@@ -47,20 +48,40 @@ const columns: any = [
     width: 160,
   },
 ]
-const dataSource = ref([])
-const pagination = ref({
-  current: 1,
-  pageSize: 10,
+
+const props: any = defineProps({
+  dataSource: Array,
+  pagination: Pagination,
 })
 
+const deleteGoods = (id: string) => {
+  deleteGoodsById(id)
+}
+
+const emit = defineEmits(['openModal', 'queryList'])
+const confirmChangeStatus = (record: any) => {
+  record.status = !record.status
+  saveOrUpdateGoods(record).then(() => {
+    emit('queryList')
+  })
+}
+const openModal = (record: any) => {
+  emit('openModal', record)
+}
+const handleTableChange = (pagination: any) => {
+  emit('queryList', {
+    pageNum: pagination.current,
+    pageSize: pagination.pageSize,
+  })
+}
 </script>
 
 <template>
 
   <a-table
       :columns="columns"
-      :dataSource="dataSource"
-      :pagination="pagination"
+      :dataSource="props.dataSource"
+      :pagination="props.pagination"
       :scroll="{ x: 'max-content', y: 'calc(100vh - 200px)' }"
       @change="handleTableChange"
   >
@@ -97,11 +118,7 @@ const pagination = ref({
               :title="
                 record.status ? $t('是否禁用该品牌？') : $t(' 是否启用该品牌？')
               "
-              @confirm="
-                () => {
-                  confirmChangeStatus()
-                }
-              "
+              @confirm="confirmChangeStatus(record)"
           >
             <template #icon>
               <question-circle-outlined style="color: red"/>
@@ -113,11 +130,7 @@ const pagination = ref({
                 :un-checked-children="$t('已禁用')"
                 class="flex-shrink-0"
                 size="small"
-                @click="
-                  () => {
-                    changeStatus(record)
-                  }
-                "
+                @click="() => {record.status =!record.status}"
             />
           </a-popconfirm>
           <a-dropdown placement="bottom" trigger="hover">
@@ -128,7 +141,7 @@ const pagination = ref({
             <template #overlay>
               <a-menu class="text-center">
                 <a-menu-item>
-                  <a-button type="link" @click="() => handleEdit(record)">{{
+                  <a-button type="link" @click="() => openModal(record)">{{
                       $t('编辑商品')
                     }}
                   </a-button>
@@ -138,24 +151,20 @@ const pagination = ref({
                       :cancel-text="$t('否')"
                       :ok-text="$t('是')"
                       ok-type="danger"
-                      @confirm="
-                        () => {
-                          deleteBrand
-                        }
-                      "
+                      @confirm="deleteGoods(record.id)"
                   >
                     <template #icon>
                       <question-circle-outlined style="color: red"/>
                     </template>
                     <template #title>
-                      <div>{{ $t('是否删除品牌？') }}</div>
+                      <div>{{ $t('是否删除商品？') }}</div>
                       <a-tag class="my-2" color="red">{{
-                          record.brandName
+                          record.goodsName
                         }}
                       </a-tag>
                     </template>
                     <a-button danger type="link">{{
-                        $t('删除品牌')
+                        $t('删除商品')
                       }}
                     </a-button>
                   </a-popconfirm>
@@ -168,7 +177,3 @@ const pagination = ref({
     </template>
   </a-table>
 </template>
-
-<style scoped>
-
-</style>

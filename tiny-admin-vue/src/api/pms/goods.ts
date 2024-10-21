@@ -11,3 +11,7 @@ export const saveOrUpdateGoods = async (data: any) => {
 export const getGoodsListByIds = async (data: any) => {
     return http.post("/pms/goods/listByIds", data)
 }
+
+export const deleteGoodsById = async (id: any) => {
+    return http.get("/pms/goods/delete/" + id)
+}

@@ -197,7 +197,7 @@ const handleOk = () => {
 }
 const activeKey = ref('basicInfo')
 
-const showModal = (goods: any = {}) => {
+const openModal = (goods: any = {}) => {
   if (goods.id) {
     isUpdate.value = true
     goodsInfo.value = Object.assign({}, goods)
@@ -208,7 +208,7 @@ const showModal = (goods: any = {}) => {
 }
 
 defineExpose({
-  showModal,
+  openModal,
 })
 
 watch(goodsInfo, (newVal) => {

@@ -8,13 +8,14 @@ const props = defineProps({
   }
 })
 const keyword = ref(''), status = ref(true)
-const emit = defineEmits(['handleAdd', 'handleSearch'])
+const emit = defineEmits(['openModal', 'queryList'])
 const handleAdd = () => {
-  emit('handleAdd')
+  emit('openModal')
 }
 const handleSearch = () => {
-  emit('handleSearch', keyword.value, status.value)
+  emit('queryList', {keyword: keyword.value, status: status.value})
 }
+handleSearch()
 const debounceQuery = useDebounceFn(handleSearch, 500)
 watch(() => [keyword.value, status.value], debounceQuery)
 </script>
