@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center gap-4 justify-end">
+  <div class="flex items-center max-sm:gap-2 sm:gap-4 justify-end">
     <a-tooltip>
       <template #title>
         <span>{{ $t('打开视频介绍') }}</span>
@@ -53,11 +53,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import {
-  GithubOutlined,
-  ReadOutlined,
-  VideoCameraOutlined,
-} from '@ant-design/icons-vue'
+import {GithubOutlined, ReadOutlined, VideoCameraOutlined,} from '@ant-design/icons-vue'
 
 const openGithub = () => {
   window.open('https://github.com/hdtopku/tiny-admin', '_blank')

@@ -1,42 +1,8 @@
 <template>
   <div>
-    <div class="p-4">
-      <div class="flex mb-4">
-        <div class="flex items-center gap-4 mx-auto sm:w-[80%] w-full">
-          <a-button type="primary" @click="handleAdd">{{
-              $t('新增')
-            }}
-          </a-button>
-          <a-input
-              id="keyword"
-              v-model:value="searchForm.keyword"
-              :placeholder="$t('搜索商品名称、副标题、简介、品牌名')"
-              allow-clear
-              autocomplete="off"
-              class="text-left"
-              type="text"
-              @keyup.enter.native="queryList"
-          >
-            <template #prefix>
-              <a-switch
-                  v-model:checked="searchForm.status"
-                  :checked-children="$t('已启用')"
-                  :loading="switchLoading"
-                  :un-checked-children="$t('已禁用')"
-                  class="flex-shrink-0"
-                  @change="queryByStatus"
-              />
-            </template>
-            <template #suffix>
-              <a-button type="primary" @click="queryList">{{
-                  $t('搜索')
-                }}
-              </a-button>
-            </template>
-          </a-input>
-        </div>
-      </div>
-    </div>
+
+    <Search :loading="loading" @handle-add="handleAdd" @handle-search="queryList"></Search>
+    <!--   PC Table List -->
     <a-table
         :columns="columns"
         :dataSource="dataSource"
@@ -147,7 +113,9 @@
         </template>
       </template>
     </a-table>
-    <GoodsModal @query-list="queryList" ref="goodsModalRef"/>
+
+    <!--   Goods add/edit Modal -->
+    <GoodsModal ref="modalRef" @query-list="queryList"/>
   </div>
 </template>
 <script lang="ts" setup>
@@ -156,35 +124,29 @@ import {t} from '@/utils/i18n.ts'
 import {DownOutlined, QuestionCircleOutlined} from '@ant-design/icons-vue'
 import {getGoodsPage} from '@/api/pms/goods.ts'
 import ImageCarousel from '@/views/pms/goods/ImageCarousel.vue'
-import {useDebounceFn} from '@vueuse/core'
 import GoodsModal from '@/views/pms/goods/GoodsModal.vue'
 
 const handleAdd = () => {
+  modalRef.value.showModal()
 }
 const pagination = ref({
   current: 1,
   pageSize: 10,
   total: 0,
 })
-const searchForm = ref({
-  keyword: '',
-  status: true,
-  pageNum: pagination.value.current,
-  pageSize: pagination.value.pageSize,
-})
-const switchLoading = ref(false)
-
-const queryList = () => {
-  getGoodsPage(searchForm.value).then((res: any) => {
+const loading = ref(false)
+const queryList = (keyword: string = '', status: boolean = true) => {
+  const searchForm = {keyword, status, pageNum: pagination.value.current, pageSize: pagination.value.pageSize}
+  loading.value = true
+  getGoodsPage(searchForm).then((res: any) => {
     dataSource.value = res.records
     pagination.value.total = res.total
+    pagination.value.current = res.current
+  }).finally(() => {
+    loading.value = false
   })
 }
 queryList()
-const debounceQuery = useDebounceFn(queryList, 500)
-watch(() => searchForm.value.keyword, debounceQuery)
-const queryByStatus = () => {
-}
 
 const columns: any = [
   {
@@ -231,15 +193,15 @@ const columns: any = [
 ]
 
 const dataSource = ref([])
-const handleTableChange = (pagination: any) => {
-  searchForm.value.pageNum = pagination.current
-  searchForm.value.pageSize = pagination.pageSize
+const handleTableChange = (_pagination: any) => {
+  pagination.value.current = _pagination.current
+  pagination.value.pageSize = _pagination.pageSize
   queryList()
 }
 
-const goodsModalRef = ref()
+const modalRef = ref()
 const handleEdit = (record: any) => {
-  goodsModalRef.value.showModal(record)
+  modalRef.value.showModal(record)
 }
 const changeStatus = (record) => {
   console.log(record)

@@ -62,8 +62,6 @@ const isDark = useDark({
 })
 
 const toggleDark = () => {
-  setTimeout(() => {
-    useToggle(isDark)()
-  }, 300)
+  useToggle(isDark)()
 }
 </script>

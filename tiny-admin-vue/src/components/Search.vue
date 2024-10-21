@@ -1,37 +1,34 @@
 <script setup lang="ts">
+import {useDebounceFn} from "@vueuse/core"
 
 const props = defineProps({
-  searchForm: {
-    type: Object,
-    default: () => ({
-      keyword: '',
-      status: true
-    })
+  loading: {
+    type: Boolean,
+    default: false
   }
 })
-const loading = ref(false)
-const emit = defineEmits(['handleAdd', 'handleSearch', 'handleSubmit'])
+const keyword = ref(''), status = ref(true)
+const emit = defineEmits(['handleAdd', 'handleSearch'])
 const handleAdd = () => {
   emit('handleAdd')
 }
 const handleSearch = () => {
-  emit('handleSearch')
+  emit('handleSearch', keyword.value, status.value)
 }
-const queryByStatus = () => {
-
-}
+const debounceQuery = useDebounceFn(handleSearch, 500)
+watch(() => [keyword.value, status.value], debounceQuery)
 </script>
 
 <template>
-  <div class="flex mb-4">
-    <div class="flex items-center gap-4 mx-auto sm:w-[80%] w-full">
-      <a-button type="primary" @click="handleAdd">{{
+  <div class="flex mb-3">
+    <div class="flex items-center gap-4 mx-auto sm:w-[80%] w-11/12">
+      <a-button :loading="props.loading" type="primary" @click="handleAdd">{{
           $t('新增')
         }}
       </a-button>
       <a-input
           id="keyword"
-          v-model:value="props.searchForm.keyword"
+          v-model:value="keyword"
           :placeholder="$t('搜索用户名、昵称、邮箱、手机号')"
           allow-clear
           autocomplete="off"
@@ -41,16 +38,15 @@ const queryByStatus = () => {
       >
         <template #prefix>
           <a-switch
-              v-model:checked="props.searchForm.status"
+              v-model:checked="status"
               :checked-children="$t('已启用')"
-              :loading="loading"
+              :loading="props.loading"
               :un-checked-children="$t('已禁用')"
               class="flex-shrink-0"
-              @change="queryByStatus"
           />
         </template>
         <template #suffix>
-          <a-button type="primary" @click="handleSearch">{{
+          <a-button :loading="props.loading" type="primary" @click="handleSearch">{{
               $t('搜索')
             }}
           </a-button>
@@ -59,7 +55,3 @@ const queryByStatus = () => {
     </div>
   </div>
 </template>
-
-<style scoped>
-
-</style>

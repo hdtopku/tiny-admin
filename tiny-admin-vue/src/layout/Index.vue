@@ -2,20 +2,20 @@
   <a-layout class="min-h-screen">
     <div v-show="showMask" class="mask" @click="closeMask"></div>
     <a-layout-sider :theme="isDark? 'dark' : 'light'"
-        v-model:collapsed="sidebarCollapsed"
-        :collapsedWidth="collapsedWidth"
-        :style="{
+                    v-model:collapsed="sidebarCollapsed"
+                    :collapsedWidth="collapsedWidth"
+                    :style="{
         overflow: 'auto',
         position: widthLessThanMiddle ? 'fixed' : 'fixed',
         left: 0,
         top: 0,
         bottom: 0,
       }"
-        breakpoint="md"
-        class="z-[1000] float-left"
-        collapsible
-        @breakpoint="onBreakpoint"
-        @collapse="onCollapse"
+                    breakpoint="md"
+                    class="z-[1000] float-left"
+                    collapsible
+                    @breakpoint="onBreakpoint"
+                    @collapse="onCollapse"
     >
       <div
           :class="{
@@ -30,7 +30,7 @@
       <Sidebar class="overflow-auto mt-[64px]"/>
       <span
           :class="getSidebarClass()"
-          class="opacity-80 fixed z-10 top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white bg-[#011528] text-2xl hover:bg-gray-700 rounded-lg cursor-pointer p-1"
+          class="dark:bg-gray-200 dark:text-gray-800 text-white bg-gray-600 duration-200 opacity-80 fixed z-[9999] top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-2xl hover:opacity-60 rounded-lg cursor-pointer p-1"
           @click="sidebarCollapsed = !sidebarCollapsed"
       >
         <svg
@@ -49,9 +49,26 @@
     <a-layout>
       <a-layout-header
           :class="getContentClass()+(isDark ? ' !bg-gray-900' : ' !bg-white')"
-          class="fixed z-10 border-l border-b dark:border-gray-700 border-gray-200 flex justify-between items-center"
+          class="fixed z-10 border-l border-b dark:border-gray-700 border-gray-200 flex max-sm:justify-end sm:justify-between items-center"
       >
-        <Breadcrumb/>
+        <Breadcrumb class="hidden sm:block"/>
+        <span
+            :class="getSidebarClass()"
+            class="sm:hidden max-sm:top-6 max-sm:ml-4 dark:bg-gray-200 dark:text-gray-800 text-white bg-gray-600 duration-200 opacity-80 fixed z-[9999] transform -translate-x-1/2 -translate-y-1/2 text-2xl hover:opacity-60 rounded-lg cursor-pointer p-1"
+            @click="sidebarCollapsed = !sidebarCollapsed"
+        >
+        <svg
+            fill="currentColor"
+            height="24px"
+            viewBox="0 -960 960 960"
+            width="24px"
+            xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+              d="M120-240v-80h720v80H120Zm0-200v-80h720v80H120Zm0-200v-80h720v80H120Z"
+          />
+        </svg>
+      </span>
         <div class="flex items-center gap-3">
           <HeadTools></HeadTools>
           <a-dropdown>
@@ -82,7 +99,7 @@
           </a-dropdown>
         </div>
       </a-layout-header>
-      <a-layout-content :class="getContentClass()" class="pt-[40px]">
+      <a-layout-content :class="getContentClass()" class="pt-[50px]">
         <Tabs class="fixed z-100 pt-[2px]"/>
         <div class="mt-10">
           <router-view #default="{ Component }">
@@ -178,7 +195,8 @@ const showMyInfo = () => {
 </script>
 <style scoped>
 ::v-deep(.ant-layout-header) {
-  height: 40px;
+  height: 50px;
+  padding-inline: 20px;
 }
 
 .mask {

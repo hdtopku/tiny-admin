@@ -48,7 +48,7 @@ const handleLogin = () => {
       class="max-sm:pt-4 sm:items-center items-start dark:bg-gray-800 dark:text-gray-200 flex justify-center h-screen"
   >
     <div
-        class="grid-cols-1 max-sm:grid-rows-3 sm:grid-cols-5 md:grid-cols-2 gap-2 md:gap-4 w-11/12 max-w-4xl grid"
+        class="grid-cols-1 max-sm:grid-rows-3 sm:grid-cols-5 md:grid-cols-2 gap-4 w-11/12 max-w-4xl grid"
     >
       <!--    Illustration  -->
       <div class="drawing max-md:col-span-2 animate__animated animate__slideInLeft animate__slower"></div>
@@ -102,7 +102,7 @@ const handleLogin = () => {
             </a-form-item>
             <a-form-item>
               <a-button
-                  :class="loginError ? 'animate__animated animate__headShake': ''"
+                  :class="loginError ? 'animate__animated animate__shakeX': ''"
                   :loading="loginLoading"
                   block
                   class="hover:scale-[102%] duration-500"
