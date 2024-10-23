@@ -11,12 +11,12 @@
       </div>
     </template>
     <template #customPaging="props">
-      <a>
+      <div>
         <img :src="params.imgUrls[props.i]"/>
-      </a>
+      </div>
     </template>
     <div v-for="url in params.imgUrls" :key="url">
-      <img :src="url" style="margin: 0 auto"/>
+      <img :src="url" class="mx-auto w-full h-full"/>
     </div>
   </a-carousel>
 </template>

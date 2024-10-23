@@ -1,7 +1,7 @@
 <template>
   <div class="flex items-center max-sm:gap-2 sm:gap-4 justify-end">
     <a-tooltip>
-      <template #title>
+      <template #title class="hidden sm:block">
         <span>{{ $t('打开视频介绍') }}</span>
       </template>
       <a-button

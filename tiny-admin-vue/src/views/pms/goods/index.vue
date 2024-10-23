@@ -2,11 +2,13 @@
   <div>
     <!--   Search -->
     <Search :loading="loading" @open-modal="openModal" @query-list="queryList"></Search>
-    <!--   PC Table List -->
-    <PcGoodsList :dataSource="dataSource" :loading="loading" :pagination="pagination" @open-modal="openModal"
+    <!--   PC Data List -->
+    <PcGoodsList :dataSource="dataSource" :loading="loading" :pagination="pagination" class="sm:block hidden"
+                 @open-modal="openModal"
                  @query-list="queryList"></PcGoodsList>
-    <!--   Mobile Table List -->
-    <MobileGoodsList :dataSource="dataSource" :loading="loading" @open-modal="openModal"></MobileGoodsList>
+    <!--   Mobile Data List -->
+    <MobileGoodsList :dataSource="dataSource" :loading="loading" :pagination="pagination" class="block sm:hidden"
+                     @open-modal="openModal"></MobileGoodsList>
     <!--   Goods add/edit Modal -->
     <GoodsModal ref="modalRef" @query-list="queryList"/>
   </div>
