@@ -21,7 +21,7 @@ watch(() => [keyword.value, status.value], debounceQuery)
 </script>
 
 <template>
-  <div class="flex mb-3">
+  <div class="flex mb-3 bg-gray-100">
     <div class="flex items-center sm:gap-4 gap-1 mx-auto sm:w-[80%] w-[95%]">
       <a-button :loading="props.loading" type="primary" @click="handleAdd">{{
           $t('新增')

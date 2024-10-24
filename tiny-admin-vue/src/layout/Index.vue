@@ -29,7 +29,7 @@
       </div>
       <Sidebar class="overflow-auto mt-[64px]"/>
       <span
-          :class="getSidebarClass()"
+          :class="getSidebarClass"
           class="dark:bg-gray-200 dark:text-gray-800 text-white bg-gray-600 duration-200 opacity-80 fixed z-[9999] top-1/2 transform -translate-x-1/2 -translate-y-1/2 text-2xl hover:opacity-60 rounded-lg cursor-pointer p-1"
           @click="sidebarCollapsed = !sidebarCollapsed"
       >
@@ -48,13 +48,13 @@
     </a-layout-sider>
     <a-layout>
       <a-layout-header
-          :class="getContentClass()+(isDark ? ' !bg-gray-900' : ' !bg-white')"
+          :class="getContentClass+(isDark ? ' !bg-gray-900' : ' !bg-white')"
           class="fixed z-10 border-l border-b dark:border-gray-700 border-gray-200 flex max-sm:justify-end sm:justify-between items-center"
       >
-        <Breadcrumb class="hidden sm:block"/>
+        <Breadcrumb class="hidden sm:block ml-6"/>
         <span
-            :class="getSidebarClass()"
-            class="sm:hidden max-sm:top-6 max-sm:ml-4 dark:bg-gray-200 dark:text-gray-800 text-white bg-gray-600 duration-200 opacity-80 fixed z-[9999] transform -translate-x-1/2 -translate-y-1/2 text-2xl hover:opacity-60 rounded-lg cursor-pointer p-1"
+            :class="getSidebarClass"
+            class="top-6 ml-4 dark:bg-gray-200 dark:text-gray-800 text-white bg-gray-600 duration-200 opacity-80 fixed z-[9999] transform -translate-x-1/2 -translate-y-1/2 text-2xl hover:opacity-60 rounded-lg cursor-pointer p-1"
             @click="sidebarCollapsed = !sidebarCollapsed"
         >
         <svg
@@ -99,7 +99,7 @@
           </a-dropdown>
         </div>
       </a-layout-header>
-      <a-layout-content :class="getContentClass()" class="pt-[50px]">
+      <a-layout-content :class="getContentClass" class="pt-[50px]">
         <Tabs class="fixed z-100 pt-[2px]"/>
         <div class="mt-10">
           <router-view #default="{ Component }">
@@ -169,18 +169,18 @@ watch(sidebarCollapsed, (val) => {
   }
   sidebarChanged = true
 })
-const getSidebarClass = () => {
+const getSidebarClass = computed(() => {
   if (sidebarCollapsed.value) {
     if (widthLessThanMiddle.value) return 'left-1'
     return 'left-[80px]'
   }
   return 'left-[200px]'
-}
-const getContentClass = () => {
+})
+const getContentClass = computed(() => {
   if (widthLessThanMiddle.value) return 'w-full'
   if (sidebarCollapsed.value) return 'w-[calc(100%-80px)] ml-[80px]'
   return 'w-[calc(100%-200px)] ml-[200px]'
-}
+})
 const closeMask = () => {
   showMask.value = false
   sidebarCollapsed.value = true

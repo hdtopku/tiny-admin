@@ -11,9 +11,7 @@
       </div>
     </template>
     <template #customPaging="props">
-      <div>
-        <img :src="params.imgUrls[props.i]"/>
-      </div>
+      <img :src="params.imgUrls[props.i]" class="cursor-pointer"/>
     </template>
     <div v-for="url in params.imgUrls" :key="url">
       <img :src="url" class="mx-auto w-full h-full"/>
@@ -39,6 +37,10 @@ const params = defineProps({
 :deep(.slick-slide) {
   text-align: center;
   overflow: hidden;
+}
+
+:deep(.slick-dots) {
+  z-index: 0 !important;
 }
 
 :deep(.slick-arrow.custom-slick-arrow) {
