@@ -34,6 +34,7 @@ const whiteList = ['/login']
 let routeList, publicRouteList
 router.beforeEach((to, from, next) => {
     // NProgress.start()
+    console.log(to.path, from.path)
     const token = localStorage.getItem('token')
     if (whiteList.includes(to.path)) {
         if (to.path === '/login' && token?.length) {
@@ -48,6 +49,7 @@ router.beforeEach((to, from, next) => {
             }
             routeList = useUserStore().getRouteList()
             publicRouteList = useUserStore().userInfo.publicMenuList?.filter(item => item.type === 1)
+            console.log(routeList, publicRouteList)
             if (routeList?.length) {
                 router.addRoute(
                     {

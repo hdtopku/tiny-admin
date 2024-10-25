@@ -31,4 +31,8 @@ const isDark = useDark()
   font-style: normal;
   font-variation-settings: "wdth" 100;
 }
+
+.ant-modal div[aria-hidden="true"] {
+  display: none !important;
+}
 </style>

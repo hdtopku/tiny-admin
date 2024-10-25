@@ -28,15 +28,15 @@
           :rules="rules"
       >
         <a-form-item :label="$t('品牌logo')" name="logo">
-          <div class="flex justify-center">
-            <ImageUpload v-model:image-url="brandInfo.logo"></ImageUpload>
+          <ImageUpload v-model:image-url="brandInfo.logo"></ImageUpload>
+          <a-form-item-rest>
             <a-textarea
                 v-model:value="brandInfo.logo"
                 :placeholder="$t('或输入品牌logo链接')"
                 :rows="2"
                 allowClear
             />
-          </div>
+          </a-form-item-rest>
         </a-form-item>
         <a-form-item :label="$t('品牌名称')" name="brandName">
           <a-input
@@ -107,7 +107,7 @@ const rules: Ref<any> = ref({
 })
 const formRef = ref()
 const formLoading = ref(false)
-const emits = defineEmits(['queryList'])
+const emit = defineEmits(['queryList'])
 const handleOk = () => {
   formRef.value
       .validate()
@@ -116,8 +116,8 @@ const handleOk = () => {
         saveOrUpdateBrand(brandInfo.value)
             .then(() => {
               message.success(t('操作成功'))
+              emit('queryList', {})
               open.value = false
-              emits('queryList')
             })
             .finally(() => {
               formLoading.value = false
@@ -128,7 +128,7 @@ const handleOk = () => {
       })
 }
 
-const showModal = (brand: any = {}) => {
+const openModal = (brand: any = {}) => {
   if (brand.id) {
     isUpdate.value = true
     brandInfo.value = Object.assign({}, brand)
@@ -139,6 +139,6 @@ const showModal = (brand: any = {}) => {
 }
 
 defineExpose({
-  showModal,
+  openModal,
 })
 </script>

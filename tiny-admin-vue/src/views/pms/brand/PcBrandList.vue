@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import {DownOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue";
-import ImageCarousel from "@/views/pms/goods/ImageCarousel.vue"
-import {t} from "@/utils/i18n.ts"
-import {Pagination} from "ant-design-vue"
-import {deleteGoodsById, saveOrUpdateGoods} from "@/api/pms/goods.ts";
+import {message, Pagination} from "ant-design-vue";
+import {t} from "@/utils/i18n.ts";
+import {deleteBrandById, saveOrUpdateBrand} from "@/api/pms/brand.ts";
 
 const props: any = defineProps({
   dataSource: Array,
   pagination: Pagination,
 })
+
 const columns: any = [
   {
     title: t('序号'),
@@ -16,40 +16,28 @@ const columns: any = [
     width: 60,
   },
   {
-    title: t('商品图册'),
-    dataIndex: 'albumList',
-    key: 'albumList',
+    title: t('品牌logo'),
+    dataIndex: 'logo',
+    key: 'logo',
     width: 100,
   },
   {
-    title: t('商品名称'),
-    dataIndex: 'goodsName',
-    key: 'goodsName',
+    title: t('品牌名'),
+    dataIndex: 'brandName',
+    key: 'brandName',
     width: 150,
   },
   {
-    title: t('商品简介'),
-    dataIndex: 'goodsDesc',
-    key: 'goodsDesc',
-    width: 150,
+    title: t('品牌简介'),
+    dataIndex: 'brandDesc',
+    key: 'brandDesc',
+    width: 200,
   },
   {
-    title: t('市场价格'),
-    dataIndex: 'marketPrice',
-    key: 'marketPrice',
-    width: 100,
-  },
-  {
-    title: t('促销价格'),
-    dataIndex: 'promotionPrice',
-    key: 'promotionPrice',
-    width: 100,
-  },
-  {
-    title: t('库存'),
-    dataIndex: 'stock',
-    key: 'stock',
-    width: 100,
+    title: t('品牌故事'),
+    dataIndex: 'brandStory',
+    key: 'brandStory',
+    width: 200,
   },
   {
     title: t('操作'),
@@ -59,25 +47,26 @@ const columns: any = [
   },
 ]
 
-
-const deleteGoods = (id: string) => {
-  deleteGoodsById(id)
-}
-
 const emit = defineEmits(['openModal', 'queryList'])
+const handleTableChange = (pagination: any) => {
+  emit('queryList', {
+    pageNum: pagination.current,
+    pageSize: pagination.pageSize,
+  })
+}
 const confirmChangeStatus = (record: any) => {
   record.status = !record.status
-  saveOrUpdateGoods(record).then(() => {
+  saveOrUpdateBrand(record).then(() => {
     emit('queryList', {})
   })
 }
 const openModal = (record: any) => {
   emit('openModal', record)
 }
-const handleTableChange = (pagination: any) => {
-  emit('queryList', {
-    pageNum: pagination.current,
-    pageSize: pagination.pageSize,
+const deleteBrand = (id: any) => {
+  deleteBrandById(id).then(() => {
+    message.success(t('删除成功'))
+    emit('queryList', {})
   })
 }
 </script>
@@ -95,25 +84,25 @@ const handleTableChange = (pagination: any) => {
       <template v-if="column.key === 'index'">
         {{ index + 1 }}
       </template>
-      <template v-else-if="column.dataIndex === 'albumList'">
-        <ImageCarousel :img-urls="record?.albumList || []"/>
+      <template v-else-if="column.dataIndex === 'logo'">
+        <a-avatar :src="record.logo" shape="square" size="large"/>
       </template>
-      <template v-else-if="column.dataIndex === 'goodsName'">
+      <template v-else-if="column.dataIndex === 'brandDesc'">
         <a-tooltip :arrow="false">
           <template #title>
-            <span>{{ record.goodsName }}</span>
+            <span>{{ record.brandDesc }}</span>
           </template>
-          <span>{{ record.goodsName?.substring(0, 10) }}</span>
-          <span v-if="record.goodsName?.length > 10">...</span>
+          <span>{{ record.brandDesc?.substring(0, 10) }}</span>
+          <span v-if="record.brandDesc?.length > 10">...</span>
         </a-tooltip>
       </template>
-      <template v-else-if="column.dataIndex === 'goodsDesc'">
+      <template v-else-if="column.dataIndex === 'brandStory'">
         <a-tooltip :arrow="false">
           <template #title>
-            <span>{{ record.goodsDesc }}</span>
+            <span>{{ record.brandStory }}</span>
           </template>
-          <span>{{ record.goodsDesc?.substring(0, 10) }}</span>
-          <span v-if="record.goodsDesc?.length > 10">...</span>
+          <span>{{ record.brandStory?.substring(0, 10) }}</span>
+          <span v-if="record.brandStory?.length > 10">...</span>
         </a-tooltip>
       </template>
       <template v-else-if="column.key === 'operation'">
@@ -124,7 +113,11 @@ const handleTableChange = (pagination: any) => {
               :title="
                 record.status ? $t('是否禁用该品牌？') : $t(' 是否启用该品牌？')
               "
-              @confirm="confirmChangeStatus(record)"
+              @confirm="
+                () => {
+                  confirmChangeStatus(record)
+                }
+              "
           >
             <template #icon>
               <question-circle-outlined style="color: red"/>
@@ -136,7 +129,7 @@ const handleTableChange = (pagination: any) => {
                 :un-checked-children="$t('已禁用')"
                 class="flex-shrink-0"
                 size="small"
-                @click="() => {record.status =!record.status}"
+                @click="record.status=!record.status"
             />
           </a-popconfirm>
           <a-dropdown placement="bottom" trigger="hover">
@@ -147,30 +140,36 @@ const handleTableChange = (pagination: any) => {
             <template #overlay>
               <a-menu class="text-center">
                 <a-menu-item>
-                  <a-button type="link" @click="() => openModal(record)">{{
-                      $t('编辑商品')
-                    }}
-                  </a-button>
+                  <a-button
+                      type="link"
+                      @click="() => openModal(record)"
+                  >{{ $t('编辑品牌') }}
+                  </a-button
+                  >
                 </a-menu-item>
                 <a-menu-item>
                   <a-popconfirm
                       :cancel-text="$t('否')"
                       :ok-text="$t('是')"
                       ok-type="danger"
-                      @confirm="deleteGoods(record.id)"
+                      @confirm="
+                        () => {
+                          deleteBrand(record.id)
+                        }
+                      "
                   >
                     <template #icon>
                       <question-circle-outlined style="color: red"/>
                     </template>
                     <template #title>
-                      <div>{{ $t('是否删除商品？') }}</div>
+                      <div>{{ $t('是否删除品牌？') }}</div>
                       <a-tag class="my-2" color="red">{{
-                          record.goodsName
+                          record.brandName
                         }}
                       </a-tag>
                     </template>
                     <a-button danger type="link">{{
-                        $t('删除商品')
+                        $t('删除品牌')
                       }}
                     </a-button>
                   </a-popconfirm>
@@ -183,3 +182,7 @@ const handleTableChange = (pagination: any) => {
     </template>
   </a-table>
 </template>
+
+<style scoped>
+
+</style>

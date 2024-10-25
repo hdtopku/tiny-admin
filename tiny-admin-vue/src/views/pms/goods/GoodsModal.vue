@@ -185,7 +185,7 @@ const handleOk = () => {
             .then(() => {
               message.success(t('操作成功'))
               open.value = false
-              emits('queryList')
+              emits('queryList', {})
             })
             .finally(() => {
               formLoading.value = false
@@ -209,9 +209,5 @@ const openModal = (goods: any = {}) => {
 
 defineExpose({
   openModal,
-})
-
-watch(goodsInfo, (newVal) => {
-  console.log(newVal)
 })
 </script>

@@ -47,7 +47,7 @@ const reload = () => {
 </script>
 
 <template>
-  <a-card size="small">
+  <a-card class="relative" size="small">
     <div class="flex flex-col gap-4">
       <a-card v-for="(record, index) in props.dataSource" :key="index" class="shadow-md">
         <template #cover>
@@ -56,6 +56,26 @@ const reload = () => {
           </div>
         </template>
         <template #actions>
+          <a-popconfirm
+              :cancel-text="$t('否')"
+              :ok-text="$t('是')"
+              :title="
+                record.status ? $t('是否禁用该品牌？') : $t(' 是否启用该品牌？')
+              "
+              @confirm="confirmChangeStatus(record)"
+          >
+            <template #icon>
+              <question-circle-outlined style="color: red"/>
+            </template>
+            <a-switch
+                v-model:checked="record.status"
+                :checked-children="$t('已启用')"
+                :loading="record.loading"
+                :un-checked-children="$t('已禁用')"
+                class="!mt-2"
+                @click="() => {record.status =!record.status}"
+            />
+          </a-popconfirm>
           <a-popconfirm
               :cancel-text="$t('否')"
               :ok-text="$t('是')"
@@ -79,26 +99,6 @@ const reload = () => {
               <DeleteOutlined/>
             </a-button>
           </a-popconfirm>
-          <a-popconfirm
-              :cancel-text="$t('否')"
-              :ok-text="$t('是')"
-              :title="
-                record.status ? $t('是否禁用该品牌？') : $t(' 是否启用该品牌？')
-              "
-              @confirm="confirmChangeStatus(record)"
-          >
-            <template #icon>
-              <question-circle-outlined style="color: red"/>
-            </template>
-            <a-switch
-                v-model:checked="record.status"
-                :checked-children="$t('已启用')"
-                :loading="record.loading"
-                :un-checked-children="$t('已禁用')"
-                class="!mt-2"
-                @click="() => {record.status =!record.status}"
-            />
-          </a-popconfirm>
           <a-button type="link">
             <ExpandAltOutlined/>
           </a-button>
@@ -106,7 +106,21 @@ const reload = () => {
             <EditOutlined/>
           </a-button>
         </template>
-        <a-card-meta :description="record.goodsDesc" :title="record.goodsName">
+        <a-card-meta :title="record.goodsName">
+          <template #description>
+            <div>{{ record.goodsDesc }}</div>
+            <div class="mt-2">
+              <a-tag>市场价</a-tag>
+              {{ record.marketPrice }}
+              <a-divider type="vertical"/>
+              <a-tag>促销价</a-tag>
+              {{ record.promotionPrice }}
+              <a-divider type="vertical"/>
+              <a-tag>库存</a-tag>
+              {{ record.stock }}
+            </div>
+
+          </template>
         </a-card-meta>
       </a-card>
       <div id="bottom" class="text-center pb-4">

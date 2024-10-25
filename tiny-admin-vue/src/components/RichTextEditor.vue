@@ -39,7 +39,6 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<EmitEvent>()
 let valueHtml = computed({
   get() {
-    console.log(props.modelValue)
     return props.modelValue
   },
   set(value: string) {

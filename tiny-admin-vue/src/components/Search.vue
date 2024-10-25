@@ -5,6 +5,10 @@ const props = defineProps({
   loading: {
     type: Boolean,
     default: false
+  },
+  placeholder: {
+    type: String,
+    default: '请输入搜索关键字'
   }
 })
 const keyword = ref(''), status = ref(true)
@@ -21,7 +25,7 @@ watch(() => [keyword.value, status.value], debounceQuery)
 </script>
 
 <template>
-  <div class="flex mb-3 bg-gray-100">
+  <div class="flex mb-3 bg-gray-100 dark:bg-black">
     <div class="flex items-center sm:gap-4 gap-1 mx-auto sm:w-[80%] w-[95%]">
       <a-button :loading="props.loading" type="primary" @click="handleAdd">{{
           $t('新增')
@@ -30,7 +34,7 @@ watch(() => [keyword.value, status.value], debounceQuery)
       <a-input
           id="keyword"
           v-model:value="keyword"
-          :placeholder="$t('搜索用户名、昵称、邮箱、手机号')"
+          :placeholder="props.placeholder"
           allow-clear
           autocomplete="off"
           class="text-left"

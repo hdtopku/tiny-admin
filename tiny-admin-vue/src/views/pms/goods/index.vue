@@ -2,8 +2,10 @@
   <div>
     <!--   Search -->
     <a-affix :offset-top="84">
-      <Search :loading="loading" @open-modal="openModal" @query-list="queryList"></Search>
+      <Search :loading="loading" :placeholder="$t('搜索用户名、昵称、邮箱、手机号')" @open-modal="openModal"
+              @query-list="queryList"></Search>
     </a-affix>
+    <div>
     <!--   PC Data List -->
     <PcGoodsList :dataSource="dataSource" :loading="loading" :pagination="pagination" class="sm:block hidden"
                  @open-modal="openModal"
@@ -12,7 +14,8 @@
     <MobileGoodsList :dataSource="dataSource" :loading-more="loading" :pagination="pagination" class="block sm:hidden"
                      @load-more="loadMore"
                      @open-modal="openModal"></MobileGoodsList>
-    <!--   Goods add/edit Modal -->
+    </div>
+    <!--  add/edit Data Modal -->
     <GoodsModal ref="modalRef" @query-list="queryList"/>
   </div>
 </template>
