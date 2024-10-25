@@ -6,14 +6,13 @@
               @query-list="queryList"></Search>
     </a-affix>
     <div>
-    <!--   PC Data List -->
-    <PcGoodsList :dataSource="dataSource" :loading="loading" :pagination="pagination" class="sm:block hidden"
-                 @open-modal="openModal"
-                 @query-list="queryList"></PcGoodsList>
-    <!--   Mobile Data List -->
-    <MobileGoodsList :dataSource="dataSource" :loading-more="loading" :pagination="pagination" class="block sm:hidden"
-                     @load-more="loadMore"
-                     @open-modal="openModal"></MobileGoodsList>
+      <!--   PC Data List -->
+      <PcGoodsList :dataSource="dataSource" :loading="loading" :pagination="pagination" class="sm:block hidden"
+                   @open-modal="openModal"
+                   @query-list="queryList"></PcGoodsList>
+      <!--   Mobile Data List -->
+      <MobileGoodsList :dataSource="dataSource" :is-loading="loading" :pagination="pagination" class="block sm:hidden"
+                       @load-more="loadMore" @open-modal="openModal"></MobileGoodsList>
     </div>
     <!--  add/edit Data Modal -->
     <GoodsModal ref="modalRef" @query-list="queryList"/>
@@ -29,7 +28,7 @@ import Search from "@/components/Search.vue";
 const loading = ref(false), dataSource = ref([]), modalRef = ref()
 let pagination: any = {}, searchParams: any = {}
 
-const queryList = ({keyword = '', status = true, pageNum = 1, pageSize = 10}) => {
+const queryList = ({keyword = '', status = true, pageNum = 1, pageSize = 2}) => {
   loading.value = true
   searchParams = {...searchParams, keyword, status, pageNum, pageSize}
   getGoodsPage(searchParams).then((res: any) => {

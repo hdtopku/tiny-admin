@@ -102,7 +102,7 @@
       <a-layout-content :class="getContentClass" class="pt-[50px]">
         <Tabs class="fixed z-100 pt-[2px]"/>
         <div class="mt-10">
-          <router-view #default="{ Component }">
+          <router-view :key="getKey()" #default="{ Component }">
             <transition
                 :duration="{ enter: 250, leave: 150 }"
                 appear

@@ -15,7 +15,7 @@ import {deleteGoodsById, saveOrUpdateGoods} from "@/api/pms/goods.ts";
 const props: any = defineProps({
   dataSource: Array,
   pagination: Pagination,
-  loadingMore: Boolean
+  isLoading: Boolean
 })
 const emit = defineEmits(['openModal', 'queryList', 'loadMore'])
 const confirmChangeStatus = (record: any) => {
@@ -125,12 +125,12 @@ const reload = () => {
       </a-card>
       <div id="bottom" class="text-center pb-4">
         <a-button v-if="props.pagination.current < props.pagination.total / props.pagination.pageSize"
-                  :loading="props.loadingMore"
+                  :loading="props.isLoading"
                   block ghost type="primary" @click="loadMore">
-          {{ props.loadingMore ? '加载中...' : '加载更多' }}
+          {{ props.isLoading ? '加载中...' : '加载更多' }}
         </a-button>
         <a-divider v-else>
-          {{ props.loadingMore ? '加载中...' : '没有更多数据了' }}
+          {{ props.isLoading ? '加载中...' : '没有更多数据了' }}
         </a-divider>
       </div>
     </div>

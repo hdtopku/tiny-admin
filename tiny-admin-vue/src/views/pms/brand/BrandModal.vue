@@ -28,12 +28,14 @@
           :rules="rules"
       >
         <a-form-item :label="$t('品牌logo')" name="logo">
-          <ImageUpload v-model:image-url="brandInfo.logo"></ImageUpload>
+          <div class="text-center">
+            <ImageUpload v-model:image-url="brandInfo.logo"></ImageUpload>
+          </div>
           <a-form-item-rest>
             <a-textarea
                 v-model:value="brandInfo.logo"
                 :placeholder="$t('或输入品牌logo链接')"
-                :rows="2"
+                :rows="3"
                 allowClear
             />
           </a-form-item-rest>
@@ -73,9 +75,8 @@ import {saveOrUpdateBrand} from '@/api/pms/brand.ts'
 import {message} from 'ant-design-vue'
 import ImageUpload from '@/components/ImageUpload.vue'
 
-const open = ref<boolean>(false)
-const isUpdate = ref<boolean>(false)
-const brandInfo = ref<any>({})
+const open = ref<boolean>(false), isUpdate = ref<boolean>(false), brandInfo = ref<any>({})
+const formRef = ref(), formLoading = ref(false), emit = defineEmits(['queryList'])
 const rules: Ref<any> = ref({
   brandName: [
     {
@@ -105,9 +106,7 @@ const rules: Ref<any> = ref({
     },
   ],
 })
-const formRef = ref()
-const formLoading = ref(false)
-const emit = defineEmits(['queryList'])
+
 const handleOk = () => {
   formRef.value
       .validate()
@@ -128,17 +127,15 @@ const handleOk = () => {
       })
 }
 
-const openModal = (brand: any = {}) => {
-  if (brand.id) {
-    isUpdate.value = true
-    brandInfo.value = Object.assign({}, brand)
-  } else {
-    brandInfo.value = {}
-  }
-  open.value = true
-}
-
 defineExpose({
-  openModal,
+  openModal: (brand: any = {}) => {
+    if (brand.id) {
+      isUpdate.value = true
+      brandInfo.value = Object.assign({}, brand)
+    } else {
+      brandInfo.value = {}
+    }
+    open.value = true
+  },
 })
 </script>

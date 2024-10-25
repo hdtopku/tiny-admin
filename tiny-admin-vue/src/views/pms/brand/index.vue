@@ -6,8 +6,10 @@
               @query-list="queryList"></Search>
     </a-affix>
     <!--   PC Data List -->
-    <PcBrandList :dataSource="dataSource" :loading="loading" :pagination="pagination" @open-modal="openModal"
-                 @query-list="queryList"></PcBrandList>
+    <PcBrandList :dataSource="dataSource" :loading="loading" :pagination="pagination" class="hidden sm:block"
+                 @open-modal="openModal" @query-list="queryList"></PcBrandList>
+    <MobileBrandList :data-source="dataSource" :is-loading="loading" :pagination="pagination" class="block sm:hidden"
+                     @open-modal="openModal" @query-list="queryList"></MobileBrandList>
     <!--  add/edit Data Modal -->
     <BrandModal ref="modalRef" @query-list="queryList"></BrandModal>
   </div>
@@ -17,6 +19,7 @@ import {getBrandPage} from '@/api/pms/brand.ts'
 import BrandModal from '@/views/pms/brand/BrandModal.vue'
 import Search from "@/components/Search.vue";
 import PcBrandList from "@/views/pms/brand/PcBrandList.vue";
+import MobileBrandList from "@/views/pms/brand/MobileBrandList.vue";
 
 const loading = ref(false), dataSource = ref([]), modalRef = ref()
 let pagination: any = {}, searchParams: any = {}

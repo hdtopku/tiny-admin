@@ -72,7 +72,6 @@ const deleteBrand = (id: any) => {
 </script>
 
 <template>
-
   <a-table
       :columns="columns"
       :dataSource="props.dataSource"
