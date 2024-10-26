@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import {DownOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue"
-import {deleteUser, saveOrUpdate} from "@/api/system/user.ts";
+import {deleteUserById, saveOrUpdateUser} from "@/api/system/user.ts";
 import {message, Pagination} from "ant-design-vue";
 import {t} from "@/utils/i18n.ts";
 
@@ -77,7 +77,7 @@ const handleChangePassword = (record: any) => {
   emit('openPasswordModal', record)
 }
 const handleDeleteUser = (id: string) => {
-  deleteUser(id).then(() => {
+  deleteUserById(id).then(() => {
     // queryList()
     message.success(t('删除成功'))
   })
@@ -93,7 +93,7 @@ const confirmChangeStatus = (record: any) => {
   record.loading = true
   const {loading, ...rest} = record
   rest.status = !rest.status
-  saveOrUpdate(rest)
+  saveOrUpdateUser(rest)
       .then(() => {
         record.status = rest.status
         message.success(t('操作成功'))

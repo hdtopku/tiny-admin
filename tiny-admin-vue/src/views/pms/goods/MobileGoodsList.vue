@@ -1,16 +1,9 @@
 <script lang="ts" setup>
-import {
-  DeleteOutlined,
-  EditOutlined,
-  ExpandAltOutlined,
-  QuestionCircleOutlined,
-  SyncOutlined,
-  VerticalAlignBottomOutlined,
-  VerticalAlignTopOutlined
-} from '@ant-design/icons-vue'
+import {DeleteOutlined, EditOutlined, ExpandAltOutlined, QuestionCircleOutlined,} from '@ant-design/icons-vue'
 import {Pagination} from "ant-design-vue";
 import ImageCarousel from "@/views/pms/goods/ImageCarousel.vue";
 import {deleteGoodsById, saveOrUpdateGoods} from "@/api/pms/goods.ts";
+import ScrollTools from "@/components/ScrollTools.vue";
 
 const props: any = defineProps({
   dataSource: Array,
@@ -27,22 +20,15 @@ const confirmChangeStatus = (record: any) => {
 const openModal = (record: any) => {
   emit('openModal', record)
 }
-const deleteGoods = (id: string) => {
+const deleteRecord = (id: string) => {
   deleteGoodsById(id)
 }
-const scrollToBottom = () => {
-// 获取到所有的 Item 项
-  const bottom = document.querySelector('#bottom')
-// 调用 scrollIntoView() 方法，显示这个元素
-  bottom && bottom.scrollIntoView({
-    behavior: 'smooth'
-  })
+let bottomRef = null
+const setRefAction = (ref) => {
+  bottomRef = ref
 }
 const loadMore = () => {
   emit('loadMore')
-}
-const reload = () => {
-  location.reload()
 }
 </script>
 
@@ -80,16 +66,13 @@ const reload = () => {
               :cancel-text="$t('否')"
               :ok-text="$t('是')"
               ok-type="danger"
-              @confirm="deleteGoods(record.id)"
+              @confirm="deleteRecord(record.id)"
           >
             <template #icon>
               <question-circle-outlined style="color: red"/>
             </template>
             <template #title>
               <div>{{ $t('是否删除商品？') }}</div>
-              {{
-                record.goodsName
-              }}
               <a-tag class="my-2" color="red">{{
                   record.goodsName
                 }}
@@ -123,7 +106,7 @@ const reload = () => {
           </template>
         </a-card-meta>
       </a-card>
-      <div id="bottom" class="text-center pb-4">
+      <div id="bottom" :ref="setRefAction" class="text-center pb-4">
         <a-button v-if="props.pagination.current < props.pagination.total / props.pagination.pageSize"
                   :loading="props.isLoading"
                   block ghost type="primary" @click="loadMore">
@@ -134,23 +117,7 @@ const reload = () => {
         </a-divider>
       </div>
     </div>
-    <a-float-button-group :style="{ right: '24px' }" shape="square">
-      <a-float-button class="group" @click="reload">
-        <template #icon>
-          <SyncOutlined class="group-hover:scale-110 duration-300"/>
-        </template>
-      </a-float-button>
-      <a-back-top :visibility-height="0" class="group">
-        <template #icon>
-          <VerticalAlignTopOutlined class="group-hover:scale-110 duration-300"/>
-        </template>
-      </a-back-top>
-      <a-float-button class="group" @click="scrollToBottom">
-        <template #icon>
-          <VerticalAlignBottomOutlined class="group-hover:scale-110 duration-300"/>
-        </template>
-      </a-float-button>
-    </a-float-button-group>
+    <ScrollTools :scroll-to-ref="bottomRef"></ScrollTools>
   </a-card>
 </template>
 

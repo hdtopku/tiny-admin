@@ -15,29 +15,14 @@
         </a-menu-item>
       </a-menu>
     </template>
-    <div>
-      <a-tooltip class="hidden sm:block">
-      <template #title>
-        <span>{{ $t('切换语言') }}</span>
-      </template>
-      <a-button class="group" ghost size="small" type="primary">
-        <div
+    <a-button class="group block" ghost size="small" type="primary">
+      <div
           class="group-hover:scale-105 duration-300 inline-flex items-center gap-1"
-        >
-          {{ getCurrentLanguage() }}
-          <DownOutlined/>
-        </div>
-      </a-button>
-    </a-tooltip>
-      <a-button class="group block sm:hidden" ghost size="small" type="primary">
-        <div
-            class="group-hover:scale-105 duration-300 inline-flex items-center gap-1"
-        >
-          {{ getCurrentLanguage() }}
-          <DownOutlined/>
-        </div>
-      </a-button>
-    </div>
+      >
+        {{ getCurrentLanguage() }}
+        <DownOutlined/>
+      </div>
+    </a-button>
   </a-dropdown>
 </template>
 <script lang="ts" setup>

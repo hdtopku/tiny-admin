@@ -194,12 +194,8 @@ const handleOk = () => {
 
 defineExpose({
   openModal: (goods: any = {}) => {
-    if (goods.id) {
-      isUpdate.value = true
-      goodsInfo.value = Object.assign({}, goods)
-    } else {
-      goodsInfo.value = {}
-    }
+    isUpdate.value = !!goods.id
+    goodsInfo.value = {...goods}
     open.value = true
   },
 })

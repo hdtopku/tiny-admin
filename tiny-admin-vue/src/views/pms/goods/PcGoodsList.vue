@@ -60,7 +60,7 @@ const columns: any = [
 ]
 
 
-const deleteGoods = (id: string) => {
+const deleteRecord = (id: string) => {
   deleteGoodsById(id)
 }
 
@@ -157,7 +157,7 @@ const handleTableChange = (pagination: any) => {
                       :cancel-text="$t('否')"
                       :ok-text="$t('是')"
                       ok-type="danger"
-                      @confirm="deleteGoods(record.id)"
+                      @confirm="deleteRecord(record.id)"
                   >
                     <template #icon>
                       <question-circle-outlined style="color: red"/>

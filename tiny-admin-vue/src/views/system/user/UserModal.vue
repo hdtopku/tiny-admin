@@ -27,6 +27,11 @@
         class="pt-4"
         @keydown.enter="handleSubmit"
     >
+      <a-form-item>
+        <div class="text-center">
+          <ImageUpload v-model:image-url="curUserInfo.avatar"/>
+        </div>
+      </a-form-item>
       <a-form-item
           :help="
           $t(
@@ -81,7 +86,7 @@
 import {t} from '@/utils/i18n.ts'
 
 import {Rule} from 'ant-design-vue/es/form'
-import {saveOrUpdate} from '@/api/system/user.ts'
+import {saveOrUpdateUser} from '@/api/system/user.ts'
 import {message} from 'ant-design-vue'
 import {getRoleList} from "@/api/system/role.ts";
 
@@ -138,7 +143,7 @@ const handleSubmit = () => {
       .validate()
       .then(() => {
         loading.value = true
-        saveOrUpdate(curUserInfo.value).then(() => {
+        saveOrUpdateUser(curUserInfo.value).then(() => {
           userInfoModalVisible.value = false
           message.success(t('修改成功'))
           emit('queryList')
@@ -167,10 +172,10 @@ const filteredOptions = computed(() => {
 })
 
 defineExpose({
-  openModal(userInfo: any) {
+  openModal(userInfo: any = {}) {
     userInfoModalVisible.value = true
     isUpdate.value = !!userInfo?.id
-    curUserInfo.value = userInfo || {}
+    curUserInfo.value = {...userInfo}
     username.value = userInfo.username || ''
   },
 })

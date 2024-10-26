@@ -15,7 +15,7 @@ const confirmChangeStatus = (record: any) => {
     emit('queryList')
   })
 }
-const deleteBrand = (id: number) => {
+const deleteRecord = (id: number) => {
   deleteBrandById(id).then(() => {
     emit('queryList')
   })
@@ -77,7 +77,7 @@ const handlePageChange = (pageNum: number, pageSize: number) => {
                     :cancel-text="$t('否')"
                     :ok-text="$t('是')"
                     ok-type="danger"
-                    @confirm="deleteBrand(record.id)"
+                    @confirm="deleteRecord(record.id)"
                 >
                   <template #icon>
                     <question-circle-outlined style="color: red"/>
@@ -100,9 +100,7 @@ const handlePageChange = (pageNum: number, pageSize: number) => {
             </div>
           </template>
           <template #avatar>
-            <div>
-              <a-avatar :src="record.logo" size="large"/>
-            </div>
+            <a-avatar :src="record.logo" size="large"/>
           </template>
         </a-list-item-meta>
       </a-list-item>

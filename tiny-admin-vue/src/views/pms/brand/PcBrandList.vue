@@ -63,7 +63,7 @@ const confirmChangeStatus = (record: any) => {
 const openModal = (record: any) => {
   emit('openModal', record)
 }
-const deleteBrand = (id: any) => {
+const deleteRecord = (id: any) => {
   deleteBrandById(id).then(() => {
     message.success(t('删除成功'))
     emit('queryList')
@@ -153,7 +153,7 @@ const deleteBrand = (id: any) => {
                       ok-type="danger"
                       @confirm="
                         () => {
-                          deleteBrand(record.id)
+                          deleteRecord(record.id)
                         }
                       "
                   >
