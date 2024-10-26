@@ -101,7 +101,7 @@
       </a-layout-header>
       <a-layout-content :class="getContentClass" class="pt-[50px]">
         <Tabs class="fixed z-100 pt-[2px]"/>
-        <div class="mt-10">
+        <div class="py-10">
           <router-view :key="getKey()" #default="{ Component }">
             <transition
                 :duration="{ enter: 250, leave: 150 }"
@@ -117,6 +117,7 @@
             </transition>
           </router-view>
         </div>
+        <ScrollTools></ScrollTools>
       </a-layout-content>
     </a-layout>
   </a-layout>
@@ -133,6 +134,7 @@ import {message} from 'ant-design-vue'
 import useGlobal from '@/hooks/useGlobal.ts'
 import Breadcrumb from '@/layout/Breadcrumb.vue'
 import {useDark} from "@vueuse/core";
+import ScrollTools from "@/components/ScrollTools.vue";
 
 const isDark = useDark()
 const {sidebarCollapsed, widthLessThanMiddle} = storeToRefs(useMenuStore())

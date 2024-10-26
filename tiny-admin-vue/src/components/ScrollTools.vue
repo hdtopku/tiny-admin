@@ -8,8 +8,13 @@ const {scrollToRef, style} = defineProps({
 const reload = () => {
   location.reload()
 }
+// let bottomRef
+// const setRefAction = (ref) => {
+//   bottomRef = ref
+// }
+const bottomRef = ref()
 const scrollToBottom = () => {
-  scrollToRef && scrollToRef.scrollIntoView({
+  bottomRef.value && bottomRef.value.scrollIntoView({
     behavior: 'smooth'
   })
 }
@@ -17,22 +22,23 @@ const scrollToBottom = () => {
 
 <template>
   <a-float-button-group :style="style" shape="square">
+    <a-back-top :duration="300" class="group">
+      <template #icon>
+        <VerticalAlignTopOutlined class="group-hover:scale-110 duration-300"/>
+      </template>
+    </a-back-top>
     <a-float-button class="group" @click="reload">
       <template #icon>
         <SyncOutlined class="group-hover:scale-110 duration-300"/>
       </template>
     </a-float-button>
-    <a-back-top :visibility-height="0" class="group">
-      <template #icon>
-        <VerticalAlignTopOutlined class="group-hover:scale-110 duration-300"/>
-      </template>
-    </a-back-top>
     <a-float-button class="group" @click="scrollToBottom">
       <template #icon>
         <VerticalAlignBottomOutlined class="group-hover:scale-110 duration-300"/>
       </template>
     </a-float-button>
   </a-float-button-group>
+  <div ref="bottomRef"></div>
 </template>
 
 <style scoped>

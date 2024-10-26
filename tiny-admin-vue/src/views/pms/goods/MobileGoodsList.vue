@@ -3,7 +3,6 @@ import {DeleteOutlined, EditOutlined, ExpandAltOutlined, QuestionCircleOutlined,
 import {Pagination} from "ant-design-vue";
 import ImageCarousel from "@/views/pms/goods/ImageCarousel.vue";
 import {deleteGoodsById, saveOrUpdateGoods} from "@/api/pms/goods.ts";
-import ScrollTools from "@/components/ScrollTools.vue";
 
 const props: any = defineProps({
   dataSource: Array,
@@ -22,10 +21,6 @@ const openModal = (record: any) => {
 }
 const deleteRecord = (id: string) => {
   deleteGoodsById(id)
-}
-let bottomRef = null
-const setRefAction = (ref) => {
-  bottomRef = ref
 }
 const loadMore = () => {
   emit('loadMore')
@@ -106,7 +101,7 @@ const loadMore = () => {
           </template>
         </a-card-meta>
       </a-card>
-      <div id="bottom" :ref="setRefAction" class="text-center pb-4">
+      <div class="text-center pb-4">
         <a-button v-if="props.pagination.current < props.pagination.total / props.pagination.pageSize"
                   :loading="props.isLoading"
                   block ghost type="primary" @click="loadMore">
@@ -117,7 +112,6 @@ const loadMore = () => {
         </a-divider>
       </div>
     </div>
-    <ScrollTools :scroll-to-ref="bottomRef"></ScrollTools>
   </a-card>
 </template>
 

@@ -2,7 +2,6 @@
 import {message, Pagination} from "ant-design-vue";
 import {DeleteOutlined, EditOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue";
 import {deleteUserById, saveOrUpdateUser} from "@/api/system/user.ts";
-import ScrollTools from "@/components/ScrollTools.vue";
 
 const props: any = defineProps({
   dataSource: Array,
@@ -20,7 +19,6 @@ const openModal = (record: any) => {
   emit('openModal', record)
 }
 const handlePageChange = (pageNum: number, pageSize: number) => {
-  console.log(pageNum, pageSize)
   emit('queryList', {pageNum, pageSize})
 }
 const deleteRecord = (id: number) => {
@@ -28,10 +26,6 @@ const deleteRecord = (id: number) => {
     message.success('删除成功')
     emit('queryList')
   })
-}
-let bottomRef = null
-const setRefAction = (ref) => {
-  bottomRef = ref
 }
 </script>
 
@@ -42,7 +36,7 @@ const setRefAction = (ref) => {
     >
       <template #renderItem="{ item:record }">
         <a-list-item>
-          <a-card class="w-full" hoverable>
+          <a-card class="w-full">
             <template #actions>
               <a-popconfirm
                   :cancel-text="$t('否')"
@@ -107,15 +101,15 @@ const setRefAction = (ref) => {
               <template #description>
                 <div>
                   <a-tag>昵称</a-tag>
-                  {{ record.nickname }}
+                  <a-typography-text copyable>{{ record.nickname }}</a-typography-text>
                 </div>
                 <div>
                   <a-tag>手机</a-tag>
-                  {{ record.phone }}
+                  <a-typography-text copyable>{{ record.phone }}</a-typography-text>
                 </div>
                 <div>
                   <a-tag>邮箱</a-tag>
-                  {{ record.email }}
+                  <a-typography-text copyable>{{ record.email }}</a-typography-text>
                 </div>
               </template>
               <template #avatar>
@@ -126,7 +120,5 @@ const setRefAction = (ref) => {
         </a-list-item>
       </template>
     </a-list>
-    <div :ref="setRefAction"></div>
-    <ScrollTools :scroll-to-ref="bottomRef"></ScrollTools>
   </div>
 </template>
