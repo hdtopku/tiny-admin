@@ -45,31 +45,40 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
 
     @Override
     public IPage<SysUserDto> page(BaseQueryParam param) {
-        MPJLambdaWrapper<SysUser> wrapper = new MPJLambdaWrapper<>();
-        wrapper.orderByDesc(SysUser::getUpdateTime);
+        MPJLambdaWrapper<SysUser> idWrapper = new MPJLambdaWrapper<>();
+        idWrapper.select(SysUser::getId);
+        idWrapper.orderByDesc(SysUser::getUpdateTime);
         if(StringUtils.isNotBlank(param.getKeyword())) {
-            wrapper.like(SysUser::getUsername, param.getKeyword())
+            idWrapper.like(SysUser::getUsername, param.getKeyword())
                     .or().like(SysUser::getNickname, param.getKeyword())
                     .or().like(SysUser::getEmail, param.getKeyword())
                     .or().like(SysUser::getPhone, param.getKeyword());
         } else {
-            wrapper.eq(SysUser::getStatus, param.getStatus() == null? 1 : param.getStatus());
+            idWrapper.eq(SysUser::getStatus, param.getStatus() == null? 1 : param.getStatus());
         }
-        wrapper.selectCollection(SysRole.class, SysUserPo::getRoles)
+        Page<SysUser> page = this.page(new Page<>(param.getPageNum(), param.getPageSize()), idWrapper);
+        if(CollectionUtils.isEmpty(page.getRecords())) {
+            return new Page<>();
+        }
+        MPJLambdaWrapper<SysUser> wrapper = new MPJLambdaWrapper<>();
+        wrapper.selectAll(SysUser.class)
+                .selectCollection(SysRole.class, SysUserPo::getRoles)
                 .leftJoin(SysUserRoleRel.class, SysUserRoleRel::getUserId, SysUser::getId)
-                .leftJoin(SysRole.class, SysRole::getId, SysUserRoleRel::getRoleId);
-        IPage<SysUserPo> iPage =sysUserMapper.selectJoinPage(new Page<>(param.getPageNum(), param.getPageSize()),
-                SysUserPo.class, wrapper);
+                .leftJoin(SysRole.class, SysRole::getId, SysUserRoleRel::getRoleId)
+                .in(SysUser::getId, page.getRecords().stream().map(SysUser::getId).toList());
+        List<SysUserPo> sysUserPoList =sysUserMapper.selectJoinList(SysUserPo.class, wrapper);
         Page<SysUserDto> res = new Page<>();
-        BeanUtil.copyProperties(iPage, res);
-        res.setRecords(iPage.getRecords().stream().map(item->{
-            SysUserDto dto = BeanUtil.copyProperties(item, SysUserDto.class);
-            dto.setKey(item.getId());
-            if(CollectionUtils.isNotEmpty(item.getRoles())) {
-                dto.setRoleNames(new HashSet<>(item.getRoles().stream().map(SysRole::getRoleName).toList()));
-            }
-            return dto;
-        }).toList());
+        BeanUtil.copyProperties(page, res);
+        if(!CollectionUtils.isEmpty(sysUserPoList)) {
+            res.setRecords(sysUserPoList.stream().map(item -> {
+                SysUserDto dto = BeanUtil.copyProperties(item, SysUserDto.class);
+                dto.setKey(item.getId());
+                if (CollectionUtils.isNotEmpty(item.getRoles())) {
+                    dto.setRoleNames(new HashSet<>(item.getRoles().stream().map(SysRole::getRoleName).toList()));
+                }
+                return dto;
+            }).toList());
+        }
         return res;
     }
 
@@ -77,7 +86,6 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
     @Transactional
     public void saveOrEdit(SysUserDto sysUserDto) {
         SysUser sysUser = BeanUtil.copyProperties(sysUserDto, SysUser.class);
-        sysUser.setId(sysUserDto.getKey());
         List<SysUserRoleRel> sysUserRoleRels = iSysUserRoleRelService.list(new MPJLambdaWrapper<SysUserRoleRel>().eq(SysUserRoleRel::getUserId, sysUserDto.getKey()));
         Set<String> oldRoleIds = Optional.ofNullable(sysUserRoleRels).orElse(new ArrayList<>())
                 .stream().map(SysUserRoleRel::getRoleId).collect(Collectors.toSet());

@@ -57,7 +57,7 @@ public class SysUserController  extends BaseController<ISysUserService, SysUser>
 //        return Result.success(true);
 //    }
 
-    @PostMapping("/saveOrEdit")
+    @PostMapping("/saveOrUpdate")
     @Transactional(rollbackFor = Exception.class)
     public Result<Boolean> saveOrEdit(@RequestBody SysUserDto sysUserDto) {
         iSysUserService.saveOrEdit(sysUserDto);

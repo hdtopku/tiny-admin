@@ -1,8 +1,6 @@
 <template>
   <a-modal
       v-model:open="userInfoModalVisible"
-      :cancel-text="$t('取消')"
-      :ok-text="$t('提交')"
       :title="
       isUpdate
         ? $t('编辑用户_{username}', { username: username })
@@ -10,6 +8,16 @@
     "
       @ok="handleSubmit"
   >
+    <template #footer>
+      <a-button @click="userInfoModalVisible = false">{{
+          $t('取消')
+        }}
+      </a-button>
+      <a-button :loading="loading" type="primary" @click="handleSubmit">{{
+          isUpdate ? $t('提交') : $t('新增')
+        }}
+      </a-button>
+    </template>
     <a-form
         ref="formRef"
         :label-col="{ span: 4 }"
@@ -75,7 +83,14 @@ import {t} from '@/utils/i18n.ts'
 import {Rule} from 'ant-design-vue/es/form'
 import {saveOrUpdate} from '@/api/system/user.ts'
 import {message} from 'ant-design-vue'
+import {getRoleList} from "@/api/system/role.ts";
 
+let roleList: any
+getRoleList().then((res: any) => {
+  roleList = res
+})
+
+const isUpdate = ref(false), userInfoModalVisible = ref(false), formRef = ref(), loading = ref(false)
 const formRules: Record<string, Rule[]> = {
   username: [
     {
@@ -118,17 +133,17 @@ const formRules: Record<string, Rule[]> = {
     },
   ],
 }
-const isUpdate = ref(false)
-const userInfoModalVisible = ref(false)
-const formRef = ref()
 const handleSubmit = () => {
   formRef.value
       .validate()
       .then(() => {
+        loading.value = true
         saveOrUpdate(curUserInfo.value).then(() => {
           userInfoModalVisible.value = false
           message.success(t('修改成功'))
           emit('queryList')
+        }).finally(() => {
+          loading.value = false
         })
       })
       .catch((error) => {
@@ -139,9 +154,8 @@ const emit = defineEmits(['queryList'])
 const curUserInfo = ref()
 const username = ref('')
 
-const roleList = ref()
 const filteredOptions = computed(() => {
-  return roleList.value
+  return roleList
       .filter(
           (item: any) =>
               !(curUserInfo.value.roleNames || []).includes(item.roleName)
@@ -153,12 +167,11 @@ const filteredOptions = computed(() => {
 })
 
 defineExpose({
-  showModal({roles, isEdit = false, userInfo}) {
+  openModal(userInfo: any) {
     userInfoModalVisible.value = true
-    isUpdate.value = isEdit ?? false
+    isUpdate.value = !!userInfo?.id
     curUserInfo.value = userInfo || {}
     username.value = userInfo.username || ''
-    roleList.value = roles || []
   },
 })
 </script>

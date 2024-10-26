@@ -68,7 +68,7 @@ const emit = defineEmits(['openModal', 'queryList'])
 const confirmChangeStatus = (record: any) => {
   record.status = !record.status
   saveOrUpdateGoods(record).then(() => {
-    emit('queryList', {})
+    emit('queryList')
   })
 }
 const openModal = (record: any) => {

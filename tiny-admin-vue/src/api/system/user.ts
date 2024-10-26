@@ -5,7 +5,7 @@ export const getUserPage = async (data: any) => {
 }
 
 export const saveOrUpdate = async (data: any) => {
-    return http.post("/system/sysUser/saveOrEdit", data)
+    return http.post("/system/sysUser/saveOrUpdate", data)
 }
 
 export const updatePassword = async (data: any) => {

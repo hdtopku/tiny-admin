@@ -57,7 +57,7 @@ const handleTableChange = (pagination: any) => {
 const confirmChangeStatus = (record: any) => {
   record.status = !record.status
   saveOrUpdateBrand(record).then(() => {
-    emit('queryList', {})
+    emit('queryList')
   })
 }
 const openModal = (record: any) => {
@@ -66,7 +66,7 @@ const openModal = (record: any) => {
 const deleteBrand = (id: any) => {
   deleteBrandById(id).then(() => {
     message.success(t('删除成功'))
-    emit('queryList', {})
+    emit('queryList')
   })
 }
 </script>

@@ -115,7 +115,7 @@ const handleOk = () => {
         saveOrUpdateBrand(brandInfo.value)
             .then(() => {
               message.success(t('操作成功'))
-              emit('queryList', {})
+              emit('queryList')
               open.value = false
             })
             .finally(() => {

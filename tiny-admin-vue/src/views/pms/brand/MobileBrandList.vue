@@ -12,12 +12,12 @@ const emit = defineEmits(['openModal', 'queryList'])
 const confirmChangeStatus = (record: any) => {
   record.status = !record.status
   saveOrUpdateBrand(record).then(() => {
-    emit('queryList', {})
+    emit('queryList')
   })
 }
 const deleteBrand = (id: number) => {
   deleteBrandById(id).then(() => {
-    emit('queryList', {})
+    emit('queryList')
   })
 }
 const openModal = (record: any) => {
@@ -84,9 +84,6 @@ const handlePageChange = (pageNum: number, pageSize: number) => {
                   </template>
                   <template #title>
                     <div>{{ $t('是否删除品牌？') }}</div>
-                    {{
-                      record.brandName
-                    }}
                     <a-tag class="my-2" color="red">{{
                         record.brandName
                       }}

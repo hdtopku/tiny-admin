@@ -1,3 +1,29 @@
+<script lang="ts" setup>
+import {getBrandPage} from '@/api/pms/brand.ts'
+import BrandModal from '@/views/pms/brand/BrandModal.vue'
+import Search from "@/components/Search.vue";
+import PcBrandList from "@/views/pms/brand/PcBrandList.vue";
+import MobileBrandList from "@/views/pms/brand/MobileBrandList.vue";
+
+const loading = ref(false), dataSource = ref([]), modalRef = ref()
+let pagination: any = {}, searchParams: any = {keyword: '', status: true, pageNum: 1, pageSize: 10}
+
+const queryList = (params = {}) => {
+  loading.value = true
+  searchParams = {...searchParams, ...params}
+  getBrandPage(searchParams).then((res: any) => {
+    dataSource.value = res.records
+    pagination = {current: res.current, pageSize: res.size, total: res.total,}
+  }).finally(() => {
+    loading.value = false
+  })
+}
+
+const openModal = (record: any = {}) => {
+  modalRef.value.openModal(record)
+}
+</script>
+
 <template>
   <div>
     <!--   Search -->
@@ -14,28 +40,3 @@
     <BrandModal ref="modalRef" @query-list="queryList"></BrandModal>
   </div>
 </template>
-<script lang="ts" setup>
-import {getBrandPage} from '@/api/pms/brand.ts'
-import BrandModal from '@/views/pms/brand/BrandModal.vue'
-import Search from "@/components/Search.vue";
-import PcBrandList from "@/views/pms/brand/PcBrandList.vue";
-import MobileBrandList from "@/views/pms/brand/MobileBrandList.vue";
-
-const loading = ref(false), dataSource = ref([]), modalRef = ref()
-let pagination: any = {}, searchParams: any = {}
-
-const queryList = ({keyword = '', status = true, pageNum = 1, pageSize = 10}) => {
-  loading.value = true
-  searchParams = {...searchParams, keyword, status, pageNum, pageSize}
-  getBrandPage(searchParams).then((res: any) => {
-    dataSource.value = res.records
-    pagination = {current: res.current, pageSize: res.size, total: res.total,}
-  }).finally(() => {
-    loading.value = false
-  })
-}
-
-const openModal = (record: any = {}) => {
-  modalRef.value.openModal(record)
-}
-</script>

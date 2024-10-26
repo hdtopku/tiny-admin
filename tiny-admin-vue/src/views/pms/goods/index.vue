@@ -26,14 +26,14 @@ import MobileGoodsList from "@/views/pms/goods/MobileGoodsList.vue";
 import Search from "@/components/Search.vue";
 
 const loading = ref(false), dataSource = ref([]), modalRef = ref()
-let pagination: any = {}, searchParams: any = {}
+let pagination: any = {}, searchParams: any = {keyword: '', status: true, pageNum: 1, pageSize: 10}
 
-const queryList = ({keyword = '', status = true, pageNum = 1, pageSize = 2}) => {
+const queryList = (params = {}) => {
   loading.value = true
-  searchParams = {...searchParams, keyword, status, pageNum, pageSize}
+  searchParams = {...searchParams, ...params}
   getGoodsPage(searchParams).then((res: any) => {
     dataSource.value = res.records
-    pagination = {current: res.current, pageSize: res.size, total: res.total,}
+    pagination = {current: res.current, pageSize: res.size, total: res.total}
   }).finally(() => {
     loading.value = false
   })

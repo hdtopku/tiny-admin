@@ -181,7 +181,7 @@ const handleOk = () => {
             .then(() => {
               message.success(t('操作成功'))
               open.value = false
-              emit('queryList', {})
+              emit('queryList')
             })
             .finally(() => {
               formLoading.value = false
