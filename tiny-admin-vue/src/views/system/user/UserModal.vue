@@ -88,12 +88,7 @@ import {t} from '@/utils/i18n.ts'
 import {Rule} from 'ant-design-vue/es/form'
 import {saveOrUpdateUser} from '@/api/system/user.ts'
 import {message} from 'ant-design-vue'
-import {getRoleList} from "@/api/system/role.ts";
-
-let roleList: any
-getRoleList().then((res: any) => {
-  roleList = res
-})
+import {getRoleList} from "@/api/system/role.ts"
 
 const isUpdate = ref(false), userInfoModalVisible = ref(false), formRef = ref(), loading = ref(false)
 const formRules: Record<string, Rule[]> = {
@@ -159,24 +154,29 @@ const emit = defineEmits(['queryList'])
 const curUserInfo = ref()
 const username = ref('')
 
+
 const filteredOptions = computed(() => {
-  return roleList
-      .filter(
-          (item: any) =>
-              !(curUserInfo.value.roleNames || []).includes(item.roleName)
-      )
-      .map((item) => ({
-        value: item.roleName,
-        label: item.roleName,
-      }))
+  return roleList.value?.filter(
+      (item: any) =>
+          !(curUserInfo.value.roleNames || []).includes(item.roleName)
+  ).map((item) => ({
+    value: item.roleName,
+    label: item.roleName,
+  }))
 })
 
+let roleList = ref()
 defineExpose({
-  openModal(userInfo: any = {}) {
+  openModal: (userInfo: any = {}) => {
     userInfoModalVisible.value = true
+    if (!roleList.value?.length) {
+      getRoleList().then((res: any) => {
+        roleList.value = res
+      })
+    }
     isUpdate.value = !!userInfo?.id
     curUserInfo.value = {...userInfo}
     username.value = userInfo.username || ''
-  },
+  }
 })
 </script>

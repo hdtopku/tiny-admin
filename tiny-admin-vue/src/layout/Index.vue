@@ -102,7 +102,7 @@
       <a-layout-content :class="getContentClass" class="pt-[50px]">
         <Tabs class="fixed z-100 pt-[2px]"/>
         <div class="py-10">
-          <router-view :key="getKey()" #default="{ Component }">
+          <router-view #default="{ Component }">
             <transition
                 :duration="{ enter: 250, leave: 150 }"
                 appear
@@ -139,7 +139,6 @@ import ScrollTools from "@/components/ScrollTools.vue";
 const isDark = useDark()
 const {sidebarCollapsed, widthLessThanMiddle} = storeToRefs(useMenuStore())
 const {$bus} = useGlobal()
-
 const collapsedWidth = ref<number>(80)
 const showMask = ref<boolean>(false)
 const onCollapse = (collapsed: boolean) => {

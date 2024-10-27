@@ -82,9 +82,9 @@ const handleCancel = () => {
 const isUpdate = ref(false)
 const curName = ref('')
 defineExpose({
-  showModal(isEdit = false, roleInfo: any) {
+  openModal(roleInfo: any = {}) {
     modalVisible.value = true
-    isUpdate.value = isEdit
+    isUpdate.value = !!roleInfo.id
     curInfo.value = Object.assign({}, roleInfo)
     curName.value = roleInfo.roleName
   },

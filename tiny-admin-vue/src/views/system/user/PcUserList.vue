@@ -1,13 +1,47 @@
 <script lang="ts" setup>
 import {DownOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue"
 import {deleteUserById, saveOrUpdateUser} from "@/api/system/user.ts";
-import {message, Pagination} from "ant-design-vue";
-import {t} from "@/utils/i18n.ts";
+import {message, Pagination} from "ant-design-vue"
+import {t} from "@/utils/i18n.ts"
 
 const {dataSource, pagination} = defineProps({
   dataSource: Array,
   pagination: Pagination,
 })
+
+const emit = defineEmits(['openModal', 'openPasswordModal', 'queryList'])
+const openModal = (record: any) => {
+  emit('openModal', record)
+}
+const handleChangePassword = (record: any) => {
+  emit('openPasswordModal', record)
+}
+const handleDeleteUser = (id: string) => {
+  deleteUserById(id).then(() => {
+    // queryList()
+    message.success(t('删除成功'))
+  })
+}
+const handleTableChange = (pagination: any) => {
+  emit('queryList', {
+    pageNum: pagination.current,
+    pageSize: pagination.pageSize,
+  })
+}
+
+const confirmChangeStatus = (record: any) => {
+  record.loading = true
+  const {loading, ...rest} = record
+  rest.status = !rest.status
+  saveOrUpdateUser(rest)
+      .then(() => {
+        record.status = rest.status
+        message.success(t('操作成功'))
+      })
+      .finally(() => {
+        record.loading = false
+      })
+}
 const columns: any = [
   {
     title: t('序号'),
@@ -68,40 +102,6 @@ const columns: any = [
     width: 160,
   },
 ]
-
-const emit = defineEmits(['openModal', 'openPasswordModal', 'queryList'])
-const openModal = (record: any) => {
-  emit('openModal', record)
-}
-const handleChangePassword = (record: any) => {
-  emit('openPasswordModal', record)
-}
-const handleDeleteUser = (id: string) => {
-  deleteUserById(id).then(() => {
-    // queryList()
-    message.success(t('删除成功'))
-  })
-}
-const handleTableChange = (pagination: any) => {
-  emit('queryList', {
-    pageNum: pagination.current,
-    pageSize: pagination.pageSize,
-  })
-}
-
-const confirmChangeStatus = (record: any) => {
-  record.loading = true
-  const {loading, ...rest} = record
-  rest.status = !rest.status
-  saveOrUpdateUser(rest)
-      .then(() => {
-        record.status = rest.status
-        message.success(t('操作成功'))
-      })
-      .finally(() => {
-        record.loading = false
-      })
-}
 </script>
 
 <template>

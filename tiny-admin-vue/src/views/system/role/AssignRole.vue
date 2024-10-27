@@ -1,15 +1,12 @@
 <template>
   <a-drawer
-      v-model:open="open"
+      v-model:open="openDrawer"
       :root-style="{ color: 'blue' }"
       style="color: red"
       placement="right"
       width="500"
   >
-    <template #title
-    >{{
-        $t('分配菜单权限：')
-      }}
+    <template #title>{{ $t('分配菜单权限：') }}
       <a-tooltip :title="currentUser?.description">
         <span class="text-gray-400">{{ currentUser?.roleName }}</span>
       </a-tooltip>
@@ -54,8 +51,8 @@
           </span>
         </a-space>
         <a-space class="flex justify-end">
-          <a-button @click="open = false">{{ $t('取消') }}</a-button>
-          <a-button type="primary" @click="handleSubmit">{{
+          <a-button @click="openDrawer = false">{{ $t('取消') }}</a-button>
+          <a-button :loading="loading" type="primary" @click="handleSubmit">{{
               $t('提交')
             }}
           </a-button>
@@ -63,57 +60,45 @@
       </a-space>
     </template>
     <template #extra></template>
-    <a-tree
-        checkStrictly
-        defaultExpandAll
-        v-model:expandedKeys="expandedKeys"
-        v-model:selectedKeys="selectedKeys"
-        v-model:checkedKeys="checkedKeys"
-        checkable
-        :tree-data="treeData"
-        :field-names="fieldNames"
-    >
-    </a-tree>
+    <a-spin :spinning="loading">
+      <a-tree
+          v-model:checkedKeys="checkedKeys"
+          v-model:expandedKeys="expandedKeys"
+          v-model:selectedKeys="selectedKeys"
+          :field-names="fieldNames"
+          :loading="loading"
+          :tree-data="treeData"
+          checkStrictly
+          checkable
+          defaultExpandAll
+      >
+      </a-tree>
+    </a-spin>
   </a-drawer>
 </template>
 <script lang="ts" setup>
 import {ref} from 'vue'
 import {TreeProps} from 'ant-design-vue'
 import {assignMenu} from '@/api/system/role.ts'
-import {useUserStore} from '@/store'
-import useGlobal from '@/hooks/useGlobal.ts'
+import {getMenuTree} from "@/api/system/menu.ts";
 
-const open = ref<boolean>(false)
-
-const currentUser = ref<any>({})
-
-const treeData: any = ref([])
-
-const expandedKeys = ref<string[]>()
-const selectedKeys = ref<string[]>([])
-const checkedKeys = ref<any>({checked: [], halfChecked: []})
-const fieldNames: TreeProps['fieldNames'] = {
-  title: 'name',
-  key: 'id',
-}
+const openDrawer = ref<boolean>(false), currentUser = ref<any>({})
+const expandedKeys = ref<string[]>(), selectedKeys = ref<string[]>([]),
+    checkedKeys = ref<any>({checked: [], halfChecked: []})
+const fieldNames: TreeProps['fieldNames'] = {title: 'name', key: 'id'}
+const checkState = ref({indeterminate: true, checkAll: false})
+let allNodes: any = [], treeData, loading = ref(false)
 
 const emit = defineEmits(['queryList'])
-const {$bus} = useGlobal()
 const handleSubmit = () => {
+  loading.value = true
   assignMenu(currentUser.value.id, checkedKeys.value.checked).then(() => {
-    emit('queryList')
-    open.value = false
-    useUserStore()
-        .refreshUserInfo()
-        .then(() => {
-        })
+    location.reload()
+  }).finally(() => {
+    loading.value = false
   })
 }
 
-const checkState = ref({
-  indeterminate: true,
-  checkAll: false,
-})
 const handleCheckAll = (e: any) => {
   if (e.target.checked) {
     checkedKeys.value = {checked: [...allNodes], halfChecked: []}
@@ -121,7 +106,7 @@ const handleCheckAll = (e: any) => {
     checkedKeys.value = {checked: [], halfChecked: []}
   }
 }
-let allNodes: any = []
+
 watch(checkedKeys, () => {
   checkState.value = {
     checkAll: checkedKeys.value.checked?.length === allNodes.length,
@@ -137,26 +122,37 @@ const handleExpandAll = (expandAll = true) => {
     expandedKeys.value = []
   }
 }
+
+const openModal = (user: any) => {
+  openDrawer.value = true
+  if (!treeData) {
+    loading.value = true
+    getMenuTree().then((res: any) => {
+      treeData = res
+      allNodes = []
+      const dfs = (nodes: any) => {
+        nodes?.forEach((node: any) => {
+          allNodes.push(node.id)
+          if (node?.children?.length) {
+            dfs(node.children)
+          }
+        })
+      }
+      dfs(treeData)
+      openModal(user)
+      return
+    }).finally(() => {
+      loading.value = false
+    })
+  }
+  currentUser.value = user
+  checkedKeys.value = {
+    checked: user.menus.map((menu: any) => menu.id),
+    halfChecked: [],
+  }
+  expandedKeys.value = [...allNodes]
+}
 defineExpose({
-  show: (user: any, tree: any) => {
-    open.value = true
-    currentUser.value = user
-    checkedKeys.value = {
-      checked: user.menus.map((menu: any) => menu.id),
-      halfChecked: [],
-    }
-    treeData.value = tree
-    allNodes = []
-    const dfs = (nodes: any) => {
-      nodes?.forEach((node: any) => {
-        allNodes.push(node.id)
-        if (node?.children?.length) {
-          dfs(node.children)
-        }
-      })
-    }
-    dfs(tree)
-    expandedKeys.value = [...allNodes]
-  },
+  openModal
 })
 </script>

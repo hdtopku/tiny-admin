@@ -30,8 +30,10 @@ const openPasswordModal = (record: any) => {
 
 <template>
   <div>
-    <Search :loading="loading" placeholder="搜索用户名、昵称、邮箱、手机号" @open-modal="openModal"
-            @query-list="queryList"/>
+    <a-affix :offset-top="84">
+      <Search :loading="loading" placeholder="搜索用户名、昵称、邮箱、手机号" @open-modal="openModal"
+              @query-list="queryList"/>
+    </a-affix>
     <PcUserList :dataSource="dataSource" :loading="loading" :pagination="pagination" class="hidden sm:block"
                 @query-list="queryList" @open-modal="openModal" @open-password-modal="openPasswordModal"/>
     <MobileUserList :dataSource="dataSource" :loading="loading" :pagination="pagination" class="block sm:hidden"

@@ -37,7 +37,7 @@ const handleChangePassword = () => {
   })
 }
 defineExpose({
-  openModal: (item: any) => {
+  openModal: (item: any = {}) => {
     passwordModalVisible.value = true
     passwordItem.value = {id: item.key, password: item.password}
     username.value = item.username
