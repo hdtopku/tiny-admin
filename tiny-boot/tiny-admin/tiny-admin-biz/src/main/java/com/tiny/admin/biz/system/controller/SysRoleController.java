@@ -48,27 +48,28 @@ public class SysRoleController {
 
     @PostMapping("/page")
     public Result<IPage<SysRoleDto>> page(@RequestBody(required = false) BaseQueryParam param) {
-        MPJLambdaWrapper<SysRole> wrapper1 = new MPJLambdaWrapper<>();
-        wrapper1.select(SysRole::getId).distinct();
+        MPJLambdaWrapper<SysRole> idWrapper = new MPJLambdaWrapper<>();
+        idWrapper.select(SysRole::getId).distinct();
         if (StringUtils.isNotBlank(param.getKeyword())) {
-            wrapper1.like(SysRole::getRoleName, param.getKeyword())
-                    .or().like(SysRole::getDescription, param.getKeyword());
+            idWrapper.like(SysRole::getRoleName, param.getKeyword()).or().like(SysRole::getDescription, param.getKeyword());
+            param.setPageNum(1);
         } else {
-            wrapper1.eq(SysRole::getStatus, param.getStatus());
+            idWrapper.eq(SysRole::getStatus, param.getStatus());
         }
-        Page<SysRole> page1 = new Page<>(param.getPageNum(), param.getPageSize());
-        IPage<SysRole> iPage1 = sysRoleMapper.selectPage(page1, wrapper1);
-
+        IPage<SysRole> sysRoleIdPage = sysRoleMapper.selectPage(new Page<>(param.getPageNum(), param.getPageSize()), idWrapper);
+        if(sysRoleIdPage.getRecords().isEmpty()) {
+            return Result.success(new Page<>(param.getPageNum(), param.getPageSize(), sysRoleIdPage.getTotal()));
+        }
         MPJLambdaWrapper<SysRole> wrapper = new MPJLambdaWrapper<>();
         wrapper.selectAll(SysRole.class)
                 .leftJoin(SysRoleMenuRel.class, SysRoleMenuRel::getRoleId, SysRole::getId)
                 .selectCollection(SysMenu.class, SysRoleDto::getMenus, map->map)
                 .leftJoin(SysMenu.class, SysMenu::getId, SysRoleMenuRel::getMenuId)
-                .in(SysRole::getId, iPage1.getRecords().stream().map(SysRole::getId).toList())
-                ;
+                .in(SysRole::getId, sysRoleIdPage.getRecords().stream().map(SysRole::getId).toList())
+                .orderByDesc(SysRole::getUpdateTime);
         wrapper.orderByDesc(SysRole::getUpdateTime);
         List<SysRoleDto> records = sysRoleMapper.selectJoinList(SysRoleDto.class, wrapper);
-        IPage<SysRoleDto> res = new Page<>(iPage1.getCurrent(), iPage1.getSize(), iPage1.getTotal());
+        IPage<SysRoleDto> res = new Page<>(sysRoleIdPage.getCurrent(), sysRoleIdPage.getSize(), sysRoleIdPage.getTotal());
         res.setRecords(records);
         return Result.success(res);
     }

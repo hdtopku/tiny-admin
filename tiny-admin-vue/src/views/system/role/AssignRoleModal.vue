@@ -4,11 +4,10 @@
       :root-style="{ color: 'blue' }"
       style="color: red"
       placement="right"
-      width="500"
   >
     <template #title>{{ $t('分配菜单权限：') }}
       <a-tooltip :title="currentUser?.description">
-        <span class="text-gray-400">{{ currentUser?.roleName }}</span>
+        <a-tag>{{ currentUser?.roleName }}</a-tag>
       </a-tooltip>
     </template>
     <template #footer>
@@ -130,15 +129,15 @@ const openModal = (user: any) => {
     getMenuTree().then((res: any) => {
       treeData = res
       allNodes = []
-      const dfs = (nodes: any) => {
+      const dfsTreeToList = (nodes: any) => {
         nodes?.forEach((node: any) => {
           allNodes.push(node.id)
           if (node?.children?.length) {
-            dfs(node.children)
+            dfsTreeToList(node.children)
           }
         })
       }
-      dfs(treeData)
+      dfsTreeToList(treeData)
       openModal(user)
       return
     }).finally(() => {

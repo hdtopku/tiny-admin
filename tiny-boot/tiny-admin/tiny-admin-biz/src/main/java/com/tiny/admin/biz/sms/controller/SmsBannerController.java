@@ -40,6 +40,7 @@ public class SmsBannerController {
         if (StringUtils.isNotBlank(param.getKeyword())) {
             wrapper.like(SmsBanner::getBannerName, param.getKeyword())
                     .or().like(SmsBanner::getRemark, param.getKeyword());
+            param.setPageNum(1);
         }
         IPage<SmsBanner> iPage = iSmsBannerService.page(new Page<>(param.getPageNum(), param.getPageSize()), wrapper);
         return Result.success(iPage);

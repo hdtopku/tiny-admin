@@ -61,6 +61,7 @@ public class SysMenuController {
         if (StringUtils.isNotBlank(param.getKeyword())) {
             wrapper.like(SysMenu::getName, param.getKeyword())
                     .or().like(SysMenu::getUrl, param.getKeyword());
+            param.setPageNum(1);
         }
         IPage<SysMenu> iPage = sysMenuService.page(new Page<>(param.getPageNum(), param.getPageSize()), wrapper);
         return Result.success(iPage);

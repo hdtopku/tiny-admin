@@ -53,6 +53,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
                     .or().like(SysUser::getNickname, param.getKeyword())
                     .or().like(SysUser::getEmail, param.getKeyword())
                     .or().like(SysUser::getPhone, param.getKeyword());
+            param.setPageNum(1);
         } else {
             idWrapper.eq(SysUser::getStatus, param.getStatus() == null? 1 : param.getStatus());
         }

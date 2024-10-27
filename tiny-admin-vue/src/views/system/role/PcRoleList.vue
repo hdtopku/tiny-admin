@@ -2,49 +2,49 @@
 import {DownOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue"
 import {message, Pagination} from "ant-design-vue";
 import {t} from "@/utils/i18n.ts";
-import {deleteById, saveOrUpdate} from "@/api/system/role.ts";
-import AssignRole from "@/views/system/role/AssignRole.vue";
+import {deleteRoleById, saveOrUpdateRole} from "@/api/system/role.ts";
 
-const {dataSource, pagination} = defineProps({
+const {dataSource, pagination, loading} = defineProps({
   dataSource: Array,
   pagination: Pagination,
+  loading: Boolean,
 })
-const emit = defineEmits(['openModal', 'queryList'])
+
+const emit = defineEmits(['openModal', 'openAssignRoleModal', 'queryList'])
 const openModal = (record: any) => {
   emit('openModal', record)
 }
 
-const handleTableChange = () => {
-}
 const confirmChangeStatus = (record: any) => {
   record.loading = true
-  saveOrUpdate({id: record.id, status: !record.status})
+  saveOrUpdateRole({id: record.id, status: !record.status})
       .then(() => {
-        changeStatus(record)
+        record.status = !record.status
+        message.success(t('操作成功'))
       })
       .finally(() => {
         record.loading = false
       })
 }
-const changeStatus = (record: any) => {
-  record.status = !record.status
+const handleTableChange = (pagination: any) => {
+  emit('queryList', {pageNum: pagination.current, pageSize: pagination.pageSize,})
 }
 const deleteRole = (id: string) => {
-  deleteById(id).then(() => {
+  deleteRoleById(id).then(() => {
     emit('queryList')
     message.success(t('删除成功'))
   })
 }
-const modalRef = ref()
-const handleAssignRole = (record: any) => {
-  modalRef.value.openModal(record)
-}
-
 const columns: any = [
   {
     title: t('角色'),
     dataIndex: 'roleName',
     key: 'roleName',
+  },
+  {
+    title: '权限',
+    dataIndex: 'roleSize',
+    key: 'roleSize',
   },
   {
     title: t('描述'),
@@ -74,6 +74,7 @@ const columns: any = [
 <template>
   <div>
     <a-table
+        :loading="loading"
         :columns="columns"
         :dataSource="dataSource"
         :pagination="pagination"
@@ -107,20 +108,12 @@ const columns: any = [
                   :un-checked-children="$t('已禁用')"
                   class="flex-shrink-0"
                   size="small"
-                  @click="
-                    () => {
-                      changeStatus(record)
-                    }
-                  "
+                  @click="record.status = !record.status"
               />
             </a-popconfirm>
-            <a-button
-                class="text-amber-500 -ml-1"
-                type="link"
-                @click="handleAssignRole(record)"
-            >{{ $t('分配权限') }}
-            </a-button
-            >
+            <a-button class="text-amber-500 -ml-1" type="link" @click="emit('openAssignRoleModal', record)">
+              {{ $t('分配权限') }}
+            </a-button>
             <a-dropdown>
               <a-button class="flex items-center" size="small" type="link"
               >{{ $t('操作') }}
@@ -168,9 +161,11 @@ const columns: any = [
             </a-dropdown>
           </div>
         </template>
+        <template v-if="column.dataIndex === 'roleSize'">
+          {{ record.menus.length }}个
+        </template>
       </template>
     </a-table>
-    <AssignRole ref="modalRef" @query-list="emit('queryList')"/>
   </div>
 </template>
 

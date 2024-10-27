@@ -40,6 +40,7 @@ public class SmsBrandController {
         wrapper.orderByAsc(SmsBrand::getSort);
         if (StringUtils.isNotBlank(param.getKeyword())) {
             wrapper.like(SmsBrand::getRemark, param.getKeyword());
+            param.setPageNum(1);
         }
         IPage<SmsBrand> iPage = iSmsBrandService.page(new Page<>(param.getPageNum(), param.getPageSize()), wrapper);
         return Result.success(iPage);

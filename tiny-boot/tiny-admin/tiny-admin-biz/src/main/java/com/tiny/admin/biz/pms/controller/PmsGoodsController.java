@@ -50,6 +50,7 @@ public class PmsGoodsController {
                     .or().like(PmsGoods::getGoodsDesc, param.getKeyword())
                     .or().like(PmsGoods::getBrandName, param.getKeyword())
                     .or().eq(PmsGoods::getId, param.getKeyword());
+            param.setPageNum(1);
         }
         IPage<PmsGoods> iPage = iPmsGoodsService.page(new Page<>(param.getPageNum(), param.getPageSize()), wrapper);
         IPage<PmsGoodsDto> dtoPage = new Page<>();

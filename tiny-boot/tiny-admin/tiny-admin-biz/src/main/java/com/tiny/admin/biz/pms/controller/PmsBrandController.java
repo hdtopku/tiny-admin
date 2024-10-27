@@ -40,6 +40,7 @@ public class PmsBrandController {
             wrapper.like(PmsBrand::getBrandName, param.getKeyword())
                     .or().like(PmsBrand::getBrandDesc, param.getKeyword())
                     .or().like(PmsBrand::getBrandStory, param.getKeyword());
+            param.setPageNum(1);
         }
         IPage<PmsBrand> iPage = iPmsBrandService.page(new Page<>(param.getPageNum(), param.getPageSize()), wrapper);
         return Result.success(iPage);

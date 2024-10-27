@@ -8,7 +8,6 @@ const {dataSource, pagination} = defineProps({
   dataSource: Array,
   pagination: Pagination,
 })
-
 const emit = defineEmits(['openModal', 'openPasswordModal', 'queryList'])
 const openModal = (record: any) => {
   emit('openModal', record)

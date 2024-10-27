@@ -2,13 +2,15 @@
   <a-modal
       :cancel-text="$t('取消')"
       :ok-text="$t('提交')"
-      :open="modalVisible"
-      :title="
-      isUpdate ? $t('编辑角色-{curName}', { curName: curName }) : $t('新增角色')
+      v-model:open="modalVisible"
+      :title="isUpdate ? $t('编辑角色-{curName}', { curName: curName }) : $t('新增角色')
     "
-      @cancel="handleCancel"
       @ok="handleSubmit"
   >
+    <template #footer>
+      <a-button type="default" @click="modalVisible = false">取消</a-button>
+      <a-button :loading="loading" type="primary" @click="handleSubmit">提交</a-button>
+    </template>
     <a-form
         ref="formRef"
         :label-col="{ span: 4 }"
@@ -40,9 +42,38 @@
 import {t} from '@/utils/i18n.ts'
 
 import {Rule} from 'ant-design-vue/es/form'
-import {saveOrUpdate} from '@/api/system/role.ts'
+import {saveOrUpdateRole} from '@/api/system/role.ts'
 import {message} from 'ant-design-vue'
 
+const formRef = ref(), loading = ref(false), curInfo = ref({id: null, roleName: '', description: ''})
+const emit = defineEmits(['queryList']), modalVisible = ref(false)
+let isUpdate = false, curName = ''
+
+const handleSubmit = () => {
+  formRef.value.validate().then(() => {
+    loading.value = true
+    saveOrUpdateRole({
+      id: curInfo.value.id,
+      roleName: curInfo.value.roleName,
+      description: curInfo.value.description,
+    }).then(() => {
+      modalVisible.value = false
+      emit('queryList')
+      message.success(t('角色已更新'))
+    }).finally(() => {
+      loading.value = false
+    })
+  })
+}
+
+defineExpose({
+  openModal(roleInfo: any = {}) {
+    modalVisible.value = true
+    isUpdate = !!roleInfo.id
+    curName = roleInfo.roleName
+    curInfo.value = Object.assign({}, roleInfo)
+  },
+})
 const rules: Record<string, Rule[]> = {
   roleName: [
     {required: true, message: t('请输入角色名称'), trigger: 'blur'},
@@ -54,39 +85,4 @@ const rules: Record<string, Rule[]> = {
     },
   ],
 }
-const formRef = ref()
-const curInfo = ref({
-  id: null,
-  roleName: '',
-  description: '',
-})
-let emits = defineEmits(['queryList'])
-const handleSubmit = () => {
-  formRef.value.validate().then(() => {
-    saveOrUpdate({
-      id: curInfo.value.id,
-      roleName: curInfo.value.roleName,
-      description: curInfo.value.description,
-    }).then(() => {
-      modalVisible.value = false
-      emits('queryList')
-      message.success(t('角色已更新'))
-    })
-  })
-}
-const modalVisible = ref(false)
-
-const handleCancel = () => {
-  modalVisible.value = false
-}
-const isUpdate = ref(false)
-const curName = ref('')
-defineExpose({
-  openModal(roleInfo: any = {}) {
-    modalVisible.value = true
-    isUpdate.value = !!roleInfo.id
-    curInfo.value = Object.assign({}, roleInfo)
-    curName.value = roleInfo.roleName
-  },
-})
 </script>
