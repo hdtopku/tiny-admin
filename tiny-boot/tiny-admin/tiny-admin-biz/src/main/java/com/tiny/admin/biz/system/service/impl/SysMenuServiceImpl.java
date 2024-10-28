@@ -26,8 +26,12 @@ import java.util.*;
 public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> implements ISysMenuService {
 
     @Override
-    public List<SysMenuTree> menuTree() {
-        List<SysMenu> menuList = this.baseMapper.selectList(new QueryWrapper<SysMenu>().orderByAsc("create_time"));
+    public List<SysMenuTree> menuTree(String keyword) {
+        QueryWrapper<SysMenu> queryWrapper = new QueryWrapper<SysMenu>();
+        if(!StringUtils.isBlank(keyword)) {
+            queryWrapper.like("name", keyword);
+        }
+        List<SysMenu> menuList = this.baseMapper.selectList(queryWrapper.orderByAsc("create_time"));
         return convertTree(menuList);
     }
 

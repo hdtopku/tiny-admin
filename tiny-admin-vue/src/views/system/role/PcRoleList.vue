@@ -11,10 +11,6 @@ const {dataSource, pagination, loading} = defineProps({
 })
 
 const emit = defineEmits(['openModal', 'openAssignRoleModal', 'queryList'])
-const openModal = (record: any) => {
-  emit('openModal', record)
-}
-
 const confirmChangeStatus = (record: any) => {
   record.loading = true
   saveOrUpdateRole({id: record.id, status: !record.status})
@@ -124,7 +120,7 @@ const columns: any = [
                   <a-menu-item>
                     <a-button
                         type="link"
-                        @click="() => openModal(record)"
+                        @click="() => emit('openModal', record)"
                     >{{ $t('编辑角色') }}
                     </a-button
                     >

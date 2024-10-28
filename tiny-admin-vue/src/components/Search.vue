@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {useDebounceFn} from "@vueuse/core"
 
-const props = defineProps({
+const {loading, placeholder, showStatus} = defineProps({
   loading: {
     type: Boolean,
     default: false
@@ -9,6 +9,10 @@ const props = defineProps({
   placeholder: {
     type: String,
     default: '请输入搜索关键字'
+  },
+  showStatus: {
+    type: Boolean,
+    default: true
   }
 })
 const keyword = ref(''), status = ref(true)
@@ -27,14 +31,14 @@ watch(() => [keyword.value, status.value], debounceQuery)
 <template>
   <div class="flex mb-3 bg-gray-100 dark:bg-black">
     <div class="flex items-center sm:gap-4 gap-1 mx-auto sm:w-[80%] w-[95%]">
-      <a-button :loading="props.loading" type="primary" @click="handleAdd">{{
+      <a-button :loading="loading" type="primary" @click="handleAdd">{{
           $t('新增')
         }}
       </a-button>
       <a-input
           id="keyword"
           v-model:value="keyword"
-          :placeholder="props.placeholder"
+          :placeholder="placeholder"
           allow-clear
           autocomplete="off"
           class="text-left"
@@ -43,15 +47,16 @@ watch(() => [keyword.value, status.value], debounceQuery)
       >
         <template #prefix>
           <a-switch
+              v-if="showStatus"
               v-model:checked="status"
               :checked-children="$t('已启用')"
-              :loading="props.loading"
+              :loading="loading"
               :un-checked-children="$t('已禁用')"
               class="flex-shrink-0"
           />
         </template>
         <template #suffix>
-          <a-button :loading="props.loading" type="primary" @click="handleSearch">{{
+          <a-button :loading="loading" type="primary" @click="handleSearch">{{
               $t('搜索')
             }}
           </a-button>

@@ -29,9 +29,9 @@ public class SysMenuController {
     @Resource
     private ISysMenuService sysMenuService;
 
-    @GetMapping("/tree")
-    public Result<List<SysMenuTree>> menuTree() {
-        return Result.success(sysMenuService.menuTree());
+    @PostMapping("/tree")
+    public Result<List<SysMenuTree>> menuTree(@RequestBody(required = false) BaseQueryParam param) {
+        return Result.success(sysMenuService.menuTree(param.getKeyword()));
     }
 
     @Operation(summary = "删")

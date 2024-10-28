@@ -1,3 +1,188 @@
+<script lang="ts" setup>
+import {t} from '@/utils/i18n.ts'
+
+import {saveOrUpdateMenu} from '@/api/system/menu.ts'
+import {message} from 'ant-design-vue'
+import IconSelector from '@/components/IconSelector.vue'
+import {useUserStore} from '@/store'
+import {DefaultOptionType} from 'ant-design-vue/es/vc-tree-select/TreeSelect'
+
+const props = defineProps({
+  menuTree: Array as () => DefaultOptionType[],
+})
+const getMenuTree = () => {
+  const dfs = (menus: any) => {
+    if (!menus?.length) return []
+    let newMenus: any = []
+    menus
+        .filter((menu: any) => menu.type === 1)
+        .forEach((menu: any) => {
+          let newMenu: any = {...menu}
+          if (menu?.children?.length) {
+            newMenu.children = dfs(menu.children)
+          }
+          newMenus.push(newMenu)
+        })
+    return newMenus
+  }
+  return dfs(props.menuTree)
+}
+const menuTree = computed(() => getMenuTree()), open = ref(false), isUpdate = ref(false), formRef = ref()
+const defaultForm = { name: '', url: '', component: '', icon: [], sort: 9999, hidden: false,
+  keepAlive: true, parentId: null, type: 1, unauthorizedStrategy: 0, permission: ''}
+
+const form: any = ref({...defaultForm}), loading = ref(false), btnFormRef = ref()
+const emit = defineEmits(['queryList'])
+const handleOk = async () => {
+  const submitForm = () => {
+    loading.value = true
+    if (!isUpdate.value && form.value.type === 2) {
+      form.value.component = null
+    }
+    if (!form.value.icon?.length) {
+      form.value.icon = null
+    }
+    saveOrUpdateMenu(form.value)
+        .then(() => {
+          message.success(t('操作成功'))
+          open.value = false
+          emit('queryList')
+          useUserStore()
+              .refreshUserInfo()
+              .then(() => {
+              })
+        })
+        .finally(() => {
+          loading.value = false
+        })
+  }
+  if (activeKey.value === 1) {
+    formRef.value.validate().then(() => {
+      submitForm()
+    })
+  } else {
+    btnFormRef.value.validate().then(() => {
+      submitForm()
+    })
+  }
+}
+const userInputPerm = ref(false), userInputComponent = ref(false), activeKey = ref(1)
+const handleUrlChange = () => {
+  if (isUpdate.value) return
+  if (!userInputPerm.value) {
+    form.value.permission = `${form.value.url
+        .toLowerCase()
+        .replace(/\//g, ':')}`
+  }
+  if (!userInputComponent.value) {
+    form.value.component = `${form.value.url}`
+  }
+}
+
+watch(activeKey, () => {
+  form.value.type = activeKey.value
+})
+watch(() => form.value.url, () => {
+  while (form.value.url?.startsWith('/')) {
+    form.value.url = form.value.url.slice(1)
+  }
+  if (form.value.url?.endsWith('.vue')) {
+    form.value.url = form.value.url?.slice(0, -4)
+  }
+  if (form.value.url?.length) {
+    form.value.url = form.value.url
+        ?.replace(/_/g, '-')
+        .replace(/ /g, '-')
+        .replace(/--/g, '-')
+        .replace(/__/g, '-')
+        .toLowerCase()
+  }
+})
+watch(() => form.value.component, () => {
+  if (form.value.component?.startsWith('views/')) {
+    form.value.component = form.value.component.slice(6)
+  }
+  if (form.value.component?.endsWith('.vue')) {
+    form.value.component = form.value.component.slice(0, -4)
+  }
+  while (form.value.component?.startsWith('/')) {
+    form.value.component = form.value.component.slice(1)
+  }
+})
+
+let curName
+defineExpose({
+  openModal(record: any={}) {
+    open.value = true
+    isUpdate.value = !!record.id
+    const {id, name, url, component, icon, sort, hidden, parentId, type, permission, unauthorizedStrategy, keepAlive} = record
+    form.value={...defaultForm, id, name, url, component, icon, sort, hidden, parentId, type, permission, unauthorizedStrategy, keepAlive}
+    curName = record.name
+    activeKey.value = record?.type || 1
+  },
+})
+const rules: any = {
+  parentId: [
+    {
+      required: false,
+      message: t('请选择父菜单'),
+      trigger: ['blur', 'change'],
+    },
+  ],
+
+  name: [
+    {
+      required: true,
+      message: t('请输入菜单名称'),
+      trigger: ['blur', 'change'],
+    },
+    {
+      min: 2,
+      max: 50,
+      message: t('长度在 2 到 20 个字符'),
+      trigger: ['blur', 'change'],
+    },
+  ],
+
+  url: [
+    {
+      required: true,
+      message: t('请输入菜单路径'),
+      trigger: ['blur', 'change'],
+    },
+    {
+      min: 2,
+      max: 200,
+      message: t('长度在 2 到 200 个字符'),
+      trigger: ['blur', 'change'],
+    },
+  ],
+
+  type: [
+    {
+      required: true,
+      message: t('请选择菜单类型'),
+      trigger: ['blur', 'change'],
+    },
+  ],
+}
+const buttonRules: any = {
+  name: [
+    {
+      required: true,
+      message: t('请输入按钮名称'),
+      trigger: ['blur', 'change'],
+    },
+    {
+      min: 2,
+      max: 50,
+      message: t('长度在 2 到 50 个字符'),
+      trigger: ['blur', 'change'],
+    },
+  ],
+}
+</script>
+
 <template>
   <a-drawer
       v-model:open="open"
@@ -13,7 +198,7 @@
             $t('修改')
           }}{{ form.type === 1 ? $t('菜单') : $t('按钮') }}：</span
         >
-        <span class="text-gray-400">{{ currentMenu.name }}</span>
+        <span class="text-gray-400">{{ curName }}</span>
       </span>
       <span v-else
       >{{ $t('新增') }}{{ form.type === 1 ? $t('菜单') : $t('按钮') }}</span
@@ -290,232 +475,3 @@
     </a-tabs>
   </a-drawer>
 </template>
-<script lang="ts" setup>
-import {t} from '@/utils/i18n.ts'
-
-import {saveOrUpdateMenu} from '@/api/system/menu.ts'
-import {message} from 'ant-design-vue'
-import IconSelector from '@/components/IconSelector.vue'
-import {useUserStore} from '@/store'
-import {DefaultOptionType} from 'ant-design-vue/es/vc-tree-select/TreeSelect'
-
-const props = defineProps({
-  menuTree: Array as () => DefaultOptionType[],
-})
-const getMenuTree = () => {
-  const dfs = (menus: any) => {
-    if (!menus?.length) return []
-    let newMenus: any = []
-    menus
-        .filter((menu: any) => menu.type === 1)
-        .forEach((menu: any) => {
-          let newMenu: any = {...menu}
-          if (menu?.children?.length) {
-            newMenu.children = dfs(menu.children)
-          }
-          newMenus.push(newMenu)
-        })
-    return newMenus
-  }
-  return dfs(props.menuTree)
-}
-const menuTree = computed(() => getMenuTree())
-const open = ref(false)
-const isUpdate = ref(false)
-const formRef = ref()
-const defaultForm = {
-  name: '',
-  url: '',
-  component: '',
-  icon: [],
-  sort: 9999,
-  hidden: false,
-  keepAlive: true,
-  parentId: null,
-  type: 1,
-  unauthorizedStrategy: 0,
-  permission: '',
-}
-
-const form: any = ref({...defaultForm})
-const rules: any = {
-  parentId: [
-    {
-      required: false,
-      message: t('请选择父菜单'),
-      trigger: ['blur', 'change'],
-    },
-  ],
-
-  name: [
-    {
-      required: true,
-      message: t('请输入菜单名称'),
-      trigger: ['blur', 'change'],
-    },
-    {
-      min: 2,
-      max: 50,
-      message: t('长度在 2 到 20 个字符'),
-      trigger: ['blur', 'change'],
-    },
-  ],
-
-  url: [
-    {
-      required: true,
-      message: t('请输入菜单路径'),
-      trigger: ['blur', 'change'],
-    },
-    {
-      min: 2,
-      max: 200,
-      message: t('长度在 2 到 200 个字符'),
-      trigger: ['blur', 'change'],
-    },
-  ],
-
-  type: [
-    {
-      required: true,
-      message: t('请选择菜单类型'),
-      trigger: ['blur', 'change'],
-    },
-  ],
-}
-const buttonRules: any = {
-  name: [
-    {
-      required: true,
-      message: t('请输入按钮名称'),
-      trigger: ['blur', 'change'],
-    },
-    {
-      min: 2,
-      max: 50,
-      message: t('长度在 2 到 50 个字符'),
-      trigger: ['blur', 'change'],
-    },
-  ],
-
-  // permission: [
-  //   {required: true, message: '请输入权限标识', trigger: ['blur', 'change']},
-  //   {min: 2, max: 50, message: '长度在 2 到 50 个字符', trigger: ['blur', 'change']},
-  // ],
-}
-const loading = ref(false)
-const emits = defineEmits(['queryList'])
-const btnFormRef = ref()
-const handleOk = async () => {
-  const submitForm = () => {
-    loading.value = true
-    if (!isUpdate.value && form.value.type === 2) {
-      form.value.component = null
-    }
-    if (!form.value.icon?.length) {
-      form.value.icon = null
-    }
-    saveOrUpdateMenu(form.value)
-        .then(() => {
-          message.success(t('操作成功'))
-          open.value = false
-          emits('queryList')
-          useUserStore()
-              .refreshUserInfo()
-              .then(() => {
-              })
-        })
-        .finally(() => {
-          loading.value = false
-        })
-  }
-  if (activeKey.value === 1) {
-    formRef.value.validate().then(() => {
-      submitForm()
-    })
-  } else {
-    btnFormRef.value.validate().then(() => {
-      submitForm()
-    })
-  }
-}
-const userInputPerm = ref(false)
-const userInputComponent = ref(false)
-const handleUrlChange = () => {
-  if (isUpdate.value) return
-  if (!userInputPerm.value) {
-    form.value.permission = `${form.value.url
-        .toLowerCase()
-        .replace(/\//g, ':')}`
-  }
-  if (!userInputComponent.value) {
-    form.value.component = `${form.value.url}`
-  }
-}
-const activeKey = ref(1)
-
-watch(activeKey, () => {
-  form.value.type = activeKey.value
-})
-watch(
-    () => form.value.url,
-    () => {
-      while (form.value.url?.startsWith('/')) {
-        form.value.url = form.value.url.slice(1)
-      }
-      if (form.value.url?.endsWith('.vue')) {
-        form.value.url = form.value.url?.slice(0, -4)
-      }
-      if (form.value.url?.length) {
-        form.value.url = form.value.url
-            ?.replace(/_/g, '-')
-        .replace(/ /g, '-')
-        .replace(/--/g, '-')
-        .replace(/__/g, '-')
-        .toLowerCase()
-      }
-    }
-)
-watch(
-    () => form.value.component,
-    () => {
-      if (form.value.component?.startsWith('views/')) {
-        form.value.component = form.value.component.slice(6)
-      }
-      if (form.value.component?.endsWith('.vue')) {
-        form.value.component = form.value.component.slice(0, -4)
-      }
-      while (form.value.component?.startsWith('/')) {
-        form.value.component = form.value.component.slice(1)
-      }
-    }
-)
-
-let currentMenu: any = {}
-defineExpose({
-  showModal(item, isEdit) {
-    open.value = true
-    isUpdate.value = isEdit
-    if (item) {
-      Object.assign(form.value, {
-        id: item.id,
-        name: item.name,
-        url: item.url,
-        component: item.component,
-        icon: item.icon,
-        sort: item.sort || 9999,
-        hidden: item.hidden,
-        parentId: item.parentId,
-        type: item.type,
-        permission: item.permission,
-        unauthorizedStrategy: item.unauthorizedStrategy || 0,
-        keepAlive: item.keepAlive,
-      })
-    } else {
-      form.value = {...defaultForm}
-    }
-    currentMenu = item
-    activeKey.value = item?.type || 1
-  },
-})
-</script>
