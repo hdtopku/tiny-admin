@@ -95,6 +95,14 @@ export const menuStore = defineStore('menu', () => {
         activeTab.value = key
         router.push(key)
     }
+    const updateTabs = () => {
+        const newPanes: any = openedTabs.value
+        useUserStore().userInfo?.menuTree?.forEach((item) => {
+            const idx = newPanes.findIndex((pane) => pane.key === item.url)
+            if (idx > -1) newPanes[idx].title = item.name
+        })
+        openedTabs.value = newPanes
+    }
     return {
         sidebarOpenKeys,
         sidebarSelectedKeys,
@@ -105,6 +113,7 @@ export const menuStore = defineStore('menu', () => {
         addTab,
         removeTab,
         changeTab,
+        updateTabs,
         getBreadcrumb
     }
 }, {

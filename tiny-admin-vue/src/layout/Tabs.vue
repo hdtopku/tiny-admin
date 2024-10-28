@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import {ref} from 'vue';
-import {useMenuStore} from "@/store";
+import {useMenuStore, useUserStore} from "@/store";
 import {Key} from "ant-design-vue/es/_util/type";
 
 const panes = ref<{ title: string; content: string; key: string; closable?: boolean }[]>(useMenuStore().openedTabs);
@@ -19,6 +19,9 @@ watch(activeKey, (newVal) => {
 })
 watch(() => useMenuStore().activeTab, (newVal) => {
   activeKey.value = newVal
+})
+watch(() => useUserStore().userInfo, () => {
+  useMenuStore().updateTabs()
 })
 </script>
 

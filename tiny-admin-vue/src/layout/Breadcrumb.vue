@@ -17,7 +17,7 @@
 </template>
 <script lang="ts" setup>
 import {ref} from 'vue';
-import {useMenuStore} from "@/store";
+import {useMenuStore, useUserStore} from "@/store";
 import router from "@/router";
 
 interface Route {
@@ -34,5 +34,8 @@ const routes = ref<Route[]>([]);
 watch(() => router.currentRoute.value.path, (path) => {
   routes.value = useMenuStore().getBreadcrumb(path)
 }, {immediate: true})
+watch(() => useUserStore().userInfo, () => {
+  routes.value = useMenuStore().getBreadcrumb(router.currentRoute.value.path)
+})
 </script>
 
