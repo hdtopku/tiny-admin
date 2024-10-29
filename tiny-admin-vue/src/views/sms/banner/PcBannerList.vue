@@ -1,54 +1,16 @@
-<script lang="ts" setup>
+<script setup lang="ts">
 import {DownOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue";
-import {message, Pagination} from "ant-design-vue";
 import {t} from "@/utils/i18n.ts";
-import {deleteBrandById, saveOrUpdateBrand} from "@/api/pms/brand.ts";
+import {message, Pagination, PaginationProps} from "ant-design-vue";
+import {deleteBannerById, saveOrUpdateBanner} from "@/api/sms/banner.ts";
 
-const props: any = defineProps({
+const {dataSource, pagination} = defineProps({
   dataSource: Array,
   pagination: Pagination,
 })
 
-const columns: any = [
-  {
-    title: t('序号'),
-    key: 'index',
-    width: 60,
-  },
-  {
-    title: t('品牌logo'),
-    dataIndex: 'logo',
-    key: 'logo',
-    width: 100,
-  },
-  {
-    title: t('品牌名'),
-    dataIndex: 'brandName',
-    key: 'brandName',
-    width: 150,
-  },
-  {
-    title: t('品牌简介'),
-    dataIndex: 'brandDesc',
-    key: 'brandDesc',
-    width: 200,
-  },
-  {
-    title: t('品牌故事'),
-    dataIndex: 'brandStory',
-    key: 'brandStory',
-    width: 200,
-  },
-  {
-    title: t('操作'),
-    key: 'operation',
-    fixed: 'right',
-    width: 160,
-  },
-]
-
 const emit = defineEmits(['openModal', 'queryList'])
-const handleTableChange = (pagination: any) => {
+const handleTableChange = (pagination: PaginationProps) => {
   emit('queryList', {
     pageNum: pagination.current,
     pageSize: pagination.pageSize,
@@ -56,30 +18,73 @@ const handleTableChange = (pagination: any) => {
 }
 const confirmChangeStatus = (record: any) => {
   record.loading = true
-  const {loading, updateTime, ...rest} = record
+  const {loading, createTime, updateTime, ...rest} = record
   rest.status =!rest.status
-  saveOrUpdateBrand(rest).then(() => {
+  saveOrUpdateBanner(rest).then(() => {
     record.status = rest.status
+    message.success(t('操作成功'))
   }).finally(() => {
     record.loading = false
   })
 }
-const openModal = (record: any) => {
-  emit('openModal', record)
-}
-const deleteRecord = (id: any) => {
-  deleteBrandById(id).then(() => {
-    message.success(t('删除成功'))
-    emit('queryList')
-  })
-}
+
+const columns: any = [
+  {
+    title: t('序号'),
+    dataIndex: 'index',
+    key: 'index',
+    width: 80,
+    align: 'center',
+  },
+  {
+    title: t('图片'),
+    dataIndex: 'picUrl',
+    key: 'picUrl',
+    width: 100,
+    align: 'center',
+  },
+  {
+    title: t('轮播名称'),
+    dataIndex: 'bannerName',
+    key: 'bannerName',
+    width: 200,
+    align: 'center',
+  },
+  {
+    title: t('平台'),
+    dataIndex: 'platform',
+    key: 'platform',
+    width: 100,
+    align: 'center',
+  },
+  {
+    title: t('备注'),
+    dataIndex: 'remark',
+    key: 'remark',
+    width: 160,
+    align: 'center',
+  },
+  {
+    title: t('排序'),
+    dataIndex: 'sort',
+    key: 'sort',
+    width: 100,
+    align: 'center',
+  },
+  {
+    title: t('操作'),
+    key: 'operation',
+    width: 160,
+    fixed: 'right',
+  },
+]
 </script>
 
 <template>
   <a-table
       :columns="columns"
-      :dataSource="props.dataSource"
-      :pagination="props.pagination"
+      :dataSource="dataSource"
+      :pagination="pagination"
       :scroll="{ x: 'max-content', y: 'calc(100vh - 200px)' }"
       @change="handleTableChange"
   >
@@ -87,34 +92,41 @@ const deleteRecord = (id: any) => {
       <template v-if="column.key === 'index'">
         {{ index + 1 }}
       </template>
-      <template v-else-if="column.dataIndex === 'logo'">
-        <a-avatar :src="record.logo" shape="square" size="large"/>
+      <template v-else-if="column.dataIndex === 'picUrl'">
+        <img :src="record.picUrl"/>
       </template>
-      <template v-else-if="column.dataIndex === 'brandDesc'">
+      <template v-else-if="column.dataIndex === 'bannerName'">
         <a-tooltip :arrow="false">
           <template #title>
-            <span>{{ record.brandDesc }}</span>
+            <span>{{ record.bannerName }}</span>
           </template>
-          <span>{{ record.brandDesc?.substring(0, 10) }}</span>
-          <span v-if="record.brandDesc?.length > 10">...</span>
+          <span>{{ record.bannerName?.substring(0, 20) }}</span>
+          <span v-if="record.bannerName?.length > 20">...</span>
         </a-tooltip>
       </template>
-      <template v-else-if="column.dataIndex === 'brandStory'">
+      <template v-else-if="column.dataIndex === 'platform'">
+        {{ record.platform === 1 ? $t('电脑端') : $t('移动端') }}
+      </template>
+      <template v-else-if="column.dataIndex === 'remark'">
         <a-tooltip :arrow="false">
           <template #title>
-            <span>{{ record.brandStory }}</span>
+            <span>{{ record.remark }}</span>
           </template>
-          <span>{{ record.brandStory?.substring(0, 10) }}</span>
-          <span v-if="record.brandStory?.length > 10">...</span>
+          <span>{{ record.remark?.substring(0, 10) }}</span>
+          <span v-if="record.remark?.length > 10">...</span>
         </a-tooltip>
       </template>
+      <template v-else-if="column.dataIndex === 'sort'">
+        {{ record.sort }}
+      </template>
+
       <template v-else-if="column.key === 'operation'">
         <div class="grid grid-cols-2 items-center justify-center">
           <a-popconfirm
               :cancel-text="$t('否')"
               :ok-text="$t('是')"
               :title="
-                record.status ? $t('是否禁用该品牌？') : $t(' 是否启用该品牌？')
+                record.status ? $t('是否禁用该轮播卡片？') : $t(' 是否启用该轮播卡片？')
               "
               @confirm="
                 () => {
@@ -143,12 +155,10 @@ const deleteRecord = (id: any) => {
             <template #overlay>
               <a-menu class="text-center">
                 <a-menu-item>
-                  <a-button
-                      type="link"
-                      @click="() => openModal(record)"
-                  >{{ $t('编辑品牌') }}
-                  </a-button
-                  >
+                  <a-button type="link" @click="() => emit('openModal', record)">{{
+                      $t('编辑轮播卡片')
+                    }}
+                  </a-button>
                 </a-menu-item>
                 <a-menu-item>
                   <a-popconfirm
@@ -157,7 +167,7 @@ const deleteRecord = (id: any) => {
                       ok-type="danger"
                       @confirm="
                         () => {
-                          deleteRecord(record.id)
+                          deleteBannerById(record.id)
                         }
                       "
                   >
@@ -165,14 +175,14 @@ const deleteRecord = (id: any) => {
                       <question-circle-outlined style="color: red"/>
                     </template>
                     <template #title>
-                      <div>{{ $t('是否删除品牌？') }}</div>
+                      <div>{{ $t('是否删除轮播卡片？') }}</div>
                       <a-tag class="my-2" color="red">{{
                           record.brandName
                         }}
                       </a-tag>
                     </template>
                     <a-button danger type="link">{{
-                        $t('删除品牌')
+                        $t('删除轮播卡片')
                       }}
                     </a-button>
                   </a-popconfirm>

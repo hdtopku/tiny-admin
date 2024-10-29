@@ -11,7 +11,10 @@ import com.tiny.admin.biz.system.vo.BaseQueryParam;
 import com.tiny.core.web.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.Resource;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
@@ -50,6 +53,8 @@ public class SysMenuController {
                 entity.setUrl("/" + entity.getUrl());
             }
         }
+        entity.setCreateTime(null);
+        entity.setUpdateTime(null);
         sysMenuService.saveOrUpdate(entity);
         return Result.success("操作成功");
     }
@@ -62,6 +67,8 @@ public class SysMenuController {
             wrapper.like(SysMenu::getName, param.getKeyword())
                     .or().like(SysMenu::getUrl, param.getKeyword());
             param.setPageNum(1);
+        } else {
+            wrapper.eq(SysMenu::getStatus, param.getStatus());
         }
         IPage<SysMenu> iPage = sysMenuService.page(new Page<>(param.getPageNum(), param.getPageSize()), wrapper);
         return Result.success(iPage);

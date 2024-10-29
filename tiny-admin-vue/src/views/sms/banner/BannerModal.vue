@@ -135,18 +135,16 @@ const handleOk = () => {
 }
 const activeKey = ref('basicInfo')
 
-const showModal = (banner: any = {}) => {
-  if (banner.id) {
-    isUpdate.value = true
-    bannerInfo.value = Object.assign({}, banner)
-  } else {
-    bannerInfo.value = {}
-  }
-  open.value = true
-}
-
 defineExpose({
-  showModal,
+  openModal: (banner: any = {}) => {
+    if (banner.id) {
+      isUpdate.value = true
+      bannerInfo.value = Object.assign({}, banner)
+    } else {
+      bannerInfo.value = {}
+    }
+    open.value = true
+  },
 })
 
 watch(bannerInfo, (newVal) => {

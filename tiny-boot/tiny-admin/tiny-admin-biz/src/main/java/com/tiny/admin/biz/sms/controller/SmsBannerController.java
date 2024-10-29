@@ -41,6 +41,8 @@ public class SmsBannerController {
             wrapper.like(SmsBanner::getBannerName, param.getKeyword())
                     .or().like(SmsBanner::getRemark, param.getKeyword());
             param.setPageNum(1);
+        } else {
+            wrapper.eq(SmsBanner::getStatus, param.getStatus());
         }
         IPage<SmsBanner> iPage = iSmsBannerService.page(new Page<>(param.getPageNum(), param.getPageSize()), wrapper);
         return Result.success(iPage);
@@ -49,11 +51,13 @@ public class SmsBannerController {
 
     @PostMapping("/saveOrUpdate")
     @Transactional(rollbackFor = Exception.class)
-    public Result<Boolean> saveOrUpdate(@Valid @RequestBody SmsBanner smsBanner, BindingResult bindingResult) {
+    public Result<Boolean> saveOrUpdate(@Valid @RequestBody SmsBanner entity, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return Result.failure(bindingResult.getFieldError().getDefaultMessage());
         }
-        iSmsBannerService.saveOrUpdate(smsBanner);
+        entity.setCreateTime(null);
+        entity.setUpdateTime(null);
+        iSmsBannerService.saveOrUpdate(entity);
         return Result.success();
     }
 }

@@ -28,8 +28,7 @@ const openModal = (record: any = {}) => {
   <div>
     <!--   Search -->
     <a-affix :offset-top="84">
-      <Search :loading="loading" placeholder="搜索品牌名、简介、品牌故事" @open-modal="openModal"
-              @query-list="queryList"></Search>
+      <Search placeholder="搜索品牌名、简介、品牌故事" :loading="loading" @open-modal="openModal" @query-list="queryList"></Search>
     </a-affix>
     <!--   PC Data List -->
     <PcBrandList :dataSource="dataSource" :loading="loading" :pagination="pagination" class="hidden sm:block"

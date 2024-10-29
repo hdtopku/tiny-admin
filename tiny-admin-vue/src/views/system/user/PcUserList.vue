@@ -32,8 +32,7 @@ const confirmChangeStatus = (record: any) => {
   record.loading = true
   const {loading, ...rest} = record
   rest.status = !rest.status
-  saveOrUpdateUser(rest)
-      .then(() => {
+  saveOrUpdateUser(rest).then(() => {
         record.status = rest.status
         message.success(t('操作成功'))
       })

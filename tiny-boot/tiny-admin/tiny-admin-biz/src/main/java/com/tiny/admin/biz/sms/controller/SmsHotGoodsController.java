@@ -46,6 +46,8 @@ public class SmsHotGoodsController {
             wrapper.like(SmsHotGoods::getRemark, param.getKeyword());
             wrapper.or().eq(SmsHotGoods::getGoodsId, param.getKeyword());
             param.setPageNum(1);
+        } else {
+            wrapper.eq(SmsHotGoods::getStatus, param.getStatus());
         }
         IPage<SmsHotGoods> iPage = iSmsHotGoodsService.page(new Page<>(param.getPageNum(), param.getPageSize()), wrapper);
         return Result.success(iPage);

@@ -60,6 +60,8 @@ public class SmsFlashSaleController {
             wrapper.like(SmsFlashSale::getRemark, param.getKeyword())
                     .or().like(SmsFlashSale::getActivityName, param.getKeyword());
             param.setPageNum(1);
+        } else {
+            wrapper.eq(SmsFlashSale::getStatus, param.getStatus());
         }
         IPage<SmsFlashSale> iPage = iSmsFlashSaleService.page(new Page<>(param.getPageNum(), param.getPageSize()), wrapper);
         HashMap<String, Set<String>> map = new HashMap<>();

@@ -41,6 +41,8 @@ public class SmsBrandController {
         if (StringUtils.isNotBlank(param.getKeyword())) {
             wrapper.like(SmsBrand::getRemark, param.getKeyword());
             param.setPageNum(1);
+        } else {
+            wrapper.eq(SmsBrand::getStatus, param.getStatus());
         }
         IPage<SmsBrand> iPage = iSmsBrandService.page(new Page<>(param.getPageNum(), param.getPageSize()), wrapper);
         return Result.success(iPage);

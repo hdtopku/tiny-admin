@@ -114,7 +114,7 @@ const columns: any = [
             v-show="record.type === 1"
             link
             type="link"
-            @click="() => saveOrUpdate({ parentId: record.id }, false)"
+            @click="() => saveOrUpdate({ parentId: record.id })"
         >{{ $t('新增') }}
         </a-button
         >

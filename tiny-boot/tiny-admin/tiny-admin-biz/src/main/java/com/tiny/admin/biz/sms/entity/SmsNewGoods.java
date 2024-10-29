@@ -39,7 +39,7 @@ public class SmsNewGoods implements Serializable {
     private String remark;
 
     @Schema(description = "是否生效(0:未生效,1:已生效)")
-    private Byte status;
+    private Boolean status;
 
     @Schema(description = "创建时间")
     @TableField(fill = FieldFill.INSERT)

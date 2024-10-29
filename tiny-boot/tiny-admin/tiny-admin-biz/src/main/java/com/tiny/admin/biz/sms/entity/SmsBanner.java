@@ -48,7 +48,7 @@ public class SmsBanner implements Serializable {
     private Integer sort;
 
     @Schema(description = "是否生效(0:未生效,1:已生效)")
-    private Byte status;
+    private Boolean status;
 
     @Schema(description = "点击次数")
     private Integer clickCount;

@@ -7,6 +7,7 @@ import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import com.tiny.admin.biz.system.dto.I18nTranslationDto;
 import com.tiny.admin.biz.system.entity.SysI18nRaw;
 import com.tiny.admin.biz.system.entity.SysI18nTranslation;
+import com.tiny.admin.biz.system.entity.SysRole;
 import com.tiny.admin.biz.system.mapper.SysI18nRawMapper;
 import com.tiny.admin.biz.system.service.ISysI18nRawService;
 import com.tiny.admin.biz.system.vo.BaseQueryParam;
@@ -59,6 +60,8 @@ public class SysI18nRawServiceImpl extends ServiceImpl<SysI18nRawMapper, SysI18n
         sysI18nRawIdWrapper.select(SysI18nRaw::getId).distinct();
         if(StringUtils.hasText(param.getKeyword())) {
             sysI18nRawIdWrapper.like(SysI18nRaw::getRawContent, param.getKeyword());
+        } else {
+            sysI18nRawIdWrapper.eq(SysRole::getStatus, param.getStatus());
         }
         Page<SysI18nRaw> page1 = new Page<>(param.getPageNum(), param.getPageSize());
         Page<SysI18nRaw> sysI18nRawPage = sysI18nRawMapper.selectPage(page1, sysI18nRawIdWrapper);

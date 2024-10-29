@@ -2,13 +2,40 @@
 import {DownOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue";
 import ImageCarousel from "@/views/pms/goods/ImageCarousel.vue"
 import {t} from "@/utils/i18n.ts"
-import {Pagination} from "ant-design-vue"
+import {message, Pagination} from "ant-design-vue"
 import {deleteGoodsById, saveOrUpdateGoods} from "@/api/pms/goods.ts";
 
-const props: any = defineProps({
+const {dataSource, pagination} = defineProps({
   dataSource: Array,
   pagination: Pagination,
 })
+
+
+const deleteRecord = (id: string) => {
+  deleteGoodsById(id)
+}
+
+const emit = defineEmits(['openModal', 'queryList'])
+const confirmChangeStatus = (record: any) => {
+  record.loading = true
+  const {loading, ...rest} = record
+  rest.status =!rest.status
+  saveOrUpdateGoods(rest).then(() => {
+    record.status = rest.status
+    message.success(t('操作成功'))
+  }).finally(() => {
+    record.loading = false
+  })
+}
+const openModal = (record: any) => {
+  emit('openModal', record)
+}
+const handleTableChange = (pagination: any) => {
+  emit('queryList', {
+    pageNum: pagination.current,
+    pageSize: pagination.pageSize,
+  })
+}
 const columns: any = [
   {
     title: t('序号'),
@@ -58,36 +85,14 @@ const columns: any = [
     width: 160,
   },
 ]
-
-
-const deleteRecord = (id: string) => {
-  deleteGoodsById(id)
-}
-
-const emit = defineEmits(['openModal', 'queryList'])
-const confirmChangeStatus = (record: any) => {
-  record.status = !record.status
-  saveOrUpdateGoods(record).then(() => {
-    emit('queryList')
-  })
-}
-const openModal = (record: any) => {
-  emit('openModal', record)
-}
-const handleTableChange = (pagination: any) => {
-  emit('queryList', {
-    pageNum: pagination.current,
-    pageSize: pagination.pageSize,
-  })
-}
 </script>
 
 <template>
 
   <a-table
       :columns="columns"
-      :dataSource="props.dataSource"
-      :pagination="props.pagination"
+      :dataSource="dataSource"
+      :pagination="pagination"
       :scroll="{ x: 'max-content', y: 'calc(100vh - 200px)' }"
       @change="handleTableChange"
   >

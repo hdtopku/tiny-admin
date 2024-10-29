@@ -41,6 +41,8 @@ public class PmsBrandController {
                     .or().like(PmsBrand::getBrandDesc, param.getKeyword())
                     .or().like(PmsBrand::getBrandStory, param.getKeyword());
             param.setPageNum(1);
+        } else {
+            wrapper.eq(PmsBrand::getStatus, param.getStatus());
         }
         IPage<PmsBrand> iPage = iPmsBrandService.page(new Page<>(param.getPageNum(), param.getPageSize()), wrapper);
         return Result.success(iPage);
@@ -56,11 +58,11 @@ public class PmsBrandController {
 
     @PostMapping("/saveOrUpdate")
     @Transactional(rollbackFor = Exception.class)
-    public Result<Boolean> saveOrUpdate(@Valid @RequestBody PmsBrand pmsBrand, BindingResult bindingResult) {
+    public Result<Boolean> saveOrUpdate(@Valid @RequestBody PmsBrand entity, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return Result.failure(bindingResult.getFieldError().getDefaultMessage());
         }
-        iPmsBrandService.saveOrUpdate(pmsBrand);
+        iPmsBrandService.saveOrUpdate(entity);
         return Result.success();
     }
     @GetMapping("/delete/{id}")

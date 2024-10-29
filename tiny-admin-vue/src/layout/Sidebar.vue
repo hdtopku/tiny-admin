@@ -8,20 +8,20 @@
 <script lang="ts" setup>
 import {useMenuStore, useUserStore} from "@/store/index.ts"
 import {storeToRefs} from 'pinia'
-import router from "@/router"
 import {useDark} from "@vueuse/core";
 
 const isDark = useDark()
 
 const menus = computed(() => useUserStore().getSidebar())
 const handleClick = ({key}) => {
-  router.push(key)
+  // router.push(key) // 点击后，页面可能不跳转，所以改为下面这种方式进行跳转
+  useMenuStore().changeTab(key)
 }
 const {sidebarOpenKeys, sidebarCollapsed} = storeToRefs(useMenuStore())
 
 let preOpenKeys
 watch(sidebarOpenKeys, (_val, oldVal) => {
-  preOpenKeys = oldVal;
+  preOpenKeys = oldVal
 },)
 watch(sidebarCollapsed, (val) => {
   if (!val) sidebarOpenKeys.value = preOpenKeys
