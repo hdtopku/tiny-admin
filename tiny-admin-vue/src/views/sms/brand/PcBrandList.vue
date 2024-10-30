@@ -1,8 +1,8 @@
-<script setup lang="ts">
-import {DownOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue";
-import {t} from "@/utils/i18n.ts";
+<script lang="ts" setup>
+import {DownOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue"
 import {message, Pagination, PaginationProps} from "ant-design-vue";
-import {deleteBannerById, saveOrUpdateBanner} from "@/api/sms/banner.ts";
+import {t} from "@/utils/i18n.ts";
+import {deleteSmsBrandById, saveOrUpdateSmsBrand} from "@/api/sms/brand.ts";
 
 const {dataSource, pagination} = defineProps({
   dataSource: Array,
@@ -10,30 +10,29 @@ const {dataSource, pagination} = defineProps({
 })
 
 const emit = defineEmits(['openModal', 'queryList'])
-const handleTableChange = (pagination: PaginationProps) => {
-  emit('queryList', {
-    pageNum: pagination.current,
-    pageSize: pagination.pageSize,
-  })
-}
 const confirmChangeStatus = (record: any) => {
   record.loading = true
-  const {loading, createTime, updateTime, ...rest} = record
-  rest.status =!rest.status
-  saveOrUpdateBanner(rest).then(() => {
+  const {loading, brandName, logo, createTime, updateTime, ...rest} = record
+  rest.status = !rest.status
+  saveOrUpdateSmsBrand(rest).then(() => {
     record.status = rest.status
     message.success(t('操作成功'))
   }).finally(() => {
     record.loading = false
   })
 }
+const handleTableChange = (pagination: PaginationProps) => {
+  emit('queryList', {
+    pageNum: pagination.current,
+    pageSize: pagination.pageSize,
+  })
+}
 const deleteRecordById = (id: string) => {
-  deleteBannerById(id).then(() => {
+  deleteSmsBrandById(id).then(() => {
     message.success(t('删除成功'))
     emit('queryList')
   })
 }
-
 const columns: any = [
   {
     title: t('序号'),
@@ -44,23 +43,16 @@ const columns: any = [
   },
   {
     title: t('图片'),
-    dataIndex: 'picUrl',
-    key: 'picUrl',
+    dataIndex: 'logo',
+    key: 'logo',
     width: 100,
     align: 'center',
   },
   {
-    title: t('轮播名称'),
-    dataIndex: 'bannerName',
-    key: 'bannerName',
+    title: t('品牌名称'),
+    dataIndex: 'brandName',
+    key: 'brandName',
     width: 200,
-    align: 'center',
-  },
-  {
-    title: t('平台'),
-    dataIndex: 'platform',
-    key: 'platform',
-    width: 100,
     align: 'center',
   },
   {
@@ -98,16 +90,16 @@ const columns: any = [
       <template v-if="column.key === 'index'">
         {{ index + 1 }}
       </template>
-      <template v-else-if="column.dataIndex === 'picUrl'">
-        <img :src="record.picUrl" alt=""/>
+      <template v-else-if="column.dataIndex === 'logo'">
+        <a-avatar :src="record.logo" shape="square" size="large"></a-avatar>
       </template>
-      <template v-else-if="column.dataIndex === 'bannerName'">
+      <template v-else-if="column.dataIndex === 'brandName'">
         <a-tooltip :arrow="false">
           <template #title>
-            <span>{{ record.bannerName }}</span>
+            <span>{{ record.brandName }}</span>
           </template>
-          <span>{{ record.bannerName?.substring(0, 20) }}</span>
-          <span v-if="record.bannerName?.length > 20">...</span>
+          <span>{{ record.brandName?.substring(0, 20) }}</span>
+          <span v-if="record.brandName?.length > 20">...</span>
         </a-tooltip>
       </template>
       <template v-else-if="column.dataIndex === 'platform'">
@@ -132,7 +124,7 @@ const columns: any = [
               :cancel-text="$t('否')"
               :ok-text="$t('是')"
               :title="
-                record.status ? $t('是否禁用该轮播卡片？') : $t(' 是否启用该轮播卡片？')
+                record.status ? $t('是否禁用该品牌？') : $t(' 是否启用该品牌？')
               "
               @confirm="
                 () => {
@@ -143,15 +135,9 @@ const columns: any = [
             <template #icon>
               <question-circle-outlined style="color: red"/>
             </template>
-            <a-switch
-                v-model:checked="record.status"
-                :checked-children="$t('已启用')"
-                :loading="record.loading"
-                :un-checked-children="$t('已禁用')"
-                class="flex-shrink-0"
-                size="small"
-                @click="record.status=!record.status"
-            />
+            <a-switch v-model:checked="record.status" :checked-children="$t('已启用')" :loading="record.loading"
+                      :un-checked-children="$t('已禁用')" class="flex-shrink-0" size="small"
+                      @click="() => {record.status = !record.status}"/>
           </a-popconfirm>
           <a-dropdown placement="bottom" trigger="hover">
             <a-button class="flex items-center" size="small" type="link"
@@ -161,8 +147,8 @@ const columns: any = [
             <template #overlay>
               <a-menu class="text-center">
                 <a-menu-item>
-                  <a-button type="link" @click="() => emit('openModal', record)">{{
-                      $t('编辑轮播卡片')
+                  <a-button type="link" @click="() => emit('openModal',record)">{{
+                      $t('编辑推荐品牌')
                     }}
                   </a-button>
                 </a-menu-item>
@@ -173,14 +159,14 @@ const columns: any = [
                       <question-circle-outlined style="color: red"/>
                     </template>
                     <template #title>
-                      <div>{{ $t('是否删除轮播卡片？') }}</div>
+                      <div>{{ $t('是否删除推荐品牌？') }}</div>
                       <a-tag class="my-2" color="red">{{
                           record.brandName
                         }}
                       </a-tag>
                     </template>
                     <a-button danger type="link">{{
-                        $t('删除轮播卡片')
+                        $t('删除推荐品牌')
                       }}
                     </a-button>
                   </a-popconfirm>
@@ -193,3 +179,7 @@ const columns: any = [
     </template>
   </a-table>
 </template>
+
+<style scoped>
+
+</style>

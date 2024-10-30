@@ -25,7 +25,6 @@ const openModal = (record: any) => {
   emit('openModal', record)
 }
 const handlePageChange = (pageNum: number, pageSize: number) => {
-  console.log(pageNum, pageSize)
   emit('queryList', {pageNum, pageSize})
 }
 </script>
@@ -39,7 +38,7 @@ const handlePageChange = (pageNum: number, pageSize: number) => {
         <a-list-item>
           <a-card>
             <template #cover>
-              <div class="bg-gray-100 dark:bg-gray-800 h-48">
+              <div class="bg-gray-100 dark:bg-gray-800 h-46">
                 <img :src="record.picUrl" alt=""/>
               </div>
             </template>

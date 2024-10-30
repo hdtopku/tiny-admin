@@ -36,7 +36,6 @@
               :placeholder="$t('请选择品牌')"
               show-search
               style="width: 200px"
-              @change="handleChange"
           ></a-select>
         </a-form-item>
         <div class="grid grid-cols-2 justify-center gap-4">
@@ -77,7 +76,8 @@ import {t} from '@/utils/i18n.ts'
 
 import {Ref, ref} from 'vue'
 import {message, SelectProps} from 'ant-design-vue'
-import {saveOrUpdateBrand} from '@/api/sms/brand.ts'
+import {saveOrUpdateSmsBrand} from '@/api/sms/brand.ts'
+import {getAllBrands} from "@/api/pms/brand.ts";
 
 const open = ref<boolean>(false)
 const isUpdate = ref<boolean>(false)
@@ -96,7 +96,7 @@ const handleOk = () => {
       .then(() => {
         formLoading.value = true
         const {id, brandId, sort, status, remark} = brandInfo.value
-        saveOrUpdateBrand({id, brandId, sort, status, remark})
+        saveOrUpdateSmsBrand({id, brandId, sort, status, remark})
             .then(() => {
               message.success(t('操作成功'))
               open.value = false
@@ -115,33 +115,30 @@ const options = ref<SelectProps['options']>([])
 const filterOption = (input: string, option: any) => {
   return option.label.toLowerCase().indexOf(input.toLowerCase()) >= 0
 }
-const showModal = (brandList: any[], brand: any = {}) => {
-  if (brand.id) {
-    isUpdate.value = true
-    brandInfo.value = Object.assign({}, brand)
-  } else {
-    brandInfo.value = {
-      brandId: null,
-      status: 1,
-      sort: 9999,
-      remark: '',
-    }
-  }
+let brandList: any = [], brandMap = new Map()
+const openModal = (brand: any = {}) => {
   open.value = true
+  if (!brandList.length) {
+    getAllBrands().then((res: any) => {
+      brandList = res
+      res.forEach((item: any) => {
+        brandMap.set(item.id, item)
+        item.brandId = item.id
+        item.disabled = false
+      })
+      openModal(brand)
+      return
+    })
+  }
+  isUpdate.value = !!brand.id
+  brandInfo.value = Object.assign({}, {...{brandId: null, status: 1, sort: 9999, remark: '',}, ...brand})
   options.value = brandList.map((item) => ({
     label: item.brandName,
     value: item.brandId,
     disabled: item.disabled ?? true,
   }))
 }
-const handleChange = (value: string) => {
-  console.log(`selected ${value}`)
-}
 defineExpose({
-  showModal,
-})
-
-watch(brandInfo, (newVal) => {
-  console.log(newVal)
+  openModal,
 })
 </script>

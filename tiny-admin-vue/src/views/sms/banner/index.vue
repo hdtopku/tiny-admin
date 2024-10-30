@@ -4,8 +4,7 @@
       <Search placeholder="搜索轮播名称、备注" :loading="loading" @open-modal="openModal" @query-list="queryList"/>
     </a-affix>
     <PcBannerList :dataSource="dataSource" :loading="loading" :pagination="pagination" class="hidden sm:block"
-                  @open-modal="openModal"
-                  @query-list="queryList"/>
+                  @open-modal="openModal" @query-list="queryList"/>
     <MobileBannerList :dataSource="dataSource" :loading="loading" :pagination="pagination" class="block sm:hidden"
                       @open-modal="openModal"
                       @query-list="queryList"/>

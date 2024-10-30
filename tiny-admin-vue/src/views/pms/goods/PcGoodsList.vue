@@ -10,7 +10,6 @@ const {dataSource, pagination} = defineProps({
   pagination: Pagination,
 })
 
-
 const deleteRecord = (id: string) => {
   deleteGoodsById(id)
 }

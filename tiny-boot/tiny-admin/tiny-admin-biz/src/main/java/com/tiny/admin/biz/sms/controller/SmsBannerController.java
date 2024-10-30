@@ -12,10 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -58,6 +55,13 @@ public class SmsBannerController {
         entity.setCreateTime(null);
         entity.setUpdateTime(null);
         iSmsBannerService.saveOrUpdate(entity);
+        return Result.success();
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional(rollbackFor = Exception.class)
+    public Result<Boolean> delete(@PathVariable("id") String id) {
+        iSmsBannerService.removeById(id);
         return Result.success();
     }
 }

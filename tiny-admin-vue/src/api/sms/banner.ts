@@ -8,5 +8,5 @@ export const getBannerPage = async (data: any) => {
     return http.post("/sms/banner/page", data)
 }
 export const deleteBannerById = async (id: any) => {
-    return http.get("/pms/banner/delete/" + id)
+    return http.delete("/pms/banner/" + id)
 }
