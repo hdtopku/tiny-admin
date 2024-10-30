@@ -93,7 +93,7 @@ const columns: any = [
         {{ index + 1 }}
       </template>
       <template v-else-if="column.dataIndex === 'picUrl'">
-        <img :src="record.picUrl"/>
+        <img :src="record.picUrl" alt=""/>
       </template>
       <template v-else-if="column.dataIndex === 'bannerName'">
         <a-tooltip :arrow="false">
@@ -195,7 +195,3 @@ const columns: any = [
     </template>
   </a-table>
 </template>
-
-<style scoped>
-
-</style>

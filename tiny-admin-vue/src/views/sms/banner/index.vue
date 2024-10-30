@@ -3,8 +3,12 @@
     <a-affix :offset-top="84">
       <Search placeholder="搜索轮播名称、备注" :loading="loading" @open-modal="openModal" @query-list="queryList"/>
     </a-affix>
-    <PcBannerList :loading="loading" :dataSource="dataSource" :pagination="pagination" @open-modal="openModal"
+    <PcBannerList :dataSource="dataSource" :loading="loading" :pagination="pagination" class="hidden sm:block"
+                  @open-modal="openModal"
                   @query-list="queryList"/>
+    <MobileBannerList :dataSource="dataSource" :loading="loading" :pagination="pagination" class="block sm:hidden"
+                      @open-modal="openModal"
+                      @query-list="queryList"/>
     <BannerModal @query-list="queryList" ref="modalRef"></BannerModal>
   </div>
 </template>
@@ -14,6 +18,7 @@ import BannerModal from '@/views/sms/banner/BannerModal.vue'
 import {getBannerPage} from '@/api/sms/banner.ts'
 import Search from "@/components/Search.vue";
 import PcBannerList from "@/views/sms/banner/PcBannerList.vue";
+import MobileBannerList from "@/views/sms/banner/MobileBannerList.vue";
 
 const openModal = (record: any) => {
   modalRef.value.openModal(record)

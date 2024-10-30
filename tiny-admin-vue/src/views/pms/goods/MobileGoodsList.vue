@@ -46,7 +46,7 @@ const loadMore = () => {
               @confirm="confirmChangeStatus(record)"
           >
             <template #icon>
-              <question-circle-outlined style="color: red"/>
+              <QuestionCircleOutlined style="color: red"/>
             </template>
             <a-switch
                 v-model:checked="record.status"
@@ -64,7 +64,7 @@ const loadMore = () => {
               @confirm="deleteRecord(record.id)"
           >
             <template #icon>
-              <question-circle-outlined style="color: red"/>
+              <QuestionCircleOutlined style="color: red"/>
             </template>
             <template #title>
               <div>{{ $t('是否删除商品？') }}</div>
