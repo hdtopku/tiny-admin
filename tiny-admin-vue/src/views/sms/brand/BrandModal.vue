@@ -54,8 +54,6 @@
           >
             <a-switch
                 v-model:checked="brandInfo.status"
-                :checked-value="1"
-                :un-checked-value="0"
             />
           </a-form-item>
         </div>

@@ -12,5 +12,5 @@ export {
     useMenuStore,
     useUserStore,
     useChatStore,
-    useI18nStore
+    useI18nStore,
 }

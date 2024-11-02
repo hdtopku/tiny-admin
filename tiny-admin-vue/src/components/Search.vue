@@ -13,6 +13,14 @@ const {loading, placeholder, showStatus} = defineProps({
   showStatus: {
     type: Boolean,
     default: true
+  },
+  searchClass: {
+    type: String,
+    default: 'bg-gray-100 dark:bg-black'
+  },
+  top: {
+    type: Number,
+    default: 0
   }
 })
 const keyword = ref(''), status = ref(true)
@@ -21,6 +29,7 @@ const handleAdd = () => {
   emit('openModal')
 }
 const handleSearch = () => {
+  keyword.value = keyword.value.trim()
   emit('queryList', {keyword: keyword.value, status: status.value})
 }
 handleSearch()
@@ -29,39 +38,41 @@ watch(() => [keyword.value, status.value], debounceQuery)
 </script>
 
 <template>
-  <div class="flex mb-3 bg-gray-100 dark:bg-black">
-    <div class="flex items-center sm:gap-4 gap-1 mx-auto sm:w-[80%] w-[95%]">
-      <a-button :loading="loading" type="primary" @click="handleAdd">{{
-          $t('新增')
-        }}
-      </a-button>
-      <a-input
-          id="keyword"
-          v-model:value="keyword"
-          :placeholder="placeholder"
-          allow-clear
-          autocomplete="off"
-          class="text-left"
-          type="text"
-          @keyup.enter.native="handleSearch"
-      >
-        <template #prefix>
-          <a-switch
-              v-if="showStatus"
-              v-model:checked="status"
-              :checked-children="$t('已启用')"
-              :loading="loading"
-              :un-checked-children="$t('已禁用')"
-              class="flex-shrink-0"
-          />
-        </template>
-        <template #suffix>
-          <a-button :loading="loading" type="primary" @click="handleSearch">{{
-              $t('搜索')
-            }}
-          </a-button>
-        </template>
-      </a-input>
+  <a-affix :offset-top="top">
+    <div :class="searchClass" class="flex mb-3">
+      <div class="flex items-center sm:gap-4 gap-1 mx-auto sm:w-[80%] w-[95%]">
+        <a-button :loading="loading" type="primary" @click="handleAdd">{{
+            $t('新增')
+          }}
+        </a-button>
+        <a-input
+            id="keyword"
+            v-model:value="keyword"
+            :placeholder="placeholder"
+            allow-clear
+            autocomplete="off"
+            class="text-left"
+            type="text"
+            @keyup.enter.native="handleSearch"
+        >
+          <template #prefix>
+            <a-switch
+                v-if="showStatus"
+                v-model:checked="status"
+                :checked-children="$t('已启用')"
+                :loading="loading"
+                :un-checked-children="$t('已禁用')"
+                class="flex-shrink-0"
+            />
+          </template>
+          <template #suffix>
+            <a-button :loading="loading" type="primary" @click="handleSearch">{{
+                $t('搜索')
+              }}
+            </a-button>
+          </template>
+        </a-input>
+      </div>
     </div>
-  </div>
+  </a-affix>
 </template>

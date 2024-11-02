@@ -1,0 +1,23 @@
+<script lang="ts" setup>
+const {text, length} = defineProps({
+  text: {type: Object, required: true},
+  length: {type: Number, default: 20},
+})
+</script>
+
+<template>
+  <span>
+    <span v-if="text?.length <= length">{{ text }}</span>
+    <a-tooltip v-else :arrow="false">
+      <template #title>
+        <span>{{ text }}</span>
+      </template>
+      <span>{{ text?.substring(0, length) }}</span>
+      <span v-if="text?.length > length">...</span>
+    </a-tooltip>
+  </span>
+</template>
+
+<style scoped>
+
+</style>

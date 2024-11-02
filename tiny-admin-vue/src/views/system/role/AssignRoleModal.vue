@@ -4,6 +4,7 @@
       :root-style="{ color: 'blue' }"
       style="color: red"
       placement="right"
+      :size="width<768 ? 'default' : 'large'"
   >
     <template #title>{{ $t('分配菜单权限：') }}
       <a-tooltip :title="currentUser?.description">
@@ -80,7 +81,9 @@ import {ref} from 'vue'
 import {TreeProps} from 'ant-design-vue'
 import {assignMenu} from '@/api/system/role.ts'
 import {getMenuTree} from "@/api/system/menu.ts";
+import {useWindowSize} from "@vueuse/core";
 
+const {width} = useWindowSize()
 const openDrawer = ref<boolean>(false), currentUser = ref<any>({})
 const expandedKeys = ref<string[]>(), selectedKeys = ref<string[]>([]),
     checkedKeys = ref<any>({checked: [], halfChecked: []})

@@ -358,9 +358,7 @@ const buttonRules: any = {
               <a-switch
                   v-model:checked="form.hidden"
                   :checked-children="$t('已显示')"
-                  :checked-value="false"
                   :un-checked-children="$t('已隐藏')"
-                  :un-checked-value="true"
               />
             </a-form-item>
             <a-form-item
@@ -373,9 +371,7 @@ const buttonRules: any = {
               <a-switch
                   v-model:checked="form.keepAlive"
                   :checked-children="$t('已缓存')"
-                  :checked-value="true"
                   :un-checked-children="$t('未缓存')"
-                  :un-checked-value="false"
               />
             </a-form-item>
           </div>

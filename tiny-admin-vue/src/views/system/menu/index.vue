@@ -2,6 +2,7 @@
 import {getMenuTree} from '@/api/system/menu.ts'
 import MenuModal from '@/views/system/menu/MenuModal.vue'
 import PcMenuList from "@/views/system/menu/PcMenuList.vue";
+import Search from "@/components/Search.vue";
 
 const modalRef = ref<any>(), loading = ref(false), dataSource = ref([])
 let pagination: any = {}, searchParams: any = {keyword: ''}
@@ -22,9 +23,8 @@ const openModal = (record: any) => {
 
 <template>
   <div>
-    <a-affix :offset-top="84">
-      <Search :show-status="false" :placeholder="$t('搜索菜单名称')" :loading="loading" @open-modal="openModal" @query-list="queryList"/>
-    </a-affix>
+    <Search :loading="loading" :placeholder="$t('搜索菜单名称')" :show-status="false" :top="84" @open-modal="openModal"
+            @query-list="queryList"/>
     <PcMenuList :loading="loading" :dataSource="dataSource" :pagination="pagination" @open-modal="openModal"
                 @query-list="queryList"/>
     <MenuModal ref="modalRef" :menuTree="dataSource" @query-list="queryList"/>

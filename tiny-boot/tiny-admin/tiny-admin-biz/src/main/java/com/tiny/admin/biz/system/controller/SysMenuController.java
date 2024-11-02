@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * <p>
@@ -34,7 +35,7 @@ public class SysMenuController {
 
     @PostMapping("/tree")
     public Result<List<SysMenuTree>> menuTree(@RequestBody(required = false) BaseQueryParam param) {
-        return Result.success(sysMenuService.menuTree(param.getKeyword()));
+        return Result.success(sysMenuService.menuTree(Objects.isNull(param) ? null : param.getKeyword()));
     }
 
     @Operation(summary = "删")

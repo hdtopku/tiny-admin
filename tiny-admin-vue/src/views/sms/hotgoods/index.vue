@@ -92,10 +92,8 @@
               <a-switch
                   v-model:checked="record.status"
                   :checked-children="$t('已启用')"
-                  :checked-value="1"
                   :loading="record.loading"
                   :un-checked-children="$t('已禁用')"
-                  :un-checked-value="0"
                   class="flex-shrink-0"
                   size="small"
                   @click="

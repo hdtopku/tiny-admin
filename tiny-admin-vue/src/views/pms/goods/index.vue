@@ -1,10 +1,8 @@
 <template>
   <div>
     <!--   Search -->
-    <a-affix :offset-top="84">
-      <Search :loading="loading" :placeholder="$t('搜索用户名、昵称、邮箱、手机号')" @open-modal="openModal"
-              @query-list="queryList"></Search>
-    </a-affix>
+    <Search :loading="loading" :placeholder="$t('搜索用户名、昵称、邮箱、手机号')" :top="84" @open-modal="openModal"
+            @query-list="queryList"></Search>
     <!--   PC Data List -->
     <PcGoodsList :dataSource="dataSource" :loading="loading" :pagination="pagination" class="sm:block hidden"
                  @open-modal="openModal" @query-list="queryList"></PcGoodsList>
@@ -18,9 +16,9 @@
 <script lang="ts" setup>
 import {getGoodsPage} from '@/api/pms/goods.ts'
 import GoodsModal from '@/views/pms/goods/GoodsModal.vue'
-import PcGoodsList from "@/views/pms/goods/PcGoodsList.vue";
-import MobileGoodsList from "@/views/pms/goods/MobileGoodsList.vue";
-import Search from "@/components/Search.vue";
+import PcGoodsList from "@/views/pms/goods/PcGoodsList.vue"
+import MobileGoodsList from "@/views/pms/goods/MobileGoodsList.vue"
+import Search from "@/components/Search.vue"
 
 const loading = ref(false), dataSource = ref([]), modalRef = ref()
 let pagination: any = {}, searchParams: any = {keyword: '', status: true, pageNum: 1, pageSize: 10}

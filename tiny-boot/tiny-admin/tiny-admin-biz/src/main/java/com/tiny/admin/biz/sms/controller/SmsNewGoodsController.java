@@ -1,28 +1,30 @@
 package com.tiny.admin.biz.sms.controller;
 
 import cn.hutool.core.collection.CollUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
+import com.tiny.admin.biz.pms.entity.PmsGoods;
+import com.tiny.admin.biz.sms.dto.SmsNewGoodsDto;
 import com.tiny.admin.biz.sms.entity.SmsNewGoods;
+import com.tiny.admin.biz.sms.mapper.SmsNewGoodsMapper;
 import com.tiny.admin.biz.sms.service.ISmsNewGoodsService;
 import com.tiny.admin.biz.system.vo.BaseQueryParam;
 import com.tiny.core.web.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.annotation.Resource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.annotation.Resource;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -37,17 +39,24 @@ import java.util.stream.Collectors;
 public class SmsNewGoodsController {
     @Resource
     private ISmsNewGoodsService iSmsNewGoodsService;
+    @Resource
+    private SmsNewGoodsMapper smsNewGoodsMapper;
+
     @PostMapping("/page")
     @Operation(summary = "分页查询品牌列表")
-    public Result<IPage<SmsNewGoods>> page(@RequestBody(required = false) BaseQueryParam param) {
-        LambdaQueryWrapper<SmsNewGoods> wrapper = new LambdaQueryWrapper<>();
+    public Result<IPage<SmsNewGoodsDto>> page(@RequestBody(required = false) BaseQueryParam param) {
+        MPJLambdaWrapper<SmsNewGoods> wrapper = new MPJLambdaWrapper<>();
         wrapper.orderByAsc(SmsNewGoods::getSort);
+        wrapper.selectAll(SmsNewGoods.class)
+                .select(PmsGoods::getGoodsName, PmsGoods::getAlbumPics, PmsGoods::getMarketPrice, PmsGoods::getPromotionPrice)
+                .leftJoin(PmsGoods.class, PmsGoods::getId, SmsNewGoods::getGoodsId);
         if (StringUtils.isNotBlank(param.getKeyword())) {
             wrapper.like(SmsNewGoods::getRemark, param.getKeyword());
-            wrapper.or().eq(SmsNewGoods::getGoodsId, param.getKeyword());
-            param.setPageNum(1);
+            wrapper.or().like(PmsGoods::getGoodsName, param.getKeyword());
+        } else {
+            wrapper.eq(SmsNewGoods::getStatus, param.getStatus());
         }
-        IPage<SmsNewGoods> iPage = iSmsNewGoodsService.page(new Page<>(param.getPageNum(), param.getPageSize()), wrapper);
+        IPage<SmsNewGoodsDto> iPage = smsNewGoodsMapper.selectJoinPage(new Page<>(param.getPageNum(), param.getPageSize()), SmsNewGoodsDto.class, wrapper);
         return Result.success(iPage);
     }
 

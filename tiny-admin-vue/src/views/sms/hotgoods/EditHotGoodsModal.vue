@@ -40,9 +40,7 @@
         <a-switch
             v-model:checked="form.status"
             :checked-children="$t('已启用')"
-            :checked-value="1"
             :un-checked-children="$t('已禁用')"
-            :un-checked-value="0"
         />
       </a-form-item>
     </a-form>

@@ -1,8 +1,6 @@
 <template>
   <div>
-    <a-affix :offset-top="84">
-      <Search :loading="loading" placeholder="搜索角色或描述" @open-modal="openModal" @query-list="queryList"/>
-    </a-affix>
+    <Search :loading="loading" :top="84" placeholder="搜索角色或描述" @open-modal="openModal" @query-list="queryList"/>
     <PcRoleList :data-source="dataSource" :loading="loading" :pagination="pagination" class="hidden sm:block"
                 @open-modal="openModal" @open-assign-role-modal="openAssignRoleModal" @query-list="queryList"/>
     <MobileRoleList :data-source="dataSource" :loading="loading" :pagination="pagination" class="block sm:hidden"
@@ -20,6 +18,7 @@ import {message} from 'ant-design-vue'
 import PcRoleList from "@/views/system/role/PcRoleList.vue"
 import MobileRoleList from "@/views/system/role/MobileRoleList.vue"
 import AssignRoleModal from "@/views/system/role/AssignRoleModal.vue"
+import Search from "@/components/Search.vue";
 
 const modalRef = ref<any>(), assignRoleModalRef = ref<any>(), loading = ref(false), dataSource = ref([])
 let pagination: any = {}, searchParams: any = {keyword: '', status: true, pageNum: 1, pageSize: 10}

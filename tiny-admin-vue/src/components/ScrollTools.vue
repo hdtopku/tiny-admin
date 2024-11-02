@@ -1,17 +1,12 @@
 <script lang="ts" setup>
 import {SyncOutlined, VerticalAlignBottomOutlined, VerticalAlignTopOutlined} from "@ant-design/icons-vue";
 
-const {scrollToRef, style} = defineProps({
-  scrollToRef: Object,
+const {style} = defineProps({
   style: {type: Object, default: {right: '10px'}}
 })
 const reload = () => {
   location.reload()
 }
-// let bottomRef
-// const setRefAction = (ref) => {
-//   bottomRef = ref
-// }
 const bottomRef = ref()
 const scrollToBottom = () => {
   bottomRef.value && bottomRef.value.scrollIntoView({
@@ -40,7 +35,3 @@ const scrollToBottom = () => {
   </a-float-button-group>
   <div ref="bottomRef"></div>
 </template>
-
-<style scoped>
-
-</style>

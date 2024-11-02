@@ -1,45 +1,51 @@
 <script lang="ts" setup>
-import {Pagination} from "ant-design-vue";
+import {message, Pagination, PaginationProps} from "ant-design-vue";
 import {DeleteOutlined, EditOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue";
-import {deleteBrandById, saveOrUpdateBrand} from "@/api/pms/brand.ts";
+import {deleteSmsBrandById, saveOrUpdateSmsBrand} from "@/api/sms/brand.ts";
+import {t} from "@/utils/i18n.ts";
 
-const props: any = defineProps({
+const {dataSource, pagination, loading} = defineProps({
   dataSource: Array,
   pagination: Pagination,
-  isLoading: Boolean
+  loading: Boolean
 })
 const emit = defineEmits(['openModal', 'queryList'])
 const confirmChangeStatus = (record: any) => {
-  record.status = !record.status
-  saveOrUpdateBrand(record).then(() => {
-    emit('queryList')
+  record.loading = true
+  const {loading, brandName, logo, createTime, updateTime, ...rest} = record
+  rest.status = !rest.status
+  saveOrUpdateSmsBrand(rest).then(() => {
+    record.status = rest.status
+    message.success(t('操作成功'))
+  }).finally(() => {
+    record.loading = false
   })
 }
-const deleteRecord = (id: number) => {
-  deleteBrandById(id).then(() => {
-    emit('queryList')
+const handleTableChange = (pagination: PaginationProps) => {
+  emit('queryList', {
+    pageNum: pagination.current,
+    pageSize: pagination.pageSize,
   })
 }
-const openModal = (record: any) => {
-  emit('openModal', record)
-}
-const handlePageChange = (pageNum: number, pageSize: number) => {
-  console.log(pageNum, pageSize)
-  emit('queryList', {pageNum, pageSize})
+const deleteRecordById = (id: string) => {
+  deleteSmsBrandById(id).then(() => {
+    message.success(t('删除成功'))
+    emit('queryList')
+  })
 }
 </script>
 
 <template>
   <div>
-    <a-list :data-source="props.dataSource" :loading="props.isLoading"
-            :pagination="{...props.pagination, onChange: handlePageChange}"
+    <a-list :data-source="dataSource" :loading="loading"
+            :pagination="{pagination, onChange: handleTableChange}"
             item-layout="horizontal">
       <template #renderItem="{ item:record }">
         <a-list-item>
           <a-list-item-meta>
             <template #description>
-              <a-typography-paragraph :content="record.brandDesc"
-                                      :ellipsis="{ rows: 3, expandable: true, symbol: 'more' }"/>
+              <a-tag>备注</a-tag>
+              <a-typography-text :content="record.remark" :ellipsis="{ rows: 3, expandable: true, symbol: 'more' }"/>
             </template>
             <template #title>
               <div class="flex justify-between items-center">
@@ -47,18 +53,9 @@ const handlePageChange = (pageNum: number, pageSize: number) => {
                   <a-button size="small" type="link">{{ record.brandName }}</a-button>
                 </a-tooltip>
                 <div class="flex justify-start items-center">
-                  <a-popconfirm
-                      :cancel-text="$t('否')"
-                      :ok-text="$t('是')"
-                      :title="
-                record.status ? $t('是否禁用该品牌？') : $t(' 是否启用该品牌？')
-              "
-                      @confirm="
-                () => {
-                  confirmChangeStatus(record)
-                }
-              "
-                  >
+                  <a-popconfirm :cancel-text="$t('否')" :ok-text="$t('是')"
+                                :title="record.status ? '是否禁用该推荐品牌？' : '是否启用该推荐品牌？'"
+                                @confirm="() => {confirmChangeStatus(record)}">
                     <template #icon>
                       <question-circle-outlined style="color: red"/>
                     </template>
@@ -76,13 +73,13 @@ const handlePageChange = (pageNum: number, pageSize: number) => {
                       :cancel-text="$t('否')"
                       :ok-text="$t('是')"
                       ok-type="danger"
-                      @confirm="deleteRecord(record.id)"
+                      @confirm="deleteRecordById(record.id)"
                   >
                     <template #icon>
                       <question-circle-outlined style="color: red"/>
                     </template>
                     <template #title>
-                      <div>{{ $t('是否删除品牌？') }}</div>
+                      <div>是否删除推荐品牌？</div>
                       <a-tag class="my-2" color="red">{{
                           record.brandName
                         }}
@@ -92,7 +89,7 @@ const handlePageChange = (pageNum: number, pageSize: number) => {
                       <DeleteOutlined/>
                     </a-button>
                   </a-popconfirm>
-                  <a-button class="flex items-center" type="link" @click="() => openModal(record)">
+                  <a-button class="flex items-center" type="link" @click="emit('openModal', record)">
                     <EditOutlined/>
                   </a-button>
                 </div>

@@ -1,8 +1,7 @@
 <template>
   <div>
-    <a-affix :offset-top="84">
-      <Search placeholder="搜索轮播名称、备注" :loading="loading" @open-modal="openModal" @query-list="queryList"/>
-    </a-affix>
+    <Search :loading="loading" :top="84" placeholder="搜索轮播名称、备注" @open-modal="openModal"
+            @query-list="queryList"/>
     <PcBannerList :dataSource="dataSource" :loading="loading" :pagination="pagination" class="hidden sm:block"
                   @open-modal="openModal" @query-list="queryList"/>
     <MobileBannerList :dataSource="dataSource" :loading="loading" :pagination="pagination" class="block sm:hidden"
@@ -32,6 +31,7 @@ const queryList = (params = {}) => {
   getBannerPage(searchParams)
       .then((res: any) => {
         dataSource.value = res.records
+        pagination = {current: res.current, pageSize: res.size, total: res.total,}
       })
       .finally(() => {
         loading.value = false
