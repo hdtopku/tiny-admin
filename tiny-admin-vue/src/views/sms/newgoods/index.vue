@@ -2,16 +2,23 @@
   <div>
     <Search :loading="loading" :search-form="searchParams" :top="84" placeholder="搜索商品名称、备注"
             @open-modal="openModal" @query-list="queryList"/>
-    <PcNewGoodsList :data-source="dataSource" :loading="loading" :pagination="pagination"
-                    @query-list="queryList" @open-modal="openModal"/>
-    <NewGoodsModal ref="modalRef"></NewGoodsModal>
+    <PcDataList :data-source="dataSource" :loading="loading" :pagination="pagination" class="hidden sm:block"
+                @query-list="queryList" @open-modal="openModal" @change-record-status="changeRecordStatus"
+                @delete-record-by-id="deleteRecordById"/>
+    <MobileDataList :data-source="dataSource" :loading="loading" :pagination="pagination" class="block sm:hidden"
+                    @query-list="queryList" @open-modal="openModal" @change-record-status="changeRecordStatus"
+                    @delete-record-by-id="deleteRecordById"/>
+    <DataModal ref="modalRef"></DataModal>
   </div>
 </template>
 <script lang="ts" setup>
-import NewGoodsModal from '@/views/sms/newgoods/NewGoodsModal.vue'
-import {getSmsNewGoodsPage} from '@/api/sms/newGoods.ts'
-import PcNewGoodsList from "@/views/sms/newgoods/PcNewGoodsList.vue";
+import DataModal from '@/views/sms/newgoods/DataModal.vue'
+import {deleteSmsNewGoods, getSmsNewGoodsPage, saveOrUpdateSmsNewGoods} from '@/api/sms/newGoods.ts'
+import PcDataList from "@/views/sms/newgoods/PcDataList.vue";
 import Search from "@/components/Search.vue";
+import MobileDataList from "@/views/sms/newgoods/MobileDataList.vue";
+import {message} from "ant-design-vue";
+import {t} from "@/utils/i18n.ts";
 
 const openModal = (record: any) => {
   modalRef.value.openModal(record)
@@ -30,5 +37,22 @@ const queryList = (params = {}) => {
       .finally(() => {
         loading.value = false
       })
+}
+
+const changeRecordStatus = (record: any) => {
+  record.loading = true
+  saveOrUpdateSmsNewGoods({id: record.id, status: !record.status}).then(() => {
+    message.success(t('操作成功'))
+    record.status = !record.status
+  }).finally(() => {
+    record.loading = false
+  })
+}
+
+const deleteRecordById = (id: string) => {
+  deleteSmsNewGoods(id).then(() => {
+    message.success(t('删除成功'))
+    queryList()
+  })
 }
 </script>

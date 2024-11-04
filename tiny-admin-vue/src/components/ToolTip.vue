@@ -12,8 +12,7 @@ const {text, length} = defineProps({
       <template #title>
         <span>{{ text }}</span>
       </template>
-      <span>{{ text?.substring(0, length) }}</span>
-      <span v-if="text?.length > length">...</span>
+      <span>{{ text?.substring(0, length) }}...</span>
     </a-tooltip>
   </span>
 </template>

@@ -21,10 +21,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * <p>
@@ -43,7 +40,7 @@ public class SmsNewGoodsController {
     private SmsNewGoodsMapper smsNewGoodsMapper;
 
     @PostMapping("/page")
-    @Operation(summary = "分页查询品牌列表")
+    @Operation(summary = "分页查询推荐新品列表")
     public Result<IPage<SmsNewGoodsDto>> page(@RequestBody(required = false) BaseQueryParam param) {
         MPJLambdaWrapper<SmsNewGoods> wrapper = new MPJLambdaWrapper<>();
         wrapper.orderByAsc(SmsNewGoods::getSort);
@@ -58,6 +55,25 @@ public class SmsNewGoodsController {
         }
         IPage<SmsNewGoodsDto> iPage = smsNewGoodsMapper.selectJoinPage(new Page<>(param.getPageNum(), param.getPageSize()), SmsNewGoodsDto.class, wrapper);
         return Result.success(iPage);
+    }
+
+    @PostMapping("/saveOrUpdate")
+    @Operation(summary = "保存或修改推荐新品")
+    public Result<Boolean> saveOrUpdate(@Valid @RequestBody SmsNewGoods entity, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return Result.failure(bindingResult.getFieldError().getDefaultMessage());
+        }
+        entity.setCreateTime(null);
+        entity.setUpdateTime(null);
+        iSmsNewGoodsService.saveOrUpdate(entity);
+        return Result.success();
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "删除推荐新品")
+    public Result<Boolean> deleteById(@PathVariable("id") String id) {
+        iSmsNewGoodsService.removeById(id);
+        return Result.success();
     }
 
     @PostMapping("/save")
@@ -77,6 +93,7 @@ public class SmsNewGoodsController {
         iSmsNewGoodsService.saveBatch(smsNewGoodsList);
         return Result.success();
     }
+
     @PostMapping("/update")
     @Transactional(rollbackFor = Exception.class)
     public Result<Boolean> update(@Valid @RequestBody SmsNewGoods smsNewGoods, BindingResult bindingResult) {

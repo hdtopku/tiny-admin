@@ -119,17 +119,16 @@ const handleOk = () => {
         loading.value = false
       })
 }
-const openModal = (brand: any = {}) => {
-  open.value = true
-  if (!dataSource.value?.length) {
-    queryList()
-  }
-  isUpdate.value = !!brand.id
-  isUpdate.value = true
-  brandInfo.value = {...{brandId: null, status: 1, sort: 9999, remark: '',}, ...brand}
-}
 defineExpose({
-  openModal,
+  openModal: (brand: any = {}) => {
+    open.value = true
+    if (!dataSource.value?.length) {
+      queryList()
+    }
+    isUpdate.value = !!brand.id
+    isUpdate.value = true
+    brandInfo.value = {...{brandId: null, status: 1, sort: 9999, remark: '',}, ...brand}
+  }
 })
 
 const columns: any = [

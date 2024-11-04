@@ -2,11 +2,11 @@
   <a-modal :open="open" @cancel="handleCancel" @ok="handleOk">
     <template #title
     >{{
-        $t('编辑推荐新品id：')
+        $t('编辑推荐新品：')
       }}
       <a-tag color="blue">
         <a-typography-text copyable>
-          {{ form.goodsId }}
+          {{ modalName }}
         </a-typography-text>
       </a-tag>
     </template>
@@ -55,16 +55,11 @@ import {message} from 'ant-design-vue'
 const open = ref(false)
 const form = ref({
   id: null,
-  goodsId: null,
   remark: '',
   sort: 9999,
   status: 1,
 })
-const rules: any = {
-  remark: [
-    {required: true, message: t('请输入备注'), trigger: ['blur', 'change']},
-  ],
-}
+const rules: any = {}
 const handleCancel = () => {
   open.value = false
 }
@@ -72,7 +67,8 @@ const loading = ref(false)
 const emit = defineEmits(['queryList'])
 const handleOk = () => {
   loading.value = true
-  updateNewGoods(form.value)
+  const {id, remark, sort, status} = form.value
+  updateNewGoods({id, remark, sort, status})
       .then(() => {
         message.success(t('修改成功'))
         open.value = false
@@ -82,12 +78,13 @@ const handleOk = () => {
         loading.value = false
       })
 }
-const showModal = (goods: any) => {
-  open.value = true
-  const {createTime, updateTime, ...rest} = goods
-  form.value = Object.assign({}, rest)
-}
+const modalName = ref('')
 defineExpose({
-  showModal,
+  openModal: (goods: any = {}) => {
+    open.value = true
+    const {createTime, updateTime, goodsName, ...rest} = goods
+    modalName.value = goodsName
+    form.value = Object.assign({}, rest)
+  },
 })
 </script>

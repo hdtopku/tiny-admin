@@ -21,9 +21,6 @@ const confirmChangeStatus = (record: any) => {
     record.loading = false
   })
 }
-const openModal = (record: any) => {
-  emit('openModal', record)
-}
 const handlePageChange = (pageNum: number, pageSize: number) => {
   emit('queryList', {pageNum, pageSize})
 }
@@ -36,7 +33,7 @@ const handlePageChange = (pageNum: number, pageSize: number) => {
             item-layout="horizontal">
       <template #renderItem="{ item:record }">
         <a-list-item>
-          <a-card>
+          <a-card class="w-full">
             <template #cover>
               <div class="bg-gray-100 dark:bg-gray-800 h-46">
                 <img :src="record.picUrl" alt=""/>
@@ -91,7 +88,7 @@ const handlePageChange = (pageNum: number, pageSize: number) => {
                   <DeleteOutlined/>
                 </a-button>
               </a-popconfirm>
-              <a-button type="link" @click="() => openModal(record)">
+              <a-button type="link" @click="emit('openModal', record)">
                 <EditOutlined/>
               </a-button>
             </template>

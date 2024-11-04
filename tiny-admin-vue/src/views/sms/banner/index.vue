@@ -13,10 +13,12 @@
 <script lang="ts" setup>
 
 import BannerModal from '@/views/sms/banner/BannerModal.vue'
-import {getBannerPage} from '@/api/sms/banner.ts'
+import {getBannerPage, saveOrUpdateBanner} from '@/api/sms/banner.ts'
 import Search from "@/components/Search.vue";
 import PcBannerList from "@/views/sms/banner/PcBannerList.vue";
 import MobileBannerList from "@/views/sms/banner/MobileBannerList.vue";
+import {message} from "ant-design-vue";
+import {t} from "@/utils/i18n.ts";
 
 const openModal = (record: any) => {
   modalRef.value.openModal(record)
@@ -37,4 +39,13 @@ const queryList = (params = {}) => {
         loading.value = false
       })
 }
+const saveOrUpdate = (data: any) => {
+  saveOrUpdateBanner(data).then(() => {
+    record.status = rest.status
+    message.success(t('操作成功'))
+  }).finally(() => {
+    record.loading = false
+  })
+}
+
 </script>

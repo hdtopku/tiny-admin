@@ -93,9 +93,7 @@ import {message} from 'ant-design-vue'
 import ImageUpload from '@/components/ImageUpload.vue'
 import {saveOrUpdateBanner} from '@/api/sms/banner.ts'
 
-const open = ref<boolean>(false)
-const isUpdate = ref<boolean>(false)
-const bannerInfo = ref<any>({})
+const open = ref<boolean>(false), isUpdate = ref<boolean>(false), bannerInfo = ref<any>({})
 const rules: Ref<any> = ref({
   bannerName: [
     {
@@ -110,26 +108,20 @@ const rules: Ref<any> = ref({
       trigger: ['blur', 'change'],
     },
   ],
-})
-const formRef = ref()
-const formLoading = ref(false)
-const emits = defineEmits(['queryList'])
+}), formRef = ref(), formLoading = ref(false), emit = defineEmits(['queryList'])
 const handleOk = () => {
-  formRef.value
-      .validate()
-      .then(() => {
+  formRef.value.validate().then(() => {
         formLoading.value = true
         saveOrUpdateBanner(bannerInfo.value)
             .then(() => {
               message.success(t('操作成功'))
               open.value = false
-              emits('queryList')
+              emit('queryList')
             })
             .finally(() => {
               formLoading.value = false
             })
-      })
-      .catch((err) => {
+  }).catch((err) => {
         console.log('error', err)
       })
 }
