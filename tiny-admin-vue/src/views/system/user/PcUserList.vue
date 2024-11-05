@@ -177,9 +177,6 @@ const columns: any = [
                   >
                 </a-menu-item>
                 <a-menu-item>
-                  <a-button type="link">{{ $t('更换头像') }}</a-button>
-                </a-menu-item>
-                <a-menu-item>
                   <a-popconfirm
                       :cancel-text="$t('否')"
                       :ok-text="$t('是')"

@@ -1,8 +1,8 @@
 <template>
   <div>
     <a-drawer v-model:open="open" :cancel-text="$t('取消')" :ok-text="$t('提交')"
-              :size="width<768 ? 'default' : 'large'" :title="isUpdate ? $t('编辑推荐新品') : $t('新增推荐新品')"
-              destroy-on-close @ok="handleOk">
+              :size="width<768 ? 'default' : 'large'"
+              destroy-on-close title="新增商品" @ok="handleOk">
       <template #footer>
         <a-space class="flex justify-end">
           <a-button key="back" @click="open = false">{{ $t('取消') }}</a-button>
@@ -54,14 +54,14 @@ import {ref} from 'vue'
 import {message} from 'ant-design-vue'
 import ImageCarousel from '@/views/pms/goods/ImageCarousel.vue'
 import {getGoodsPage} from '@/api/pms/goods.ts'
-import {saveNewGoods} from '@/api/sms/newGoods.ts'
 import {useDebounceFn, useWindowSize} from '@vueuse/core'
+import {getAllGoodsIds} from "@/api/sms/newGoods.ts";
 
 const {width} = useWindowSize()
 
 const open = ref<boolean>(false), isUpdate = ref<boolean>(false), brandInfo = ref<any>()
 const emit = defineEmits(['queryList']), loading = ref(false), dataSource = ref([])
-let pagination: any = {}, searchParams: any = {keyword: '', status: true, pageNum: 1, pageSize: 10}
+let pagination: any = {}, searchParams: any = {keyword: '', status: true, pageNum: 1, pageSize: 1}
 
 const queryList = (params = {}) => {
   loading.value = true
@@ -86,30 +86,33 @@ const handleTableChange = (pagination: any) => {
 const debounceQuery = useDebounceFn(queryList, 500)
 watch(() => searchParams.keyword, debounceQuery)
 
-let selectedGoods: (string | number)[] = []
-const rowSelection = ref({
-  checkStrictly: false,
-  onChange: (selectedRowKeys: (string | number)[], selectedRows: any[]) => {
-    selectedGoods = selectedRows
-  },
-  onSelect: (record: any, selected: boolean, selectedRows: any[]) => {
-    console.log(record, selected, selectedRows)
-  },
-  onSelectAll: (selected: boolean, selectedRows: any[], changeRows: any[]) => {
-    console.log(selected, selectedRows, changeRows)
-  },
+const selectedGoodsIds: Ref<(string | number)[]> = ref([])
+const rowSelection = computed(() => {
+  return {
+    checkStrictly: false,
+    selectedRowKeys: unref(selectedGoodsIds),
+    preserveSelectedRowKeys: true,
+    onSelectAll: (selected, selectedRows, changeRows) => {
+      if (selected) {
+        selectedGoodsIds.value.push(...changeRows.map((item: any) => item.id))
+      } else {
+        selectedGoodsIds.value = selectedGoodsIds.value.filter((id: any) => !changeRows.some((item: any) => item.id === id))
+      }
+    },
+    onSelect: (record, selected: boolean) => {
+      if (selected) {
+        selectedGoodsIds.value.push(record.id)
+      } else {
+        selectedGoodsIds.value = selectedGoodsIds.value.filter((id: any) => id !== record.id)
+      }
+    }
+  }
 })
 
+let submit: Function
 const handleOk = () => {
-  const newGoodsList: any = []
-  selectedGoods.forEach((item: any) => {
-    newGoodsList.push({
-      goodsId: item.id,
-      remark: item.goodsName,
-    })
-  })
   loading.value = true
-  saveNewGoods(newGoodsList)
+  submit(selectedGoodsIds.value)
       .then(() => {
         message.success(t('操作成功'))
         open.value = false
@@ -120,14 +123,19 @@ const handleOk = () => {
       })
 }
 defineExpose({
-  openModal: (brand: any = {}) => {
+  openModal: (record: any = {}, submitFunc: Function = () => {
+  }) => {
     open.value = true
     if (!dataSource.value?.length) {
       queryList()
     }
-    isUpdate.value = !!brand.id
+    getAllGoodsIds().then((res: any) => {
+      selectedGoodsIds.value = res
+    })
+    isUpdate.value = !!record.id
     isUpdate.value = true
-    brandInfo.value = {...{brandId: null, status: 1, sort: 9999, remark: '',}, ...brand}
+    brandInfo.value = {...{brandId: null, status: 1, sort: 9999, remark: '',}, ...record}
+    submit = submitFunc
   }
 })
 

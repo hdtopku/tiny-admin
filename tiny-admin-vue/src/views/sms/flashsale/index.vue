@@ -2,9 +2,9 @@
   <div>
     <Search :loading="loading" :search-form="searchParams" :top="84" placeholder="搜索商品名称、备注"
             @open-modal="openModal" @query-list="queryList"/>
-    <PcFlashSaleList :dataSource="dataSource" :loading="loading" :pagination="pagination" class="hidden"
+    <PcFlashSaleList :dataSource="dataSource" :loading="loading" :pagination="pagination"
                      @open-modal="openModal" @query-list="queryList"/>
-    <FlashSaleModal ref="modalRef" @query-list="queryList"></FlashSaleModal>
+    <DataModal ref="modalRef" @query-list="queryList"/>
     <AddGoodsModal ref="addModalRef" @query-list="queryList"></AddGoodsModal>
     <RemoveGoodsModal
         ref="removeModalRef"
@@ -13,7 +13,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import FlashSaleModal from '@/views/sms/flashsale/FlashSaleModal.vue'
+import DataModal from '@/views/sms/flashsale/DataModal.vue'
 import {getFlashSalePage} from '@/api/sms/flashSale.ts'
 import AddGoodsModal from '@/views/sms/flashsale/AddGoodsModal.vue'
 import RemoveGoodsModal from '@/views/sms/flashsale/RemoveGoodsModal.vue'

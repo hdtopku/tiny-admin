@@ -1,7 +1,7 @@
 package com.tiny.admin.biz.sms.mapper;
 
+import com.github.yulichang.base.MPJBaseMapper;
 import com.tiny.admin.biz.sms.entity.SmsHotGoods;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
  * <p>
@@ -11,6 +11,6 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  * @author lxh
  * @since 2024-09-30
  */
-public interface SmsHotGoodsMapper extends BaseMapper<SmsHotGoods> {
+public interface SmsHotGoodsMapper extends MPJBaseMapper<SmsHotGoods> {
 
 }

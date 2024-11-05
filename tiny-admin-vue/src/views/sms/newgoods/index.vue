@@ -3,29 +3,36 @@
     <Search :loading="loading" :search-form="searchParams" :top="84" placeholder="搜索商品名称、备注"
             @open-modal="openModal" @query-list="queryList"/>
     <PcDataList :data-source="dataSource" :loading="loading" :pagination="pagination" class="hidden sm:block"
-                @query-list="queryList" @open-modal="openModal" @change-record-status="changeRecordStatus"
-                @delete-record-by-id="deleteRecordById"/>
+                @query-list="queryList" @change-record-status="changeRecordStatus"
+                @delete-record-by-id="deleteRecordById"
+                @open-modal="openModal" @open-edit-modal="openEditModal"/>
     <MobileDataList :data-source="dataSource" :loading="loading" :pagination="pagination" class="block sm:hidden"
-                    @query-list="queryList" @open-modal="openModal" @change-record-status="changeRecordStatus"
-                    @delete-record-by-id="deleteRecordById"/>
-    <DataModal ref="modalRef"></DataModal>
+                    @query-list="queryList" @change-record-status="changeRecordStatus"
+                    @delete-record-by-id="deleteRecordById"
+                    @open-modal="openModal" @open-edit-modal="openEditModal"/>
+    <DataModal ref="modalRef" @query-list="queryList"></DataModal>
+    <EditNewGoodsModal ref="editModalRef" @query-list="queryList"></EditNewGoodsModal>
   </div>
 </template>
 <script lang="ts" setup>
 import DataModal from '@/views/sms/newgoods/DataModal.vue'
-import {deleteSmsNewGoods, getSmsNewGoodsPage, saveOrUpdateSmsNewGoods} from '@/api/sms/newGoods.ts'
-import PcDataList from "@/views/sms/newgoods/PcDataList.vue";
-import Search from "@/components/Search.vue";
-import MobileDataList from "@/views/sms/newgoods/MobileDataList.vue";
-import {message} from "ant-design-vue";
-import {t} from "@/utils/i18n.ts";
+import {deleteSmsNewGoods, getSmsNewGoodsPage, saveNewGoods, updateNewGoods} from '@/api/sms/newGoods.ts'
+import PcDataList from "@/views/sms/newgoods/PcDataList.vue"
+import Search from "@/components/Search.vue"
+import MobileDataList from "@/views/sms/newgoods/MobileDataList.vue"
+import {message} from "ant-design-vue"
+import {t} from "@/utils/i18n.ts"
+import EditNewGoodsModal from "@/views/sms/newgoods/EditNewGoodsModal.vue"
 
-const openModal = (record: any) => {
-  modalRef.value.openModal(record)
-}
-const loading = ref(false), dataSource = ref([]), modalRef = ref()
+const loading = ref(false), dataSource = ref([]), modalRef = ref(), editModalRef = ref()
 let pagination: any = {}, searchParams: any = {keyword: '', status: true, pageNum: 1, pageSize: 10}
 
+const openModal = (record: any) => {
+  modalRef.value.openModal(record, saveNewGoods)
+}
+const openEditModal = (record: any) => {
+  editModalRef.value.openModal(record)
+}
 const queryList = (params = {}) => {
   loading.value = true
   searchParams = {...searchParams, ...params}
@@ -41,7 +48,7 @@ const queryList = (params = {}) => {
 
 const changeRecordStatus = (record: any) => {
   record.loading = true
-  saveOrUpdateSmsNewGoods({id: record.id, status: !record.status}).then(() => {
+  updateNewGoods({id: record.id, status: !record.status}).then(() => {
     message.success(t('操作成功'))
     record.status = !record.status
   }).finally(() => {

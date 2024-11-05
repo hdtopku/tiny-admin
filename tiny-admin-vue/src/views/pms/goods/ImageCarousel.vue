@@ -24,7 +24,7 @@ import {LeftCircleOutlined, RightCircleOutlined} from '@ant-design/icons-vue';
 const params = defineProps({
   imgUrls: {
     type: Array,
-    required: true,
+    default: [],
   },
   width: {
     type: Number,

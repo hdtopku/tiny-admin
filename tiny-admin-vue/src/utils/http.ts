@@ -42,7 +42,7 @@ http.interceptors.response.use(
     },
     (error) => {
         NProgress.done()
-        const errorMsg = error.response?.data?.msg || error.message
+        const errorMsg = error.response?.data?.msg || error.response?.statusText || error.message
         if (error.message.includes('401')) {
             message.error(errorMsg || t('请先登录'))
             useUserStore().logout()
@@ -50,12 +50,15 @@ http.interceptors.response.use(
         } else if (error.message.includes('403')) {
             message.error(errorMsg || t('权限不足'))
             return Promise.reject(errorMsg || t('权限不足'))
-        } else if (error.message.includes('500')) {
+        } else if (errorMsg.includes('Internal Server Error') || error.message.includes('500')) {
+            message.error('服务异常，请稍后再试')
             return Promise.reject(errorMsg || t('服务异常，请稍后再试'))
         } else if (error.message.includes('timeout')) {
             return Promise.reject(t('请求超时，请稍后再试'))
         } else if (error.message.includes('Network Error')) {
             return Promise.reject(t('网络连接异常，请检查网络连接'))
+        } else if (errorMsg.includes('Internal Server Error')) {
+            return Promise.reject(t('服务异常，请稍后再试'))
         } else if (error.message.includes('Request failed with status code')) {
             return Promise.reject(new Error(error.message))
         }

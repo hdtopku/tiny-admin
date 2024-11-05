@@ -4,8 +4,8 @@ export const getSmsNewGoodsPage = async (data: any) => {
     return http.post("/sms/newGoods/page", data)
 }
 
-export const saveOrUpdateSmsNewGoods = (data: any) => {
-    return http.post('/sms/newGoods/saveOrUpdate', data)
+export const getAllGoodsIds = async () => {
+    return http.get("/sms/newGoods/allGoodsIds")
 }
 
 export const deleteSmsNewGoods = (id: any) => {

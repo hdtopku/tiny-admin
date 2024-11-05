@@ -102,7 +102,7 @@ const handleOk = () => {
       })
 }
 defineExpose({
-  showModal: (data: any = {}) => {
+  openModal: (data: any = {}) => {
     form.value = Object.assign({}, data)
     isUpdate.value = !!data.id
     open.value = true

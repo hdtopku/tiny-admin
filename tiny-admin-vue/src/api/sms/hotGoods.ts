@@ -4,6 +4,10 @@ export const getSmsHotGoodsPage = async (data: any) => {
     return http.post("/sms/hotGoods/page", data)
 }
 
+export const saveOrUpdateSmsHotGoods = (data: any) => {
+    return http.post('/sms/hotGoods/saveOrUpdate', data)
+}
+
 export const saveHotGoods = async (data: any) => {
     return http.post("/sms/hotGoods/save", data)
 }

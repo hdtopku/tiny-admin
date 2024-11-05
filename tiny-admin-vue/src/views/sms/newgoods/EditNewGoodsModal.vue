@@ -1,13 +1,11 @@
 <template>
   <a-modal :open="open" @cancel="handleCancel" @ok="handleOk">
     <template #title
-    >{{
-        $t('编辑推荐新品：')
-      }}
+    >编辑：
       <a-tag color="blue">
-        <a-typography-text copyable>
-          {{ modalName }}
-        </a-typography-text>
+        <a-typography-paragraph :copyable="{text: modalName}">
+          <ToolTip :text="modalName"/>
+        </a-typography-paragraph>
       </a-tag>
     </template>
     <template #footer>
@@ -85,6 +83,6 @@ defineExpose({
     const {createTime, updateTime, goodsName, ...rest} = goods
     modalName.value = goodsName
     form.value = Object.assign({}, rest)
-  },
+  }
 })
 </script>

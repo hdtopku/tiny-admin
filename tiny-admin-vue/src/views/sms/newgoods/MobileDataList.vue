@@ -9,7 +9,7 @@ const {dataSource, pagination, isLoading} = defineProps({
   pagination: Pagination,
   isLoading: Boolean
 })
-const emit = defineEmits(['openModal', 'queryList', 'changeRecordStatus', 'deleteRecordById'])
+const emit = defineEmits(['openModal', 'queryList', 'changeRecordStatus', 'deleteRecordById', 'openEditModal'])
 
 const handlePageChange = (current: number, pageSize: number) => {
   emit('queryList', {pageNum: current, pageSize})
@@ -41,7 +41,7 @@ const handlePageChange = (current: number, pageSize: number) => {
               <SwitchStatusConfirm :record="record" @change-record-status="emit('changeRecordStatus', record)"/>
               <DeleteRecordConfirm :record-id="record.id" :record-name="record.goodsName" show-icon
                                    @delete-record-by-id="emit('deleteRecordById', record.id)"/>
-              <a-button type="link" @click="() => emit('openModal',record)">
+              <a-button type="link" @click="() => emit('openEditModal', record)">
                 <EditOutlined/>
               </a-button>
             </template>

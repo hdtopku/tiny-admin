@@ -3,7 +3,6 @@ import {DownOutlined} from "@ant-design/icons-vue"
 import {t} from "@/utils/i18n.ts"
 import {Pagination} from "ant-design-vue"
 import ToolTip from "@/components/ToolTip.vue";
-import EditNewGoodsModal from "@/views/sms/newgoods/EditNewGoodsModal.vue";
 import ImageCarousel from "@/views/pms/goods/ImageCarousel.vue";
 import DeleteRecordConfirm from "@/components/DeleteRecordConfirm.vue";
 import SwitchStatusConfirm from "@/components/SwitchStatusConfirm.vue";
@@ -14,13 +13,12 @@ const {dataSource, pagination, loading} = defineProps({
   loading: Boolean,
 })
 
-const emit = defineEmits(['openModal', 'queryList', 'changeRecordStatus', 'deleteRecordById'])
+const emit = defineEmits(['openModal', 'queryList', 'changeRecordStatus', 'deleteRecordById', 'openEditModal'])
 
 const handlePageChange = (current: number, pageSize: number) => {
   emit('queryList', {pageNum: current, pageSize})
 }
 
-const editModalRef = ref()
 const columns: any = [
   {
     title: t('序号'),
@@ -81,8 +79,7 @@ const columns: any = [
 </script>
 
 <template>
-  <div>
-    <a-table :columns="columns" :dataSource="dataSource" :loading="loading" :pagination="pagination"
+  <a-table :columns="columns" :dataSource="dataSource" :loading="loading" :pagination="pagination"
              :scroll="{ x: 'max-content', y: 'calc(100vh - 200px)' }" @change="handlePageChange">
       <template #bodyCell="{ record, index, column }">
         <template v-if="column.key === 'index'">
@@ -109,7 +106,7 @@ const columns: any = [
               <template #overlay>
                 <a-menu class="text-center">
                   <a-menu-item>
-                    <a-button type="link" @click="() => editModalRef.openModal(record)">编辑</a-button>
+                    <a-button type="link" @click="emit('openEditModal', record)">编辑</a-button>
                   </a-menu-item>
                   <a-menu-item>
                     <DeleteRecordConfirm :record-id="record.id" :record-name="record.goodsName"
@@ -122,7 +119,4 @@ const columns: any = [
         </template>
       </template>
     </a-table>
-
-    <EditNewGoodsModal ref="editModalRef" @query-list="emit('queryList')"></EditNewGoodsModal>
-  </div>
 </template>

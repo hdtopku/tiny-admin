@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 const {text, length} = defineProps({
-  text: {type: Object, required: true},
+  text: {type: String, default: ''},
   length: {type: Number, default: 20},
 })
 </script>
