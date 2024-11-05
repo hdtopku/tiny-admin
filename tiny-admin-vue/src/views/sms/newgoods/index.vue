@@ -10,13 +10,19 @@
                     @query-list="queryList" @change-record-status="changeRecordStatus"
                     @delete-record-by-id="deleteRecordById"
                     @open-modal="openModal" @open-edit-modal="openEditModal"/>
-    <DataModal ref="modalRef" @query-list="queryList"></DataModal>
-    <EditNewGoodsModal ref="editModalRef" @query-list="queryList"></EditNewGoodsModal>
+    <DataModal ref="modalRef" @query-list="queryList"/>
+    <EditNewGoodsModal ref="editModalRef" @query-list="queryList"/>
   </div>
 </template>
 <script lang="ts" setup>
 import DataModal from '@/views/sms/newgoods/DataModal.vue'
-import {deleteSmsNewGoods, getSmsNewGoodsPage, saveNewGoods, updateNewGoods} from '@/api/sms/newGoods.ts'
+import {
+  deleteSmsNewGoods,
+  getAllNewGoodsIds,
+  getSmsNewGoodsPage,
+  saveNewGoods,
+  updateNewGoods
+} from '@/api/sms/newGoods.ts'
 import PcDataList from "@/views/sms/newgoods/PcDataList.vue"
 import Search from "@/components/Search.vue"
 import MobileDataList from "@/views/sms/newgoods/MobileDataList.vue"
@@ -28,10 +34,10 @@ const loading = ref(false), dataSource = ref([]), modalRef = ref(), editModalRef
 let pagination: any = {}, searchParams: any = {keyword: '', status: true, pageNum: 1, pageSize: 10}
 
 const openModal = (record: any) => {
-  modalRef.value.openModal(record, saveNewGoods)
+  modalRef.value.openModal(record, getAllNewGoodsIds, saveNewGoods)
 }
 const openEditModal = (record: any) => {
-  editModalRef.value.openModal(record)
+  editModalRef.value.openModal(record, updateNewGoods)
 }
 const queryList = (params = {}) => {
   loading.value = true

@@ -88,24 +88,31 @@ public class SmsNewGoodsController {
       return Result.failure(bindingResult.getFieldError().getDefaultMessage());
     }
     iSmsNewGoodsService.remove(new QueryWrapper<>());
-    List<SmsNewGoods> smsHotGoodsList = goodsIds.stream().map(
-                goodsId -> {
-                  SmsNewGoods entity = new SmsNewGoods();
-                  entity.setGoodsId(goodsId);
-                  return entity;
-                }).toList();
-    iSmsNewGoodsService.saveBatch(smsHotGoodsList);
+    if (CollUtil.isNotEmpty(goodsIds)) {
+      List<SmsNewGoods> smsHotGoodsList =
+          goodsIds.stream()
+              .map(
+                  goodsId -> {
+                    SmsNewGoods entity = new SmsNewGoods();
+                    entity.setGoodsId(goodsId);
+                    return entity;
+                  })
+              .toList();
+      iSmsNewGoodsService.saveBatch(smsHotGoodsList);
+    }
     return Result.success();
   }
 
   @PostMapping("/update")
   @Transactional(rollbackFor = Exception.class)
   public Result<Boolean> update(
-      @Valid @RequestBody SmsNewGoods smsNewGoods, BindingResult bindingResult) {
+      @Valid @RequestBody SmsNewGoods entity, BindingResult bindingResult) {
     if (bindingResult.hasErrors()) {
       return Result.failure(bindingResult.getFieldError().getDefaultMessage());
     }
-    iSmsNewGoodsService.updateById(smsNewGoods);
+    entity.setCreateTime(null);
+    entity.setUpdateTime(null);
+    iSmsNewGoodsService.updateById(entity);
     return Result.success();
   }
 }

@@ -55,13 +55,13 @@ import {message} from 'ant-design-vue'
 import ImageCarousel from '@/views/pms/goods/ImageCarousel.vue'
 import {getGoodsPage} from '@/api/pms/goods.ts'
 import {useDebounceFn, useWindowSize} from '@vueuse/core'
-import {getAllGoodsIds} from "@/api/sms/newGoods.ts";
+import {getAllNewGoodsIds} from "@/api/sms/newGoods.ts";
 
 const {width} = useWindowSize()
 
 const open = ref<boolean>(false), isUpdate = ref<boolean>(false), brandInfo = ref<any>()
 const emit = defineEmits(['queryList']), loading = ref(false), dataSource = ref([])
-let pagination: any = {}, searchParams: any = {keyword: '', status: true, pageNum: 1, pageSize: 1}
+let pagination: any = {}, searchParams: any = {keyword: '', status: true, pageNum: 1, pageSize: 10}
 
 const queryList = (params = {}) => {
   loading.value = true
@@ -123,13 +123,12 @@ const handleOk = () => {
       })
 }
 defineExpose({
-  openModal: (record: any = {}, submitFunc: Function = () => {
-  }) => {
+  openModal: (record: any = {}, getSelectIds: Function, submitFunc: Function) => {
     open.value = true
     if (!dataSource.value?.length) {
       queryList()
     }
-    getAllGoodsIds().then((res: any) => {
+    getSelectIds().then((res: any) => {
       selectedGoodsIds.value = res
     })
     isUpdate.value = !!record.id

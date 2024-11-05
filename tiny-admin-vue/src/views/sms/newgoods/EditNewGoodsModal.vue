@@ -63,10 +63,11 @@ const handleCancel = () => {
 }
 const loading = ref(false)
 const emit = defineEmits(['queryList'])
+let submit: Function
 const handleOk = () => {
   loading.value = true
   const {id, remark, sort, status} = form.value
-  updateNewGoods({id, remark, sort, status})
+  submit({id, remark, sort, status})
       .then(() => {
         message.success(t('修改成功'))
         open.value = false
@@ -78,11 +79,12 @@ const handleOk = () => {
 }
 const modalName = ref('')
 defineExpose({
-  openModal: (goods: any = {}) => {
+  openModal: (goods: any = {}, submitFunc: Function) => {
     open.value = true
     const {createTime, updateTime, goodsName, ...rest} = goods
     modalName.value = goodsName
     form.value = Object.assign({}, rest)
+    submit = submitFunc
   }
 })
 </script>

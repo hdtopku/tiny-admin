@@ -6,8 +6,8 @@ const {text, length} = defineProps({
 </script>
 
 <template>
-  <span>
-    <span v-if="text?.length <= length">{{ text }}</span>
+  <span v-if="text?.length">
+    <span v-if="text.length <= length">{{ text }}</span>
     <a-tooltip v-else :arrow="false">
       <template #title>
         <span>{{ text }}</span>

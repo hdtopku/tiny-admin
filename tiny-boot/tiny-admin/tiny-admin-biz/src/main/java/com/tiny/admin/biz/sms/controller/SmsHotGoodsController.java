@@ -16,9 +16,9 @@ import com.tiny.admin.biz.system.vo.BaseQueryParam;
 import com.tiny.core.web.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
@@ -36,8 +36,21 @@ public class SmsHotGoodsController {
   @Resource private ISmsHotGoodsService iSmsHotGoodsService;
   @Resource private SmsHotGoodsMapper smsHotGoodsMapper;
 
+  @GetMapping("/allGoodsIds")
+  @Operation(summary = "查询所有推荐新品")
+  public Result<List<String>> listAll() {
+    QueryWrapper<SmsHotGoods> wrapper = new QueryWrapper<>();
+    wrapper.select("goods_id");
+    List<SmsHotGoods> list = iSmsHotGoodsService.list(wrapper);
+    List<String> res = Collections.emptyList();
+    if (!CollUtil.isEmpty(list)) {
+      res = list.stream().map(SmsHotGoods::getGoodsId).toList();
+    }
+    return Result.success(res);
+  }
+
   @PostMapping("/page")
-  @Operation(summary = "分页查询品牌列表")
+  @Operation(summary = "分页查询热销商品列表")
   public Result<IPage<SmsNewGoodsDto>> page(@RequestBody(required = false) BaseQueryParam param) {
     MPJLambdaWrapper<SmsHotGoods> wrapper = new MPJLambdaWrapper<>();
     wrapper.orderByAsc(SmsHotGoods::getSort);
@@ -62,7 +75,7 @@ public class SmsHotGoodsController {
   }
 
   @DeleteMapping("/{id}")
-  @Operation(summary = "删除推荐新品")
+  @Operation(summary = "删除热销商品")
   public Result<Boolean> deleteById(@PathVariable("id") String id) {
     iSmsHotGoodsService.removeById(id);
     return Result.success();
@@ -74,19 +87,17 @@ public class SmsHotGoodsController {
     if (bindingResult.hasErrors()) {
       return Result.failure(bindingResult.getFieldError().getDefaultMessage());
     }
-    if (!CollUtil.isEmpty(goodsIds)) {
-      QueryWrapper<SmsHotGoods> queryWrapper = new QueryWrapper<>();
-      queryWrapper.in("goods_id", goodsIds);
-      List<SmsHotGoods> oldList = iSmsHotGoodsService.list(queryWrapper);
-      if (CollUtil.isNotEmpty(oldList)) {
-        Set<String> ids = oldList.stream().map(SmsHotGoods::getId).collect(Collectors.toSet());
-        iSmsHotGoodsService.removeByIds(ids);
-      }
-      List<SmsHotGoods> smsHotGoodsList = goodsIds.stream().map(goodsId -> {
-                    SmsHotGoods entity = new SmsHotGoods();
-                    entity.setGoodsId(goodsId);
-                    return entity;
-                  }).toList();
+    iSmsHotGoodsService.remove(new QueryWrapper<>());
+    if (CollUtil.isNotEmpty(goodsIds)) {
+      List<SmsHotGoods> smsHotGoodsList =
+              goodsIds.stream()
+                      .map(
+                              goodsId -> {
+                                SmsHotGoods entity = new SmsHotGoods();
+                                entity.setGoodsId(goodsId);
+                                return entity;
+                              })
+                      .toList();
       iSmsHotGoodsService.saveBatch(smsHotGoodsList);
     }
     return Result.success();

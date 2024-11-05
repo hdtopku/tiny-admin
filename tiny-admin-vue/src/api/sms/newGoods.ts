@@ -4,7 +4,7 @@ export const getSmsNewGoodsPage = async (data: any) => {
     return http.post("/sms/newGoods/page", data)
 }
 
-export const getAllGoodsIds = async () => {
+export const getAllNewGoodsIds = async () => {
     return http.get("/sms/newGoods/allGoodsIds")
 }
 

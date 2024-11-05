@@ -17,37 +17,35 @@ const handlePageChange = (current: number, pageSize: number) => {
 </script>
 
 <template>
-  <div>
-    <a-list :data-source="dataSource" :loading="isLoading"
-            :pagination="{...pagination, onChange: handlePageChange}" item-layout="horizontal">
-      <template #renderItem="{ item:record }">
-        <a-list-item>
-          <a-card class="w-full">
-            <template #cover>
-              <div class="bg-gray-100 dark:bg-gray-800 h-46">
-                <ImageCarousel :img-urls="record?.albumPics?.split(',')" class="mx-auto"/>
+  <a-list :data-source="dataSource" :loading="isLoading"
+          :pagination="{...pagination, onChange: handlePageChange}" item-layout="horizontal">
+    <template #renderItem="{ item:record }">
+      <a-list-item>
+        <a-card class="w-full">
+          <template #cover>
+            <div class="bg-gray-100 dark:bg-gray-800 h-46">
+              <ImageCarousel :img-urls="record?.albumPics?.split(',')" class="mx-auto"/>
+            </div>
+          </template>
+          <a-card-meta :title="record.goodsName">
+            <template #description>
+              {{ record.remark }}
+              <div class="mt-2">
+                <a-tag>排序</a-tag>
+                {{ record.sort }}
               </div>
             </template>
-            <a-card-meta :title="record.goodsName">
-              <template #description>
-                {{ record.remark }}
-                <div class="mt-2">
-                  <a-tag>排序</a-tag>
-                  {{ record.sort }}
-                </div>
-              </template>
-            </a-card-meta>
-            <template #actions>
-              <SwitchStatusConfirm :record="record" @change-record-status="emit('changeRecordStatus', record)"/>
-              <DeleteRecordConfirm :record-id="record.id" :record-name="record.goodsName" show-icon
-                                   @delete-record-by-id="emit('deleteRecordById', record.id)"/>
-              <a-button type="link" @click="() => emit('openEditModal', record)">
-                <EditOutlined/>
-              </a-button>
-            </template>
-          </a-card>
-        </a-list-item>
-      </template>
-    </a-list>
-  </div>
+          </a-card-meta>
+          <template #actions>
+            <SwitchStatusConfirm :record="record" @change-record-status="emit('changeRecordStatus', record)"/>
+            <DeleteRecordConfirm :record-id="record.id" :record-name="record.goodsName" show-icon
+                                 @delete-record-by-id="emit('deleteRecordById', record.id)"/>
+            <a-button type="link" @click="() => emit('openEditModal', record)">
+              <EditOutlined/>
+            </a-button>
+          </template>
+        </a-card>
+      </a-list-item>
+    </template>
+  </a-list>
 </template>
