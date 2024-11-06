@@ -55,7 +55,6 @@ import {message} from 'ant-design-vue'
 import ImageCarousel from '@/views/pms/goods/ImageCarousel.vue'
 import {getGoodsPage} from '@/api/pms/goods.ts'
 import {useDebounceFn, useWindowSize} from '@vueuse/core'
-import {getAllNewGoodsIds} from "@/api/sms/newGoods.ts";
 
 const {width} = useWindowSize()
 
@@ -123,7 +122,7 @@ const handleOk = () => {
       })
 }
 defineExpose({
-  openModal: (record: any = {}, getSelectIds: Function, submitFunc: Function) => {
+  openModal: (record: any, getSelectIds: Function, submitFunc: Function) => {
     open.value = true
     if (!dataSource.value?.length) {
       queryList()
