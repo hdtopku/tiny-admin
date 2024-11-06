@@ -1,17 +1,10 @@
 <template>
   <PageStructure>
-    <template #pc="{dataSource, loading, pagination, queryList, changeRecordStatus, deleteRecordById}">
-      <PcDataList :data-source="dataSource" :loading="loading" :pagination="pagination" class="hidden sm:block"
-                  @change-record-status="changeRecordStatus" @query-list="queryList"
-                  @delete-record-by-id="deleteRecordById" @open-edit-modal="openEditModal"/>
-    </template>
-    <template #mobile="{dataSource, loading, pagination, queryList, changeRecordStatus, deleteRecordById}">
-      <MobileDataList :data-source="dataSource" :loading="loading" :pagination="pagination" class="block sm:hidden"
-                      @change-record-status="changeRecordStatus" @query-list="queryList"
-                      @delete-record-by-id="deleteRecordById"/>
-    </template>
-    <template #modal="{queryList}">
-      <DataModal ref="modalRef" @query-list="queryList"/>
+    <template #list="dataAndFunc">
+      <PcDataList class="hidden sm:block" v-bind="dataAndFunc" @open-modal="openModal"/>
+      <MobileDataList class="block sm:hidden" v-bind="dataAndFunc" @open-edit-modal="openEditModal"
+                      @open-modal="openModal"/>
+      <DataModal ref="modalRef" @query-list="dataAndFunc.queryList"/>
     </template>
     <EditNewGoodsModal ref="editModalRef"/>
   </PageStructure>
@@ -36,7 +29,7 @@ const openModal = (record: any) => {
 provide('init', {
   deleteFunc: deleteSmsHotGoods,
   saveOrUpdateFunc: updateHotGoods,
-  pageFunc: getSmsHotGoodsPage,
+  queryFunc: getSmsHotGoodsPage,
   openModal
 })
 const openEditModal = (record: any) => {

@@ -1,9 +1,8 @@
 <script lang="ts" setup>
-import {DownOutlined, QuestionCircleOutlined} from "@ant-design/icons-vue"
-import {message, Pagination, PaginationProps} from "ant-design-vue";
-import {deleteSmsBrandById, saveOrUpdateSmsBrand} from "@/api/sms/brand.ts";
+import {DownOutlined} from "@ant-design/icons-vue"
+import {Pagination, PaginationProps} from "ant-design-vue";
 import {t} from "@/utils/i18n.ts";
-import {assignGoods, removeGoods} from "@/api/sms/flashGoodsRel.ts";
+import SwitchStatusConfirm from "@/components/SwitchStatusConfirm.vue";
 
 const {dataSource, pagination, loading} = defineProps({
   dataSource: Array,
@@ -11,28 +10,11 @@ const {dataSource, pagination, loading} = defineProps({
   loading: Boolean,
 })
 
-const emit = defineEmits(['openModal', 'queryList'])
-const confirmChangeStatus = (record: any) => {
-  record.loading = true
-  const {loading, brandName, logo, createTime, updateTime, ...rest} = record
-  rest.status = !rest.status
-  saveOrUpdateSmsBrand(rest).then(() => {
-    record.status = rest.status
-    message.success(t('操作成功'))
-  }).finally(() => {
-    record.loading = false
-  })
-}
+const emit = defineEmits(['openModal', 'queryList', 'changeRecordStatus', 'deleteRecordById'])
 const handleTableChange = (pagination: PaginationProps) => {
   emit('queryList', {
     pageNum: pagination.current,
     pageSize: pagination.pageSize,
-  })
-}
-const deleteRecordById = (id: string) => {
-  deleteSmsBrandById(id).then(() => {
-    message.success(t('删除成功'))
-    emit('queryList')
   })
 }
 const columns: any = [
@@ -132,35 +114,7 @@ const columns: any = [
       </template>
       <template v-if="column.key === 'operation'">
         <div class="grid grid-cols-2 items-center justify-center">
-          <a-popconfirm
-              :cancel-text="$t('否')"
-              :ok-text="$t('是')"
-              :title="
-                record.status ? $t('是否禁用该活动？') : $t(' 是否启用该活动？')
-              "
-              @confirm="
-                () => {
-                  confirmChangeStatus(record)
-                }
-              "
-          >
-            <template #icon>
-              <question-circle-outlined style="color: red"/>
-            </template>
-            <a-switch
-                v-model:checked="record.status"
-                :checked-children="$t('已启用')"
-                :loading="record.loading"
-                :un-checked-children="$t('已禁用')"
-                class="flex-shrink-0"
-                size="small"
-                @click="
-                  () => {
-                    changeStatus(record)
-                  }
-                "
-            />
-          </a-popconfirm>
+          <SwitchStatusConfirm :record="record" @change-record-status="emit('changeRecordStatus', record)"/>
           <a-dropdown placement="bottom" trigger="hover">
             <a-button class="flex items-center" size="small" type="link"
             >{{ $t('操作') }}
@@ -169,43 +123,15 @@ const columns: any = [
             <template #overlay>
               <a-menu class="text-center">
                 <a-menu-item>
-                  <a-button type="link" @click="emit('openModal',record)">{{
-                      $t('编辑秒杀活动')
-                    }}
-                  </a-button>
+                  <a-button type="link" @click="emit('openModal',record)">编辑</a-button>
                 </a-menu-item>
                 <a-menu-item>
-                  <a-popconfirm :cancel-text="$t('否')" :ok-text="$t('是')" ok-type="danger"
-                                @confirm="deleteRecordById(record.id)">
-                    <template #icon>
-                      <question-circle-outlined style="color: red"/>
-                    </template>
-                    <template #title>
-                      <div>{{ $t('是否删除秒杀活动？') }}</div>
-                      <a-tag class="my-2" color="red">{{
-                          record.activityName
-                        }}
-                      </a-tag>
-                    </template>
-                    <a-button danger type="link">{{
-                        $t('删除秒杀活动')
-                      }}
-                    </a-button>
-                  </a-popconfirm>
+                  <DeleteRecordConfirm :record-id="record.id" :record-name="record.activityName"
+                                       @delete-record-by-id="emit('deleteRecordById', record.id)"/>
                 </a-menu-item>
               </a-menu>
             </template>
           </a-dropdown>
-        </div>
-        <div>
-          <a-button type="link" @click="assignGoods(record)">{{
-              $t('添加商品')
-            }}
-          </a-button>
-          <a-button danger type="text" @click="removeGoods(record)">{{
-              $t('移除商品')
-            }}
-          </a-button>
         </div>
       </template>
     </template>

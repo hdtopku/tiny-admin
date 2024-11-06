@@ -1,30 +1,23 @@
 <template>
   <div>
     <Search :loading="loading" :search-form="searchParams" :top="84" @query-list="queryList" @open-modal="openModal"/>
-    <slot :changeRecordStatus="changeRecordStatus" :data-source="dataSource" :deleteRecordById="deleteRecordById" :loading="loading"
-          :pagination="pagination" :queryList="queryList" name="pc"/>
-    <slot :data-source="dataSource" :loading="loading" :pagination="pagination" name="mobile"
-          @query-list="queryList" @change-record-status="changeRecordStatus"
-          @delete-record-by-id="deleteRecordById" @open-modal="openModal"/>
-    <slot :openModal="openModal" name="modal" @query-list="queryList"/>
-    <EditNewGoodsModal ref="editModalRef" @query-list="queryList"/>
-    <slot></slot>
+    <slot :changeRecordStatus="changeRecordStatus" :data-source="dataSource" :deleteRecord="deleteRecordById" :loading="loading"
+          :pagination="pagination" :queryList="queryList" name="list"/>
   </div>
 </template>
 <script lang="ts" setup>
 import Search from "@/components/Search.vue"
 import {message} from "ant-design-vue"
 import {t} from "@/utils/i18n.ts"
-import EditNewGoodsModal from "@/views/sms/newgoods/EditNewGoodsModal.vue"
 
-const loading = ref(false), dataSource = ref([]), editModalRef = ref()
+const loading = ref(false), dataSource = ref([])
 let pagination: any = {}, searchParams: any = {keyword: '', status: true, pageNum: 1, pageSize: 10}
-const {pageFunc, saveOrUpdateFunc, deleteFunc, openModal}: any = inject('init')
+const {queryFunc, saveOrUpdateFunc, deleteFunc, openModal}: any = inject('init')
 
 const queryList = (params = {}) => {
   loading.value = true
   searchParams = {...searchParams, ...params}
-  pageFunc(searchParams)
+  queryFunc(searchParams)
       .then((res: any) => {
         dataSource.value = res.records
         pagination = {current: res.current, pageSize: res.size, total: res.total}

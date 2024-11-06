@@ -39,7 +39,7 @@
 import {t} from '@/utils/i18n.ts'
 
 import dayjs, {Dayjs} from 'dayjs'
-import {saveOrUpdateFlashSale} from '@/api/sms/flashSale.ts'
+import {updateFlashSale} from '@/api/sms/flashSale.ts'
 import {message} from 'ant-design-vue'
 
 const open = ref(false)
@@ -91,7 +91,7 @@ const onRangeChange = (
 const emit = defineEmits(['queryList'])
 const handleOk = () => {
   loading.value = true
-  saveOrUpdateFlashSale(form.value)
+  updateFlashSale(form.value)
       .then(() => {
         message.success(t('操作成功'))
         emit('queryList')
