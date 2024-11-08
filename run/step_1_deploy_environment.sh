@@ -1,22 +1,26 @@
 #!/bin/bash
 
+# Get the absolute path of the current script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+echo "The absolute path of the script is: $SCRIPT_DIR"
+
 # Load environment variables from .env file
 set -a  # Automatically export all variables
-source ./env/.env  # Load variables from .env
+source $SCRIPT_DIR/env/.env  # Load variables from .env
 set +a  # Stop exporting variables
 
 # Define the target directory and files
 TARGET_DIR=~/mydata/nginx/conf          # Directory for nginx configuration
-TARGET_FILE="$TARGET_DIR/nginx.conf"
-SOURCE_FILE="./env/nginx.conf"
-ENV_FILE="./env/.env"
-EXAMPLE_ENV_FILE="./env/.env.example"
+TARGET_FILE=$TARGET_DIR/nginx.conf
+SOURCE_FILE=$SCRIPT_DIR/env/nginx.conf
+ENV_FILE=$SCRIPT_DIR/env/.env
+EXAMPLE_ENV_FILE=$SCRIPT_DIR/env/.env.example
 
 # Define the SQL file and target variables
-SQL_FILE=./sql/tiny_admin.sql                    # Path to the SQL file to import
+SQL_FILE=$SCRIPT_DIR/sql/tiny_admin.sql                    # Path to the SQL file to import
 SQL_TARGET_DIR=~/mydata/mysql/sql                # Directory to copy SQL file
 SQL_TARGET_FILE=$SQL_TARGET_DIR/tiny_admin.sql  # Target path for the SQL file
-CONTAINER_NAME=mysql                             # The name of the MySQL container
 
 # Create the SQL target directory if it does not exist
 if [ ! -d "$SQL_TARGET_DIR" ]; then
@@ -57,4 +61,5 @@ fi
 
 # Start docker-compose
 echo "Starting docker-compose-env.yml..."
-docker-compose -f ./env/docker-compose-env.yml up -d
+docker pull openjdk:22-ea-16-jdk-slim
+docker-compose -f $SCRIPT_DIR/env/docker-compose-env.yml up -d
