@@ -46,8 +46,6 @@
 </template>
 <script lang="ts" setup>
 import {t} from '@/utils/i18n.ts'
-
-import {updateNewGoods} from '@/api/sms/newGoods.ts'
 import {message} from 'ant-design-vue'
 
 const open = ref(false)

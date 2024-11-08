@@ -1,0 +1,51 @@
+version: '3.8'  # Use the appropriate version for your Docker Compose file
+
+networks:
+  my_network:
+    driver: bridge
+
+services:
+  mysql:
+    image: mysql:8.0.40
+    container_name: mysql
+    command:
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --lower_case_table_names=1
+      --explicit_defaults_for_timestamp=true
+      --max_allowed_packet=128M
+      --authentication_policy=caching_sha2_password
+    restart: always
+    environment:
+      - TZ=Asia/Shanghai
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} # set root password
+    ports:
+      - 3306:3306
+    volumes:
+      - ~/mydata/mysql/data/db:/var/lib/mysql # data volume
+      - ~/mydata/mysql/conf:/etc/mysql/conf.d # config volume
+      - ~/mydata/mysql/log:/var/log/mysql # log volume
+      - ~/mydata/mysql/sql/tiny_admin.sql:/tiny_admin.sql
+    networks:
+      - my_network
+
+  redis:
+    image: redis:latest                  # Use the latest version of Redis image
+    container_name: redis       # Container name
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD} # Set Redis password from an environment variable
+    ports:
+      - 6379:6379                       # Map host port 6379 to container port 6379
+    volumes:
+      - ~/mydata/redis/data:/data                # Persist Redis data to the host
+    restart: always                        # Automatically restart the Redis container
+
+  nginx:
+    image: nginx:latest                  # Use the latest version of Nginx image
+    container_name: nginx       # Container name
+    ports:
+      - 80:80                           # Map host port 80 to container port 80
+    volumes:
+      - ~/mydata/nginx/conf:/etc/nginx    # Mount custom configuration file
+      - ~/mydata/nginx/html:/usr/share/nginx/html  # Mount static files
+      - ~/mydata/nginx/logs:/var/log/nginx  # Persist Nginx logs to the host
+    restart: always                        # Automatically restart the Nginx container

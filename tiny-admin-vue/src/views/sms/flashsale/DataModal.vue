@@ -39,12 +39,48 @@
 import {t} from '@/utils/i18n.ts'
 
 import dayjs, {Dayjs} from 'dayjs'
-import {updateFlashSale} from '@/api/sms/flashSale.ts'
 import {message} from 'ant-design-vue'
 
-const open = ref(false)
-const isUpdate = ref(false)
-const form: Ref<any> = ref({})
+const {queryList=()=>{}, saveOrUpdate=()=>{}} = defineProps({
+  queryList: Function,
+  saveOrUpdate: Function,
+})
+const open = ref(false), isUpdate = ref(false), form: Ref<any> = ref({}), loading = ref(false)
+const rangeTime: Ref<[string, string] | [Dayjs, Dayjs] | undefined> = ref([
+  '',
+  '',
+])
+const onRangeChange = (
+    value: [string, string] | [Dayjs, Dayjs],
+    dateString: [string, string]
+) => {
+  form.value.startTime = dateString[0]
+  form.value.endTime = dateString[1]
+}
+const emit = defineEmits(['queryList'])
+const handleOk = () => {
+  loading.value = true
+  saveOrUpdate(form.value)
+      .then(() => {
+        message.success(t('操作成功'))
+        queryList()
+        open.value = false
+      })
+      .finally(() => {
+        loading.value = false
+      })
+}
+defineExpose({
+  openModal: (data: any = {}) => {
+    form.value = Object.assign({}, data)
+    isUpdate.value = !!data.id
+    open.value = true
+    if (isUpdate.value) {
+      rangeTime.value = [dayjs(data.startTime), dayjs(data.endTime)]
+    }
+  },
+})
+
 const rules: Ref<any> = ref({
   activityName: [
     {
@@ -75,40 +111,5 @@ const rules: Ref<any> = ref({
       trigger: ['blur', 'change'],
     },
   ],
-})
-const rangeTime: Ref<[string, string] | [Dayjs, Dayjs] | undefined> = ref([
-  '',
-  '',
-])
-const loading = ref(false)
-const onRangeChange = (
-    value: [string, string] | [Dayjs, Dayjs],
-    dateString: [string, string]
-) => {
-  form.value.startTime = dateString[0]
-  form.value.endTime = dateString[1]
-}
-const emit = defineEmits(['queryList'])
-const handleOk = () => {
-  loading.value = true
-  updateFlashSale(form.value)
-      .then(() => {
-        message.success(t('操作成功'))
-        emit('queryList')
-        open.value = false
-      })
-      .finally(() => {
-        loading.value = false
-      })
-}
-defineExpose({
-  openModal: (data: any = {}) => {
-    form.value = Object.assign({}, data)
-    isUpdate.value = !!data.id
-    open.value = true
-    if (isUpdate.value) {
-      rangeTime.value = [dayjs(data.startTime), dayjs(data.endTime)]
-    }
-  },
 })
 </script>

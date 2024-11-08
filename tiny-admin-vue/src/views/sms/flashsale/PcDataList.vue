@@ -137,7 +137,3 @@ const columns: any = [
     </template>
   </a-table>
 </template>
-
-<style scoped>
-
-</style>
