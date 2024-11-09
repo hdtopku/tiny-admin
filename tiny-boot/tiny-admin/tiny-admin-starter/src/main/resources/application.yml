@@ -4,8 +4,8 @@ spring:
     time-zone: GMT+8
   server:
     port: 8080
-  profiles:
-    active: dev
+#  profiles:
+#    active: dev
   config:
     import: classpath:.env.local[.properties]
   cache:
@@ -33,7 +33,7 @@ spring:
           min-idle: 0
           max-wait: -1ms
   datasource:
-    url: jdbc:mysql://${MYSQL_URL}?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    url: jdbc:mysql://${MYSQL_URL}?allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8
     username: ${MYSQL_USERNAME}
     password: ${MYSQL_ROOT_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -55,15 +55,14 @@ security:
   white-url-list:
     - /login
     - /logout
-    - /register
     - /error
     - /actuator/**
     - /v2/api-docs
     - /swagger-ui.html
     - /swagger-resources/**
     - /webjars/**
-    - /csrf
     - websocket/**
+    - /xrebel
 
 firebase.bucket-name:
   tiny-blog-1a77f.appspot.com

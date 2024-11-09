@@ -1,8 +1,8 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>com.tiny</groupId>
         <artifactId>tiny-admin</artifactId>
@@ -10,6 +10,7 @@
     </parent>
 
     <artifactId>tiny-admin-starter</artifactId>
+
     <dependencies>
         <dependency>
             <groupId>com.tiny</groupId>
@@ -24,6 +25,7 @@
     </dependencies>
 
     <build>
+        <finalName>tiny-admin-starter</finalName> <!-- 设置生成 JAR 文件的最终名称 -->
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
