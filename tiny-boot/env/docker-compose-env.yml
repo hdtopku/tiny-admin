@@ -17,7 +17,7 @@ services:
       - TZ=Asia/Shanghai
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}  # Set the root password using an environment variable
     ports:
-      - "3306:3306"
+      - 3306:3306
     volumes:
       - ~/mydata/mysql/data/db:/var/lib/mysql       # Data volume for persistence
       - ~/mydata/mysql/conf:/etc/mysql/conf.d       # Configuration files
@@ -32,7 +32,7 @@ services:
     container_name: redis
     command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}  # Set the Redis password
     ports:
-      - "6379:6379"
+      - 6379:6379
     volumes:
       - ~/mydata/redis/data:/data  # Data persistence
     restart: always
@@ -53,28 +53,6 @@ services:
     networks:
       - my_network
 
-  # Spring Boot service configuration
-  springboot:
-    build:
-      context: ../../tiny-boot                          # Build context pointing to the project root
-      dockerfile: Dockerfile                            # Specify the Dockerfile
-    container_name: tiny_admin
-    volumes:
-      - ../../tiny-boot:/usr/src/app                    # Mount the Spring Boot project
-      - ~/.m2/repository:/root/.m2/repository           # Mount the local Maven repository
-    working_dir: /usr/src/app/tiny-admin/tiny-admin-starter
-    command: mvn spring-boot:run                        # Run the Spring Boot application
-    ports:
-      - "8080:8080"                                     # Expose port 8080
-    networks:
-      - my_network
-    environment:
-      - SPRING_PROFILES_ACTIVE=prod                     # Specify the active Spring profile
-    restart: always                                     # Automatically restart if the container stops
-    depends_on:
-      - mysql
-      - redis
-
 networks:
   my_network:
-    driver: bridge
+    name: my_network

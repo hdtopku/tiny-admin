@@ -1,20 +1,13 @@
-# Use OpenJDK 22 as the base image
-FROM openjdk:22-ea-16-jdk-slim
+FROM openjdk:22-ea-16-jdk-slim AS build
 
-# Install Maven
 RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
 
-# Set the working directory
-WORKDIR /usr/src/app
-
-# Copy project files to the container
+WORKDIR /usr/src/app/temp
 COPY . .
-
-# Download dependencies (this will be cached unless pom.xml changes) && Build the Spring Boot application
 RUN mvn -B dependency:go-offline && mvn clean install -DskipTests
 
-# Change to the tiny-admin-starter directory
-WORKDIR /usr/src/app/tiny-admin/tiny-admin-starter
-
-# Run the Spring Boot application
-CMD ["java", "-jar", "target/tiny-admin-starter.jar"]
+# Runtime image
+FROM openjdk:22-ea-16-jdk-slim
+# Ensure /usr/src/app is a directory by removing any file or directory with the same name
+COPY --from=build /usr/src/app/temp/tiny-admin/tiny-admin-starter/target/tiny-admin-starter.jar /usr/src/app/
+RUN rm -rf /usr/src/app/temp
