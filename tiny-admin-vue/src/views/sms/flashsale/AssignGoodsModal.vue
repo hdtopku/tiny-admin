@@ -2,7 +2,7 @@
   <div>
     <a-drawer v-model:open="open" :cancel-text="$t('取消')" :ok-text="$t('提交')"
               :size="width<768 ? 'default' : 'large'"
-              destroy-on-close title="新增商品" @ok="handleOk">
+              destroy-on-close title="分配商品" @ok="handleOk">
       <template #footer>
         <a-space class="flex justify-end">
           <a-button key="back" @click="open = false">{{ $t('取消') }}</a-button>
@@ -56,6 +56,9 @@ import ImageCarousel from '@/views/pms/goods/ImageCarousel.vue'
 import {getGoodsPage} from '@/api/pms/goods.ts'
 import {useDebounceFn, useWindowSize} from '@vueuse/core'
 
+const {queryList: emitQueryList=()=>{}} = defineProps({
+  queryList: Function,
+})
 const {width} = useWindowSize()
 
 const open = ref<boolean>(false), isUpdate = ref<boolean>(false), brandInfo = ref<any>()
@@ -111,28 +114,30 @@ const rowSelection = computed(() => {
 let submit: Function
 const handleOk = () => {
   loading.value = true
-  submit(selectedGoodsIds.value)
+  submit(flashSaleId, selectedGoodsIds.value)
       .then(() => {
         message.success(t('操作成功'))
         open.value = false
-        emit('queryList')
+        emitQueryList()
       })
       .finally(() => {
         loading.value = false
       })
 }
+let flashSaleId: string
 defineExpose({
   openModal: (record: any, getSelectIds: Function, submitFunc: Function) => {
     open.value = true
     if (!dataSource.value?.length) {
       queryList()
     }
-    getSelectIds().then((res: any) => {
+    getSelectIds(record.id).then((res: any) => {
       selectedGoodsIds.value = res
     })
     isUpdate.value = !!record.id
     isUpdate.value = true
     brandInfo.value = {...{brandId: null, status: 1, sort: 9999, remark: '',}, ...record}
+    flashSaleId = record.id
     submit = submitFunc
   }
 })

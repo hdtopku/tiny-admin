@@ -8,6 +8,6 @@ export const execQuery = async (data: any) => {
     return http.post("/sms/flashSale/page", data)
 }
 export const deleteById = (id: any) => {
-    return http.delete('/sms/hotGoods/' + id)
+    return http.delete('/sms/flashSale/' + id)
 }
 

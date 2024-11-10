@@ -1,12 +1,12 @@
 <template>
   <PageStructure>
     <template #content="{dataAndFunc}">
-      <PcDataList class="hidden sm:block" v-bind="dataAndFunc" @open-modal="openModal"/>
+      <PcDataList class="hidden sm:block" v-bind="dataAndFunc" @open-edit-modal="openEditModal" @open-modal="openModal"/>
       <MobileDataList class="block sm:hidden" v-bind="dataAndFunc" @open-edit-modal="openEditModal"
                       @open-modal="openModal"/>
       <DataModal ref="modalRef" @query-list="dataAndFunc.queryList"/>
+      <EditNewGoodsModal ref="editModalRef" @query-list="dataAndFunc.queryList"/>
     </template>
-    <EditNewGoodsModal ref="editModalRef"/>
   </PageStructure>
 </template>
 <script lang="ts" setup>

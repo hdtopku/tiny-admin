@@ -4,14 +4,17 @@ import {Pagination, PaginationProps} from "ant-design-vue";
 import {t} from "@/utils/i18n.ts";
 import SwitchStatusConfirm from "@/components/SwitchStatusConfirm.vue";
 
-const {dataSource, pagination, loading} = defineProps({
+const {dataSource, pagination, loading, queryList=()=>{}, changeRecordStatus=()=>{}, deleteRecordById=()=>{}} = defineProps({
   dataSource: Array,
   pagination: Pagination,
   loading: Boolean,
+  queryList: Function,
+  changeRecordStatus: Function,
+  deleteRecordById: Function,
 })
-const emit = defineEmits(['openModal', 'queryList', 'changeRecordStatus', 'deleteRecordById'])
+const emit = defineEmits(['openModal', ])
 const handleTableChange = (pagination: PaginationProps) => {
-  emit('queryList', {
+  queryList({
     pageNum: pagination.current,
     pageSize: pagination.pageSize,
   })
@@ -96,7 +99,7 @@ const columns: any = [
         <a-tag
         >{{
             $t('活动共包含')
-          }}<b class="text-red-500">{{ record.goodsIds.length }}</b
+          }}<b class="text-red-500">{{ record?.goodsIds?.length }}</b
           >{{ $t('件商品') }}
         </a-tag
         >
@@ -113,7 +116,7 @@ const columns: any = [
       </template>
       <template v-if="column.key === 'operation'">
         <div class="grid grid-cols-2 items-center justify-center">
-          <SwitchStatusConfirm :record="record" @change-record-status="emit('changeRecordStatus', record)"/>
+          <SwitchStatusConfirm :record="record" @change-record-status="changeRecordStatus(record)"/>
           <a-dropdown placement="bottom" trigger="hover">
             <a-button class="flex items-center" size="small" type="link"
             >{{ $t('操作') }}
@@ -126,7 +129,10 @@ const columns: any = [
                 </a-menu-item>
                 <a-menu-item>
                   <DeleteRecordConfirm :record-id="record.id" :record-name="record.activityName"
-                                       @delete-record-by-id="emit('deleteRecordById', record.id)"/>
+                                       @delete-record-by-id="deleteRecordById(record.id)"/>
+                </a-menu-item>
+                <a-menu-item>
+                  <a-button class="text-orange-300" type="link" @click="emit('openAssignGoodsModal',record)">分配商品</a-button>
                 </a-menu-item>
               </a-menu>
             </template>

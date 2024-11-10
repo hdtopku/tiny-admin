@@ -14,6 +14,10 @@ const {loading, placeholder, showStatus} = defineProps({
     type: Boolean,
     default: true
   },
+  showAdd: {
+    type: Boolean,
+    default: true
+  },
   searchClass: {
     type: String,
     default: 'bg-gray-100 dark:bg-black'
@@ -41,7 +45,7 @@ watch(() => [keyword.value, status.value], debounceQuery)
   <a-affix :offset-top="top">
     <div :class="searchClass" class="flex mb-3">
       <div class="flex items-center sm:gap-4 gap-1 mx-auto sm:w-[80%] w-[95%]">
-        <a-button :loading="loading" type="primary" @click="handleAdd">{{
+        <a-button v-if="showAdd" :loading="loading" type="primary" @click="handleAdd">{{
             $t('新增')
           }}
         </a-button>
