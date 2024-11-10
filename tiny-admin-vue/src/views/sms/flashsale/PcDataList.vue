@@ -12,7 +12,7 @@ const {dataSource, pagination, loading, queryList=()=>{}, changeRecordStatus=()=
   changeRecordStatus: Function,
   deleteRecordById: Function,
 })
-const emit = defineEmits(['openModal', ])
+const emit = defineEmits(['openModal', 'openAssignGoodsModal'])
 const handleTableChange = (pagination: PaginationProps) => {
   queryList({
     pageNum: pagination.current,
