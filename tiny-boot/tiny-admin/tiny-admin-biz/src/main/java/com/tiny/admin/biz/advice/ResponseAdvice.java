@@ -108,9 +108,6 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
                     responseDataParseAndRemove(element, language);
                 }
             }
-        } else {
-            // 非容器节点
-            log.info("非容器节点，不需要任何处理");
         }
     }
 }

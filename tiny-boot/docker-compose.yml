@@ -7,7 +7,6 @@ services:
       dockerfile: Dockerfile
     container_name: tiny_admin
     volumes:
-      - .:/usr/src/app/temp  # map the current directory to the container's /usr/src/app directory
       - ~/.m2/repository:/root/.m2/repository
     working_dir: /usr/src/app
     command: java -jar tiny-admin-starter.jar

@@ -2,3 +2,5 @@
 */target
 **/target
 /tiny-admin/tiny-admin-biz/src/main/resources/firebase.json
+/tiny-admin/tiny-admin-starter/src/main/resources/.env.dev
+/tiny-admin/tiny-admin-starter/src/main/resources/.env.prod

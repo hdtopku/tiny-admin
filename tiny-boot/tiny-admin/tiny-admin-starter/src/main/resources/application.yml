@@ -1,13 +1,11 @@
 spring:
+  config:
+    import: classpath:.env.dev[.properties]
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
   server:
     port: 8080
-#  profiles:
-#    active: dev
-  config:
-    import: classpath:.env.local[.properties]
   cache:
     type: redis
 
@@ -48,6 +46,7 @@ spring:
 mybatis-plus:
   configuration:
     cache-enabled: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
 
 constant:
   redis-users-token-map-key: tiny-admin-users-token-map

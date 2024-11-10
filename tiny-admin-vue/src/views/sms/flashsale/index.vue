@@ -1,6 +1,6 @@
 <template>
   <PageStructure>
-    <template #content="dataAndFunc">
+    <template #content="{dataAndFunc}">
       <PcDataList class="hidden sm:block" v-bind="dataAndFunc" @open-modal="openModal"/>
       <MobileDataList class="block sm:hidden" v-bind="dataAndFunc" @open-edit-modal="openEditModal"
                       @open-modal="openModal"/>
@@ -13,7 +13,7 @@
 import DataModal from '@/views/sms/flashsale/DataModal.vue'
 import PcDataList from "./PcDataList.vue"
 import MobileDataList from "./MobileDataList.vue"
-import {deleteById, saveOrUpdate, execQuery} from "@/api/sms/flashSale.ts"
+import {deleteById, execQuery, saveOrUpdate} from "@/api/sms/flashSale.ts"
 import AddGoodsModal from "@/views/sms/flashsale/AddGoodsModal.vue";
 
 const modalRef = ref<any>()

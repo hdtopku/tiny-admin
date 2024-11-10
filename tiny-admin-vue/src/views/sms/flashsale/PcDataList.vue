@@ -9,7 +9,6 @@ const {dataSource, pagination, loading} = defineProps({
   pagination: Pagination,
   loading: Boolean,
 })
-
 const emit = defineEmits(['openModal', 'queryList', 'changeRecordStatus', 'deleteRecordById'])
 const handleTableChange = (pagination: PaginationProps) => {
   emit('queryList', {
