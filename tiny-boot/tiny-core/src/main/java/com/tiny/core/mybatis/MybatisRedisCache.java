@@ -45,8 +45,8 @@ public class MybatisRedisCache implements Cache {
         }
         try {
             if (value != null) {
-                log.info("key>>>>>>>>>>>>>>>>>>>>>>> {} ", key);
-                log.info("value>>>>>>>>>>>>>>>>>>>>>>> {}", value);
+//                log.info("key>>>>>>>>>>>>>>>>>>>>>>> {} ", key);
+//                log.info("value>>>>>>>>>>>>>>>>>>>>>>> {}", value);
                 redisTemplate.opsForValue().set(String.valueOf(key), value);
             }
         }catch (Exception e) {

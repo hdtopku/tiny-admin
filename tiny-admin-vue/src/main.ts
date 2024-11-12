@@ -6,7 +6,7 @@ import {createPinia} from 'pinia'
 import piniaPluginPersistedState from "pinia-plugin-persistedstate";
 import mitt from "mitt";
 import permission from "@/directive/permission.ts"
-import websocketClient from "@/utils/websocket.ts";
+// import websocketClient from "@/utils/websocket.ts";
 import 'virtual:windi.css'
 import i18n from "@/utils/i18n.ts";
 import Antd from 'ant-design-vue';
@@ -21,4 +21,4 @@ app.directive('permission', {
         permission(el, binding)
     }
 })
-websocketClient.activate()
+// websocketClient.activate()

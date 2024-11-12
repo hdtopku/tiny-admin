@@ -6,7 +6,7 @@ import {message} from 'ant-design-vue'
 import {useI18nStore, useUserStore} from '@/store'
 
 const http = axios.create({
-    timeout: 30000,
+    timeout: 6000,
     baseURL: import.meta.env.VITE_APP_API_URL,
     headers: {
         'Content-Type': 'application/json',

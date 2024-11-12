@@ -9,10 +9,21 @@ import WindiCSS from 'vite-plugin-windicss'
 // https://vitejs.dev/config/
 export default defineConfig(({command}) => {
     return {
+        base: '/',
+        build: {
+            outDir: 'dist',  // 确保输出路径是正确的
+            rollupOptions: {
+                input: 'index.html',  // 确保入口文件正确
+            },
+            esbuild: {
+                minify: false, // 禁用压缩，看是否影响输出
+            }
+        },
         server: {
             host: '0.0.0.0',
             port: 3000,
             open: true,
+            cors: true,
             proxy: {
                 '/api': {
                     target: 'http://localhost:8080/',

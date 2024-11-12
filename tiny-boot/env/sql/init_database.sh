@@ -61,6 +61,7 @@ if database_exists "tiny_admin"; then
   echo "Database 'tiny_admin' already exists. Skipping creation and import tables. If you want to recreate the database, please drop the existing database 'tiny_admin' first."
 else
   echo "Database 'tiny_admin' does not exist, creating it..."
+  sleep 30
   # Create the database
   docker exec -i "$CONTAINER_NAME" mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "CREATE DATABASE tiny_admin;"
 

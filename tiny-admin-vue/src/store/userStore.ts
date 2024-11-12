@@ -3,7 +3,6 @@ import {getSelfInfo, postLogin} from "@/api/system/auth.ts";
 import {setToken} from "@/utils/token.ts";
 import {ItemType} from 'ant-design-vue';
 import {GetIcon} from "@/components/CustomIcon.ts";
-import websocketClient from "@/utils/websocket.ts";
 
 const modules = import.meta.glob('../views/**/*.vue')
 
@@ -16,7 +15,7 @@ export type UserType = {
     menuTree?: any[],
     publicMenuList?: any[]
 }
-const setMyselfOnlineUrl = '/app/setMyselfOnline'
+// const setMyselfOnlineUrl = '/app/setMyselfOnline'
 
 export const userStore = defineStore('user', () => {
     const routeList = ref<any>([]);
@@ -25,10 +24,10 @@ export const userStore = defineStore('user', () => {
         return postLogin(data).then((res: any) => {
             setToken(res.token)
             userInfo.value = res.userInfo
-            websocketClient.publish({
-                destination: setMyselfOnlineUrl,
-                body: userInfo.value.username
-            })
+            // websocketClient.publish({
+            //     destination: setMyselfOnlineUrl,
+            //     body: userInfo.value.username
+            // })
         })
     }
     const refreshUserInfo = async () => {

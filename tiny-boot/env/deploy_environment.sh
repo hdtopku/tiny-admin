@@ -1,13 +1,17 @@
 #!/bin/bash
 
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
+cd "$SCRIPT_DIR" || { echo "Failed to change directory to $SCRIPT_DIR"; exit 1; }
+
 # Define paths and directories
 NGINX_TARGET_DIR="$HOME/mydata/nginx/conf"               # Directory for nginx configuration
-NGINX_SOURCE_FILE="nginx.conf"                            # Source nginx.conf file path
-ENV_FILE=".env"                                           # .env file path
-EXAMPLE_ENV_FILE=".env.example"                           # .env.example file path
-SQL_FILE="sql/tiny_admin.sql"                             # Path to the SQL file to import
+NGINX_SOURCE_FILE="${SCRIPT_DIR}/nginx.conf"                            # Source nginx.conf file path
+ENV_FILE="${SCRIPT_DIR}/.env"                                           # .env file path
+EXAMPLE_ENV_FILE="${SCRIPT_DIR}/.env.example"                           # .env.example file path
+SQL_FILE="${SCRIPT_DIR}/sql/tiny_admin.sql"                             # Path to the SQL file to import
 SQL_TARGET_DIR="$HOME/mydata/mysql/sql"                   # Directory to copy SQL file
-SQL_TARGET_FILE="$SQL_TARGET_DIR/tiny_admin.sql"          # Target SQL file path
+SQL_CONF_DIR="$HOME/mydata/mysql/conf"                 # Directory to copy MySQL configuration file
+REDIS_TARGET_DIR="$HOME/mydata/redis/data"                   # Directory to copy Redis configuration file
 
 # Function to create a directory if it doesn't exist
 create_directory() {
@@ -36,14 +40,16 @@ copy_file() {
 }
 
 # Create directories if they don't exist
-create_directory "$SQL_TARGET_DIR"
 create_directory "$NGINX_TARGET_DIR"
+create_directory "$SQL_TARGET_DIR"
+create_directory "$SQL_CONF_DIR"
+create_directory "$REDIS_TARGET_DIR"
+
 
 # Copy SQL file to the target directory
-copy_file "$SQL_FILE" "$SQL_TARGET_FILE"
-
+cp -f "$SQL_FILE" "$SQL_TARGET_DIR"
 # Copy nginx configuration file to the target directory
-copy_file "$NGINX_SOURCE_FILE" "$NGINX_TARGET_DIR"
+cp -f "$NGINX_SOURCE_FILE" "$NGINX_TARGET_DIR"
 
 # Check if .env file exists, if not, copy .env.example
 if [ ! -f "$ENV_FILE" ]; then
@@ -60,17 +66,13 @@ set -a  # Automatically export all variables
 source "$ENV_FILE"  # Load variables from .env
 set +a  # Stop exporting variables
 
-# Check if Docker network exists, if not create it
-echo "Creating Docker network if it doesn't exist..."
-docker network inspect my_network >/dev/null 2>&1 || docker network create my_network
-
 # Start docker-compose
 echo "Starting docker-compose.yml..."
-docker-compose -f docker-compose-env.yml up -d || { echo "Failed to start Docker containers"; exit 1; }
+docker-compose -f "${SCRIPT_DIR}/docker-compose-env.yml" up -d || { echo "Failed to start Docker containers"; exit 1; }
 
+docker pull openjdk:22-ea-16-jdk-slim
 # Import SQL file into MySQL container
 echo "Importing SQL file into MySQL container..."
-sleep 15  # Wait for MySQL container to start
-sh sql/init_database.sh || { echo "Failed to import SQL file"; exit 1; }
-
+sh "${SCRIPT_DIR}/sql/init_database.sh" || { echo "Failed to import SQL file"; exit 1; }
+docker restart nginx
 echo "Environment setup completed successfully."

@@ -10,26 +10,27 @@ spring:
     type: redis
 
   redisson:
-    #  单机模式：https://developer.aliyun.com/article/1430674
-    host: ${REDIS_HOST}
-    port: 6379
-    # 密码
-    password: ${REDIS_PASSWORD}
-    redis:
-      time-to-live: 3600s
-    #如果指定了key前缀就用我们指定的前缀，如果没有就默认使用缓存的名字（value）作为前缀，最好不指定前缀
-      key-prefix: tiny-admin
+    singleServerConfig:
+      keyPrefix: tiny_admin
+
   data:
     redis:
       host: ${REDIS_HOST}
       password: ${REDIS_PASSWORD}
       database: 0
+      timeout: 10000
       lettuce:
         pool:
-          max-active: 8
-          max-idle: 8
-          min-idle: 0
-          max-wait: -1ms
+          max-active: 10
+          max-idle: 5
+          min-idle: 1
+          max-wait: 5000
+            # Enable reconnect settings for Lettuce
+        cluster:
+          max-redirects: 3           # Number of times Lettuce will try to reconnect to other nodes
+          reconnect-timeout: 10000   # How long to wait for the cluster reconnect before giving up
+        shutdown-timeout: 10000
+
   datasource:
     url: jdbc:mysql://${MYSQL_URL}?allowPublicKeyRetrieval=true&useSSL=false&useUnicode=true&characterEncoding=UTF-8
     username: ${MYSQL_USERNAME}

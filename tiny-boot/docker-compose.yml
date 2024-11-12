@@ -11,7 +11,7 @@ services:
     working_dir: /usr/src/app
     command: java -jar tiny-admin-starter.jar
     ports:
-      - "8080:8080"
+      - "9000:8080"
     networks:
       - my_network
     environment:
