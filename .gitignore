@@ -27,3 +27,4 @@ dist-ssr
 *.iml
 /tiny-boot/env/.env
 **/.idea
+/tiny-boot/tiny-admin/tiny-admin-starter/src/main/resources/firebase.json

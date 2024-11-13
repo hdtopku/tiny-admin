@@ -124,7 +124,7 @@ Deploy the backend Springboot service on docker containers.
 > sh ./tiny-boot/deploy.sh
 ```
 
-Compile the frontend nodejs and pnpm in docker containers.
+Compile the frontend width nodejs and pnpm in docker containers.
 ```bash
 > sh ./tiny-boot/build.sh
 ```
