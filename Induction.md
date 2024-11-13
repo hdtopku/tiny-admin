@@ -104,6 +104,7 @@ First, you need to set your own password for the MySQL database and redis cache.
 > cp ./tiny-boot/env/.env.example ./tiny-boot/env/.env
 > cp ./tiny-boot/tiny-admin/tiny-admin-starter/src/main/resources/.env.example ./tiny-boot/tiny-admin/tiny-admin-starter/src/main/resources/.env.prod
 > cp ./tiny-boot/tiny-admin/tiny-admin-starter/src/main/resources/.env.example ./tiny-boot/tiny-admin/tiny-admin-starter/src/main/resources/.env.dev
+> cp ./tiny-boot/tiny-admin/tiny-admin-starter/src/main/resources/firebase-example.json ./tiny-boot/tiny-admin/tiny-admin-starter/src/main/resources/firebase.json
 ```
 
 Change your mysql and redis password in the.env, .env.prod and.env.dev file.
