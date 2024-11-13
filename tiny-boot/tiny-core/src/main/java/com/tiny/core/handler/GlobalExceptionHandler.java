@@ -76,7 +76,7 @@ public class GlobalExceptionHandler implements ErrorController {
             if (message.contains("Duplicate entry")) {
                 return Result.failure(message.split(" ")[2] + "已被占用，请修改！");
             }
-        } else if (e instanceof NoResourceFoundException) {
+        } else if (e instanceof org.springframework.web.servlet.resource.NoResourceFoundException) {
             return Result.failure(e.getMessage());
         }
         log.error("服务器内部异常", e);

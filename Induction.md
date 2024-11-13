@@ -96,12 +96,36 @@ Press Enter to open https://github.com/login/device in your browser...
 > git clone git@github.com:hdtopku/tiny-admin.git
 ```
 
-## Step 3: Deploy Tiny Admin
+## Step 3: Set your MySQL and Redis password
 Because we have already installed docker and docker-compose, we can deploy our backend service and frontend on docker containers.
-First, you need to set your own password for the mysql database and redis cache.
+First, you need to set your own password for the MySQL database and redis cache.
 ```bash
 > cd /root/tiny-admin
 > cp ./tiny-boot/env/.env.example ./tiny-boot/env/.env
 > cp ./tiny-boot/tiny-admin/tiny-admin-starter/src/main/resources/.env.example ./tiny-boot/tiny-admin/tiny-admin-starter/src/main/resources/.env.prod
 > cp ./tiny-boot/tiny-admin/tiny-admin-starter/src/main/resources/.env.example ./tiny-boot/tiny-admin/tiny-admin-starter/src/main/resources/.env.dev
 ```
+
+Change your mysql and redis password in the.env, .env.prod and.env.dev file.
+```bash
+> vim ./tiny-boot/env/.env
+> vim ./tiny-boot/tiny-admin/tiny-admin-starter/src/main/resources/.env.prod
+> vim ./tiny-boot/tiny-admin/tiny-admin-starter/src/main/resources/.env.dev
+```
+
+## Step 4: Deploy the backend and the frontend services on docker containers
+Deploy mysql, redis and nginx services on docker containers.
+```bash
+> sh ./tiny-boot/env/deploy_environment.sh
+```
+
+Deploy the backend Springboot service on docker containers.
+```bash
+> sh ./tiny-boot/deploy.sh
+```
+
+Compile the frontend nodejs and pnpm in docker containers.
+```bash
+> sh ./tiny-boot/build.sh
+```
+
