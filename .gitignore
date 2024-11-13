@@ -25,3 +25,5 @@ dist-ssr
 /auto-imports.d.ts
 /components.d.ts
 *.iml
+/tiny-boot/env/.env
+**/.idea
