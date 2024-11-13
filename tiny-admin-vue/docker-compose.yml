@@ -1,8 +1,10 @@
 version: '3'
 services:
   app:
-    container_name: tiny_admin_vue  # Correct key
-    build: .
+    container_name: tiny_admin_vue
+    build:
+      context: .
+      dockerfile: Dockerfile
     volumes:
       - ~/mydata/nginx/html/tiny_admin:/app/dist
     command: ["pnpm", "build"]
