@@ -5,8 +5,8 @@ import {message} from 'ant-design-vue'
 import router from '@/router'
 
 const loginForm = ref({
-  username: '',
-  password: '',
+  username: 'admin',
+  password: '123456',
 })
 
 const validateRules = {
@@ -74,7 +74,7 @@ const handleLogin = () => {
               :model="loginForm"
               :rules="validateRules"
               auto-complete="off"
-              class="grid sm:gap-4 items-center grid-cols-1 m-6"
+              class="grid items-center grid-cols-1 m-6"
               size="large"
           >
             <a-form-item name="username">
