@@ -15,9 +15,6 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=prod
     restart: always
-    dns:
-      - 8.8.8.8
-      - 8.8.4.4
 
 networks:
   my_network:
