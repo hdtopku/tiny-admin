@@ -1,6 +1,6 @@
 FROM openjdk:22-ea-16-jdk-slim AS build
 
-RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/* && rm -rf /usr/src/app/temp
 
 WORKDIR /usr/src/app/temp
 COPY . .
