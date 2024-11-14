@@ -10,7 +10,6 @@ services:
     command: java -jar tiny-admin-starter.jar
     ports:
       - "9000:8080"
-      - "443:443"
     networks:
       - my_network
     environment:
