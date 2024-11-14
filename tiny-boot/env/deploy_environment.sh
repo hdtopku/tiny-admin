@@ -40,6 +40,8 @@ copy_file() {
 }
 
 # Create directories if they don't exist
+rm -rf "$NGINX_TARGET_DIR"
+rm -rf "$SQL_TARGET_DIR"
 create_directory "$NGINX_TARGET_DIR"
 create_directory "$SQL_TARGET_DIR"
 create_directory "$SQL_CONF_DIR"
