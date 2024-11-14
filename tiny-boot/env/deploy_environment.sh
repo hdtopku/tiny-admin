@@ -70,6 +70,7 @@ docker-compose -f "${SCRIPT_DIR}/docker-compose-env.yml" up -d || { echo "Failed
 # Pull OpenJDK image and import SQL into MySQL container
 docker pull openjdk:22-ea-16-jdk-slim
 echo "Importing SQL file into MySQL container..."
+sleep 20
 sh "${SCRIPT_DIR}/sql/init_database.sh" || { echo "Failed to import SQL file"; exit 1; }
 
 # Restart nginx
