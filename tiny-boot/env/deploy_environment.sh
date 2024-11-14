@@ -67,6 +67,9 @@ set +a  # Stop exporting variables
 echo "Starting Docker containers with docker-compose..."
 docker-compose -f "${SCRIPT_DIR}/docker-compose-env.yml" up -d || { echo "Failed to start Docker containers"; exit 1; }
 
+# Restart nginx
+docker restart nginx
+
 # Pull OpenJDK image and import SQL into MySQL container
 docker pull openjdk:22-ea-16-jdk-slim
 
@@ -75,6 +78,4 @@ sleep 20
 echo "Importing SQL file into MySQL container..."
 sh "${SCRIPT_DIR}/sql/init_database.sh" || { echo "Failed to import SQL file"; exit 1; }
 
-# Restart nginx
-docker restart nginx
 echo "Environment setup completed successfully."
