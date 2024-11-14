@@ -67,7 +67,7 @@ set +a  # Stop exporting variables
 echo "Starting Docker containers with docker-compose..."
 docker-compose -f "${SCRIPT_DIR}/docker-compose-env.yml" up -d || { echo "Failed to start Docker containers"; exit 1; }
 
-# Restart nginx
+# Restart nginx container to apply changes to configuration
 docker restart nginx
 
 # Pull OpenJDK image and import SQL into MySQL container
