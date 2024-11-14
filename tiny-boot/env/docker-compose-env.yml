@@ -48,6 +48,7 @@ services:
       - ~/mydata/nginx/conf/nginx.conf:/etc/nginx/nginx.conf # Nginx configuration
       - ~/mydata/nginx/html:/usr/share/nginx/html       # Static files
       - ~/mydata/nginx/logs:/var/log/nginx              # Log files
+      - /.acme.sh:/.acme.sh # Let's Encrypt SSL certificate
     restart: always
     networks:
       - my_network
