@@ -1,4 +1,3 @@
-version: '3.8'  # Define the Docker Compose version
 
 services:
   # MySQL service configuration
