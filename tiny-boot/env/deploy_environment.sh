@@ -37,7 +37,7 @@ copy_file() {
 
 # Clean up and create necessary directories
 echo "Cleaning up and creating directories..."
-rm -rf "$NGINX_TARGET_DIR" "$SQL_TARGET_DIR"
+rm -rf "$SQL_TARGET_DIR"
 create_directory "$NGINX_TARGET_DIR"
 create_directory "$SQL_TARGET_DIR"
 create_directory "$SQL_CONF_DIR"
