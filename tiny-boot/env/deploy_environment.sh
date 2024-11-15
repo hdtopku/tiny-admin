@@ -45,7 +45,7 @@ create_directory "$REDIS_TARGET_DIR"
 
 # Copy necessary files
 copy_file "$SQL_FILE" "$SQL_TARGET_DIR"
-copy_file "$NGINX_SOURCE_FILE" "$NGINX_TARGET_DIR"
+copy_file "$NGINX_SOURCE_FILE" "$NGINX_TARGET_DIR/nginx.conf"
 
 # Check and create .env file if it doesn't exist
 if [ ! -f "$ENV_FILE" ]; then
