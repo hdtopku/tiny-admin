@@ -7,7 +7,7 @@ import {useI18nStore, useUserStore} from '@/store'
 
 const http = axios.create({
     timeout: 6000,
-    baseURL: import.meta.env.VITE_APP_API_URL,
+    baseURL: `${window.location.protocol}//${import.meta.env.VITE_APP_API_URL}`,
     headers: {
         'Content-Type': 'application/json',
     },
