@@ -28,7 +28,7 @@ copy_file() {
   local target="$2"
   if [ -f "$source" ]; then
     echo "Copying '$source' to '$target'..."
-    cp -f "$source" "$target" || { echo "Failed to copy $source to $target"; exit 1; }
+    cp "$source" "$target" || { echo "Failed to copy $source to $target"; exit 1; }
   else
     echo "Source file '$source' not found, cannot copy."
     exit 1
