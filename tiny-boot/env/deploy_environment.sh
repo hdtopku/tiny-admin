@@ -23,17 +23,23 @@ create_directory() {
 }
 
 # Function to copy a file if it exists
+# Function to copy a file if it exists, but prevent overwriting
 copy_file() {
   local source="$1"
   local target="$2"
   if [ -f "$source" ]; then
-    echo "Copying '$source' to '$target'..."
-    cp "$source" "$target" || { echo "Failed to copy $source to $target"; exit 1; }
+    if [ -f "$target" ]; then
+      echo "Target file '$target' already exists, skipping copy."
+    else
+      echo "Copying '$source' to '$target'..."
+      cp -f "$source" "$target" || { echo "Failed to copy $source to $target"; exit 1; }
+    fi
   else
     echo "Source file '$source' not found, cannot copy."
     exit 1
   fi
 }
+
 
 # Clean up and create necessary directories
 echo "Cleaning up and creating directories..."
