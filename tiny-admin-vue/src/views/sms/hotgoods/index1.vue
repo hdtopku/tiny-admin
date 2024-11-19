@@ -10,12 +10,12 @@
                     @query-list="queryList" @change-record-status="changeRecordStatus"
                     @delete-record-by-id="deleteRecordById"
                     @open-modal="openModal" @open-edit-modal="openEditModal"/>
-    <DataModal ref="modalRef" @query-list="queryList"/>
+    <AssignProductModal ref="modalRef" @query-list="queryList"/>
     <EditNewGoodsModal ref="editModalRef" @query-list="queryList"/>
   </div>
 </template>
 <script lang="ts" setup>
-import DataModal from '@/views/sms/newgoods/DataModal.vue'
+import AssignProductModal from '@/views/sms/newgoods/AssignProductModal.vue'
 import {getAllHotGoodsIds, assignGoods,} from '@/api/sms/hotGoods.ts'
 import Search from "@/components/page/Search.vue";
 import PcDataList from "@/views/sms/newgoods/PcDataList.vue"
