@@ -36,12 +36,12 @@ const queryList = () => {
 queryList()
 const columns = [
   {
-    title: t('待翻译文本'),
+    title: 'Raw Content',
     dataIndex: 'rawContent',
     width: 100,
   },
   {
-    title: t('已翻译'),
+    title: 'Translation',
     dataIndex: 'translationList',
     width: 200,
   },
@@ -58,27 +58,27 @@ const rules = {
   rawContent: [
     {
       required: true,
-      message: t('请输入待翻译文本'),
+      message: 'Please enter the raw content',
       trigger: ['blur', 'change'],
     },
   ],
 }
 const handleSubmit = () => {
   saveOrUpdateRawContent({rawContent: form.value.rawContent}).then(() => {
-    message.success(t('操作成功'))
+    message.success('Operation successful')
     queryList()
     open.value = false
   })
 }
 const handleDeleteRawContent = (id: string) => {
   deleteRawContent(id).then(() => {
-    message.success(t('删除成功'))
+    message.success('Deleted successfully')
     queryList()
   })
 }
 const handleDeleteTranslation = (id: string) => {
   deleteTranslation(id).then(() => {
-    message.success(t('删除成功'))
+    message.success('Deleted successfully')
     queryList()
   })
 }
@@ -107,12 +107,12 @@ const handleAdd = () => {
             >
               <template #icon>
                 <a-popconfirm
-                    :cancel-text="$t('否')"
-                    :ok-text="$t('是')"
+                    :cancel-text="否"
+                    :ok-text="是"
                     @confirm="handleDeleteRawContent(record.id)"
                 >
                   <template #title>
-                    <div>{{ $t('是否删除该文本？') }}</div>
+                    <div>Are you sure you want to delete this content?</div>
                     <a-tag class="my-2" color="red"
                     >{{ record.rawContent }}
                     </a-tag>
@@ -164,12 +164,12 @@ const handleAdd = () => {
               </a-typography-paragraph>
 
               <a-popconfirm
-                  :cancel-text="$t('否')"
-                  :ok-text="$t('是')"
+                  :cancel-text="否"
+                  :ok-text="是"
                   @confirm="handleDeleteTranslation(item.id)"
               >
                 <template #title>
-                  <div>{{ $t('是否删除该翻译？') }}</div>
+                  <div>Are you sure you want to delete this translation?</div>
                   <a-tag>{{ item.languageCode }}</a-tag>
                   <a-tag class="my-2" color="red"
                   >{{ item.translatedContent }}
@@ -221,16 +221,16 @@ const handleAdd = () => {
       </template>
     </a-table>
     <a-modal :open="open">
-      <template #title>{{ $t('新增待翻译文本') }}</template>
+      <template #title>New Raw Content</template>
       <a-form :model="form" :rules="rules">
-        <a-form-item :label="$t('待翻译文本')" name="rawContent">
+        <a-form-item :label="'Raw Content'" name="rawContent">
           <a-textarea v-model:value="form.rawContent" :rows="4" allow-clear/>
         </a-form-item>
       </a-form>
       <template #footer>
-        <a-button @click="open = false">{{ $t('取消') }}</a-button>
+        <a-button @click="open = false">Cancel</a-button>
         <a-button type="primary" @click="handleSubmit">
-          {{ $t('提交') }}
+          Submit
         </a-button>
       </template>
     </a-modal>

@@ -28,7 +28,7 @@ const handleLogin = () => {
         .login(loginForm.value)
         .then(() => {
           router.push('/')
-          message.success('登录成功！')
+          message.success('Login successful!')
         })
         .catch(() => {
           loginError.value = true
@@ -80,7 +80,7 @@ const handleLogin = () => {
             <a-form-item name="username">
               <a-input
                   v-model:value="loginForm.username"
-                  :placeholder="$t('用户名')"
+                  placeholder="Username"
                   allow-clear autocomplete>
                 <template #prefix>
                   <UserOutlined/>
@@ -90,7 +90,7 @@ const handleLogin = () => {
             <a-form-item name="password">
               <a-input-password
                   v-model:value="loginForm.password"
-                  :placeholder="$t('密码')"
+                  placeholder="Password"
                   allow-clear
                   autocomplete="current-password"
                   type="password"

@@ -5,6 +5,7 @@
       :ok-text="'Submit'"
       :title="'Personal Information'"
       @ok="handleOk"
+      width="800px"
   >
     <div class="text-center">
       <a-upload
@@ -28,7 +29,7 @@
         </div>
       </a-upload>
     </div>
-    <a-form :label-col="{ style: { width: '60px' } }" :model="personalInfo">
+    <a-form :label-col="{ style: { width: '100px' } }" :model="personalInfo">
       <a-form-item :label="'Username'" name="username">
         <a-input v-model:value="personalInfo.username" allow-clear></a-input>
       </a-form-item>
@@ -56,9 +57,13 @@ import useGlobal from '@/hooks/useGlobal.ts'
 const open = ref<boolean>(false)
 
 const {$bus} = useGlobal()
-$bus.on('show-my-info-modal', () => {
+let personalInfo
+const openModal=() => {
   open.value = true
-})
+  const {menuTree, publicMenuList, ...myInfo} = useUserStore().userInfo
+  personalInfo = myInfo
+}
+$bus.on('show-my-info-modal', openModal)
 const handleOk = () => {
   updateSelfInfo(personalInfo).then(() => {
     message.success('Saved successfully')
@@ -96,5 +101,4 @@ const beforeUpload = (file: UploadProps['fileList'][number]) => {
   }
   return isJpgOrPng && isLt2M
 }
-const {menuTree, publicMenuList, ...personalInfo} = useUserStore().userInfo
 </script>

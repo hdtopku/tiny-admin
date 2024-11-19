@@ -75,16 +75,10 @@
             <template #overlay>
               <a-menu>
                 <a-menu-item>
-                  <a-button size="small" type="link" @click="showMyInfo">{{
-                      $t('个人中心')
-                    }}
-                  </a-button>
+                  <a-button size="small" type="link" @click="showMyInfo">Personal Center</a-button>
                 </a-menu-item>
                 <a-menu-item>
-                  <a-button danger size="small" type="link" @click="logout">{{
-                      $t('退出登录')
-                    }}
-                  </a-button>
+                  <a-button danger size="small" type="link" @click="logout">Logout</a-button>
                 </a-menu-item>
               </a-menu>
             </template>
@@ -123,7 +117,6 @@
   </a-layout>
 </template>
 <script lang="ts" setup>
-import {t} from '@/utils/i18n.ts'
 import {ref} from 'vue'
 import {storeToRefs} from 'pinia'
 import {useMenuStore, useUserStore} from '@/store'
@@ -188,7 +181,7 @@ const closeMask = () => {
 }
 const logout = () => {
   useUserStore().logout()
-  message.success(t('已退出登录！'))
+  message.success('Successfully logged out!')
 }
 const showMyInfo = () => {
   $bus.emit('show-my-info-modal')
