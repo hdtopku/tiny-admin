@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
-import com.tiny.admin.biz.pms.entity.PmsGoods;
+import com.tiny.admin.biz.pms.entity.PmsProduct;
 import com.tiny.admin.biz.sms.dto.SmsNewGoodsDto;
 import com.tiny.admin.biz.sms.entity.SmsNewGoods;
 import com.tiny.admin.biz.sms.mapper.SmsNewGoodsMapper;
@@ -56,16 +56,16 @@ public class SmsNewGoodsController {
     wrapper
         .selectAll(SmsNewGoods.class)
         .select(
-            PmsGoods::getGoodsName,
-            PmsGoods::getAlbumPics,
-            PmsGoods::getMarketPrice,
-            PmsGoods::getPromotionPrice)
-        .leftJoin(PmsGoods.class, PmsGoods::getId, SmsNewGoods::getGoodsId);
+            PmsProduct::getProductName,
+            PmsProduct::getAlbum,
+            PmsProduct::getMarketPrice,
+            PmsProduct::getSalePrice)
+        .leftJoin(PmsProduct.class, PmsProduct::getId, SmsNewGoods::getGoodsId);
     if (StringUtils.isNotBlank(param.getKeyword())) {
       wrapper.like(SmsNewGoods::getRemark, param.getKeyword());
-      wrapper.or().like(PmsGoods::getGoodsName, param.getKeyword());
+      wrapper.or().like(PmsProduct::getProductName, param.getKeyword());
     } else {
-      wrapper.eq(SmsNewGoods::getStatus, param.getStatus());
+      wrapper.eq(SmsNewGoods::getEnabled, param.getEnabled());
     }
     IPage<SmsNewGoodsDto> iPage =
         smsNewGoodsMapper.selectJoinPage(

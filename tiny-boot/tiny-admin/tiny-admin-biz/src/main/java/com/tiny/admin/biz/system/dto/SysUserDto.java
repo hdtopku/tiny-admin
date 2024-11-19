@@ -18,7 +18,7 @@ public class SysUserDto {
     private String avatar;
     private String email;
     private String phone;
-    private Boolean status;
+    private Boolean enabled;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
     private Set<String> roleNames = new HashSet<>();

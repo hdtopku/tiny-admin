@@ -10,8 +10,8 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class SmsNewGoodsDto extends SmsNewGoods {
-    private String goodsName;
-    private String albumPics;
+    private String productName;
+    private String album;
     private BigDecimal marketPrice;
-    private BigDecimal promotionPrice;
+    private BigDecimal salePrice;
 }

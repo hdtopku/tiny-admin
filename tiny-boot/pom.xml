@@ -119,26 +119,4 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <!--aliyun maven repository-->
-<!--    <repositories>-->
-<!--        <repository>-->
-<!--            <id>aliyun-central</id>-->
-<!--            <url>https://maven.aliyun.com/repository/public</url>-->
-<!--            <releases>-->
-<!--                <enabled>true</enabled>-->
-<!--                <updatePolicy>always</updatePolicy>-->
-<!--            </releases>-->
-<!--            <snapshots>-->
-<!--                <enabled>false</enabled>-->
-<!--            </snapshots>-->
-<!--        </repository>-->
-<!--    </repositories>-->
-<!--    <pluginRepositories>-->
-<!--        <pluginRepository>-->
-<!--            <id>aliyun-plugins</id>-->
-<!--            <url>https://maven.aliyun.com/repository/public</url>-->
-<!--        </pluginRepository>-->
-<!--    </pluginRepositories>-->
-
 </project>

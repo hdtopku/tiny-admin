@@ -1,33 +1,35 @@
 package com.tiny.admin.biz.sms.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.io.Serial;
+import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
 
 /**
  * <p>
- * 用户角色关系表
+ * Flash Sale - Product Relationship Table
  * </p>
  *
  * @author lxh
- * @since 2024-10-01
+ * @since 2024-11-19
  */
 @Getter
 @Setter
 @TableName("sms_flash_goods_rel")
-@Schema(name = "SmsFlashGoodsRel", description = "用户角色关系表")
+@Schema(name = "SmsFlashGoodsRel", description = "Flash Sale - Product Relationship Table")
 public class SmsFlashGoodsRel implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
-    @Schema(description = "主键ID")
+    @Schema(description = "Primary Key ID")
     private String id;
 
-    @Schema(description = "秒杀ID")
+    @Schema(description = "Flash Sale ID")
     private String flashId;
 
-    @Schema(description = "商品ID")
+    @Schema(description = "Product ID")
     private String goodsId;
 }

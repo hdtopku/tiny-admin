@@ -3,19 +3,15 @@
       v-model:open="userInfoModalVisible"
       :title="
       isUpdate
-        ? $t('编辑用户_{username}', { username: username })
-        : $t('新增用户')
+        ? 'Edit User ' + username
+        : 'Add New User'
     "
       @ok="handleSubmit"
   >
     <template #footer>
-      <a-button @click="userInfoModalVisible = false">{{
-          $t('取消')
-        }}
-      </a-button>
-      <a-button :loading="loading" type="primary" @click="handleSubmit">{{
-          isUpdate ? $t('提交') : $t('新增')
-        }}
+      <a-button @click="userInfoModalVisible = false">Cancel</a-button>
+      <a-button :loading="loading" type="primary" @click="handleSubmit">
+        {{ isUpdate ? 'Submit' : 'Add' }}
       </a-button>
     </template>
     <a-form
@@ -34,11 +30,9 @@
       </a-form-item>
       <a-form-item
           :help="
-          $t(
-            '用户名必须唯一，长度在 2 到 20 个字符，只能包含字母、数字、下划线，且不能以数字、下划线开头，不能以下划线结尾'
-          )
+            'Username must be unique, length between 2 and 20 characters, can only contain letters, numbers, and underscores, and cannot start with a number or underscore, or end with an underscore'
         "
-          :label="$t('用户名')"
+          :label="'Username'"
           name="username"
       >
         <a-input
@@ -47,32 +41,32 @@
             autocomplete="off"
         />
       </a-form-item>
-      <a-form-item :label="$t('用户昵称')" name="nickname">
+      <a-form-item :label="'Nickname'" name="nickname">
         <a-input
             v-model:value="curUserInfo.nickname"
             allow-clear
             autocomplete="off"
         />
       </a-form-item>
-      <a-form-item :label="$t('分配角色')">
+      <a-form-item :label="'Assign Role'">
         <a-select
             key="id"
             v-model:value="curUserInfo.roleNames"
             :options="filteredOptions"
-            :placeholder="$t('请选择角色')"
+            :placeholder="'Please select role'"
             allow-clear
             mode="multiple"
         >
         </a-select>
       </a-form-item>
-      <a-form-item :label="$t('邮箱')">
+      <a-form-item :label="'Email'">
         <a-input
             v-model:value="curUserInfo.email"
             allow-clear
             autocomplete="off"
         />
       </a-form-item>
-      <a-form-item :label="$t('手机号')">
+      <a-form-item :label="'Phone Number'">
         <a-input
             v-model:value="curUserInfo.phone"
             allow-clear
@@ -82,12 +76,12 @@
     </a-form>
   </a-modal>
 </template>
+
 <script lang="ts" setup>
-import {t} from '@/utils/i18n.ts'
+import {message} from 'ant-design-vue'
 
 import {Rule} from 'ant-design-vue/es/form'
-import {saveOrUpdateUser} from '@/api/system/user.ts'
-import {message} from 'ant-design-vue'
+import {saveOrUpdate} from '@/api/system/user.ts'
 import {getRoleList} from "@/api/system/role.ts"
 
 const isUpdate = ref(false), userInfoModalVisible = ref(false), formRef = ref(), loading = ref(false)
@@ -95,14 +89,14 @@ const formRules: Record<string, Rule[]> = {
   username: [
     {
       required: true,
-      message: t('请输入用户名'),
+      message: 'Please enter a username',
       trigger: ['blur', 'change'],
     },
     {
       type: 'string',
       min: 2,
       max: 20,
-      message: t('用户名长度在 2 到 20 个字符'),
+      message: 'Username length must be between 2 and 20 characters',
     },
     {
       validator: (rule, value) => {
@@ -110,9 +104,7 @@ const formRules: Record<string, Rule[]> = {
           ;/^(?![0-9_])(?!.*?_$)[a-zA-Z0-9_]+$/.test(value)
               ? resolve()
               : reject(
-                  t(
-                      '用户名必须唯一，长度在 3 到 20 个字符，只能包含字母、数字、下划线，且不能以数字、下划线开头，不能以下划线结尾'
-                  )
+                  'Username must be unique, length between 3 and 20 characters, can only contain letters, numbers, and underscores, and cannot start with a number or underscore, or end with an underscore'
               )
         })
       },
@@ -122,14 +114,14 @@ const formRules: Record<string, Rule[]> = {
   nickname: [
     {
       required: true,
-      message: t('请输入昵称'),
+      message: 'Please enter a nickname',
       trigger: ['blur', 'change'],
     },
     {
       type: 'string',
       min: 2,
       max: 20,
-      message: t('昵称长度在 2 到 20 个字符'),
+      message: 'Nickname length must be between 2 and 20 characters',
     },
   ],
 }
@@ -138,9 +130,9 @@ const handleSubmit = () => {
       .validate()
       .then(() => {
         loading.value = true
-        saveOrUpdateUser(curUserInfo.value).then(() => {
+        saveOrUpdate(curUserInfo.value).then(() => {
           userInfoModalVisible.value = false
-          message.success(t('修改成功'))
+          message.success('Modification successful')
           emit('queryList')
         }).finally(() => {
           loading.value = false

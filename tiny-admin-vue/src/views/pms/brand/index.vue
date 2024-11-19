@@ -1,40 +1,31 @@
+<template>
+  <PageStructure>
+    <template #content="{ dataAndFunc }">
+      <PcDataList class="hidden sm:block" v-bind="dataAndFunc" />
+      <MobileDataList class="block sm:hidden" v-bind="dataAndFunc" />
+      <DataModal ref="modalRef" v-bind="dataAndFunc" />
+    </template>
+  </PageStructure>
+</template>
+
 <script lang="ts" setup>
-import {getBrandPage} from '@/api/pms/brand.ts'
-import BrandModal from '@/views/pms/brand/BrandModal.vue'
-import Search from "@/components/Search.vue";
-import PcBrandList from "@/views/pms/brand/PcBrandList.vue";
-import MobileBrandList from "@/views/pms/brand/MobileBrandList.vue";
+import { ref, provide } from 'vue';
+import DataModal from './DataModal.vue';
+import PcDataList from './PcDataList.vue';
+import MobileDataList from './MobileDataList.vue';
+import { deleteById, execQuery, saveOrUpdate } from '@/api/pms/brand.ts';
 
-const loading = ref(false), dataSource = ref([]), modalRef = ref()
-let pagination: any = {}, searchParams: any = {keyword: '', status: true, pageNum: 1, pageSize: 10}
+// Modal reference to open or close it
+const modalRef = ref<InstanceType<typeof DataModal>>();
 
-const queryList = (params = {}) => {
-  loading.value = true
-  searchParams = {...searchParams, ...params}
-  getBrandPage(searchParams).then((res: any) => {
-    dataSource.value = res.records
-    pagination = {current: res.current, pageSize: res.size, total: res.total,}
-  }).finally(() => {
-    loading.value = false
-  })
-}
+const openModal = (record: any) => {
+  modalRef.value?.openModal(record);  // Use optional chaining to handle undefined modalRef
+};
 
-const openModal = (record: any = {}) => {
-  modalRef.value.openModal(record)
-}
+// First, provide API functions to the parent component, PageStructure. Then, PageStructure passes dataAndFunc to its child components (PcDataList, MobileDataList, DataModal, etc.). This allows the child components to use the provided API functions for server interactions.
+provide('init', { deleteById, saveOrUpdate, execQuery, openModal });
 </script>
 
-<template>
-  <div>
-    <!--   Search -->
-    <Search :loading="loading" :top="84" placeholder="搜索品牌名、简介、品牌故事" @open-modal="openModal"
-            @query-list="queryList"></Search>
-    <!--   PC Data List -->
-    <PcBrandList :dataSource="dataSource" :loading="loading" :pagination="pagination" class="hidden sm:block"
-                 @open-modal="openModal" @query-list="queryList"></PcBrandList>
-    <MobileBrandList :data-source="dataSource" :is-loading="loading" :pagination="pagination" class="block sm:hidden"
-                     @open-modal="openModal" @query-list="queryList"></MobileBrandList>
-    <!--  add/edit Data Modal -->
-    <BrandModal ref="modalRef" @query-list="queryList"></BrandModal>
-  </div>
-</template>
+<style scoped>
+/* Optional: Add scoped styles here */
+</style>

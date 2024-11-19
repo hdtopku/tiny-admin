@@ -4,7 +4,7 @@ export const deleteById = (id: any) => {
     return http.delete('/sms/hotGoods/' + id)
 }
 
-export const saveOrUpdate = async (data: any) => {
+export const updateRecord = async (data: any) => {
     return http.post("/sms/hotGoods/update", data)
 }
 
@@ -16,6 +16,6 @@ export const getAllHotGoodsIds = async () => {
     return http.get("/sms/hotGoods/allGoodsIds")
 }
 
-export const saveHotGoods = async (data: any) => {
+export const assignGoods = async (data: any) => {
     return http.post("/sms/hotGoods/save", data)
 }

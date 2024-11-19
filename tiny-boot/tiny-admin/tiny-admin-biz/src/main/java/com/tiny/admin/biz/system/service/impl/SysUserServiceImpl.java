@@ -55,7 +55,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
                     .or().like(SysUser::getPhone, param.getKeyword());
             param.setPageNum(1);
         } else {
-            idWrapper.eq(SysUser::getStatus, param.getStatus() == null? 1 : param.getStatus());
+            idWrapper.eq(SysUser::getEnabled, param.getEnabled() == null? 1 : param.getEnabled());
         }
         Page<SysUser> page = this.page(new Page<>(param.getPageNum(), param.getPageSize()), idWrapper);
         if(CollectionUtils.isEmpty(page.getRecords())) {

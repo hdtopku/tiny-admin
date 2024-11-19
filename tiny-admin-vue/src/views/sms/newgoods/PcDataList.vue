@@ -1,86 +1,81 @@
 <script lang="ts" setup>
 import {DownOutlined} from "@ant-design/icons-vue"
-import {t} from "@/utils/i18n.ts"
-import {Pagination} from "ant-design-vue"
+import {message, Pagination} from "ant-design-vue"
 import ToolTip from "@/components/ToolTip.vue";
-import ImageCarousel from "@/views/pms/goods/ImageCarousel.vue";
-import DeleteRecordConfirm from "@/components/DeleteRecordConfirm.vue";
-import SwitchStatusConfirm from "@/components/SwitchStatusConfirm.vue";
+import ImageCarousel from "@/views/pms/product/ImageCarousel.vue";
+import DeleteRecordConfirm from "@/components/page/DeleteRecordConfirm.vue";
+import SwitchStatusConfirm from "@/components/page/SwitchStatusConfirm.vue";
 
-const {
-  dataSource, pagination, loading, queryList = () => {
-  }, deleteRecordById = () => {
-  }, changeRecordStatus = () => {
-  }
-} = defineProps({
+const {dataSource, pagination, loading, queryList, deleteRecordById, openModal, changeRecordStatus} = defineProps({
   dataSource: Array,
   pagination: Pagination,
   loading: Boolean,
-  deleteRecordById: Function,
   queryList: Function,
+  deleteRecordById: Function,
+  openModal: Function,
   changeRecordStatus: Function,
 })
 
-const emit = defineEmits(['openModal', 'queryList', 'changeRecordStatus', 'deleteRecordById', 'openEditModal'])
+const emit = defineEmits(['openEditModal'])
 
 const handlePageChange = (current: number, pageSize: number) => {
-  queryList({pageNum: current, pageSize})
+  queryList?.({pageNum: current, pageSize})
 }
 
 const columns: any = [
   {
-    title: t('序号'),
+    title: 'Index',
     dataIndex: 'index',
     key: 'index',
     width: 60,
     align: 'center',
   },
   {
-    title: '商品图片',
-    dataIndex: 'albumPics',
-    key: 'albumPics',
+    title: 'Product Image',
+    dataIndex: 'album',
+    key: 'album',
     width: 100,
     align: 'center',
   },
   {
-    title: '商品名称',
-    dataIndex: 'goodsName',
-    key: 'goodsName',
+    title: 'Product Name',
+    dataIndex: 'productName',
+    key: 'productName',
     width: 200,
     align: 'center',
   },
   {
-    title: t('备注'),
+    title: 'Remark',
     dataIndex: 'remark',
     key: 'remark',
-    width: 200,
+    width: 250,
     align: 'center',
   },
   {
-    title: '市场价',
+    title: 'Market Price',
     dataIndex: 'marketPrice',
     key: 'marketPrice',
     width: 100,
     align: 'center',
   },
   {
-    title: '促销价',
-    dataIndex: 'promotionPrice',
-    key: 'promotionPrice',
+    title: 'Sale Price',
+    dataIndex: 'salePrice',
+    key: 'salePrice',
     width: 100,
     align: 'center',
   },
   {
-    title: t('排序'),
+    title: 'Sort Order',
     dataIndex: 'sort',
     key: 'sort',
     width: 100,
     align: 'center',
   },
   {
-    title: t('操作'),
+    title: 'Action',
     key: 'operation',
-    width: 160,
+    width: 180,
     fixed: 'right',
   },
 ]
@@ -93,32 +88,34 @@ const columns: any = [
       <template v-if="column.key === 'index'">
         {{ index + 1 }}
       </template>
-      <template v-else-if="column.dataIndex === 'albumPics'">
-        <ImageCarousel :img-urls="record?.albumPics?.split(',')" :width="120"/>
+      <template v-else-if="column.dataIndex === 'album'">
+        <ImageCarousel :img-urls="record?.album?.split(',')" :width="120"/>
       </template>
-      <template v-else-if="column.dataIndex === 'goodsName'">
-        <ToolTip :text="record.goodsName"/>
+      <template v-else-if="column.dataIndex === 'productName'">
+        <ToolTip :content="record.productName" :length="30"/>
       </template>
       <template v-else-if="column.dataIndex === 'remark'">
-        <ToolTip :text="record.remark"/>
+        <ToolTip :content="record.remark" :length="50"/>
       </template>
 
       <template v-else-if="column.key === 'operation'">
         <div class="grid grid-cols-2 items-center justify-center">
-          <SwitchStatusConfirm :record="record" @change-record-status="changeRecordStatus(record)"/>
+          <SwitchStatusConfirm :record="record" @confirm="changeRecordStatus?.(record)"/>
+
           <a-dropdown placement="bottom" trigger="hover">
             <a-button class="flex items-center" size="small" type="link"
-            >{{ $t('操作') }}
+            >Action
               <DownOutlined/>
             </a-button>
             <template #overlay>
               <a-menu class="text-center">
                 <a-menu-item>
-                  <a-button type="link" @click="emit('openEditModal', record)">编辑</a-button>
+                  <a-button type="link" @click="emit('openEditModal', record)">Edit</a-button>
                 </a-menu-item>
                 <a-menu-item>
-                  <DeleteRecordConfirm :record-id="record.id" :record-name="record.goodsName"
-                                       @delete-record-by-id="deleteRecordById(record.id)"/>
+                  <DeleteRecordConfirm :record-id="record.id" :record-name="record.productName"
+                                       @confirm="deleteRecordById?.(record.id)"/>
+
                 </a-menu-item>
               </a-menu>
             </template>

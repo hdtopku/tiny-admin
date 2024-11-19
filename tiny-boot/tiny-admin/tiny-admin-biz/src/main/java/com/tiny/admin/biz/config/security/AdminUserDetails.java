@@ -53,6 +53,6 @@ public class AdminUserDetails extends SysUser implements UserDetailsBo {
 
     @Override
     public boolean isEnabled() {
-        return this.getStatus();
+        return this.getEnabled();
     }
 }

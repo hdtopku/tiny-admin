@@ -4,67 +4,66 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * <p>
- * 用户表
+ * Table for storing user information
  * </p>
  *
  * @author lxh
- * @since 2024-06-07
+ * @since 2024-11-18
  */
 @Getter
 @Setter
 @TableName("sys_user")
-@Schema(name = "SysUser", description = "用户表")
+@Schema(name = "SysUser", description = "Table for storing user information")
 public class SysUser implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @Schema(description = "主键id")
+    @Schema(description = "Primary Key ID")
     private String id;
 
-    @Schema(description = "用户名")
+    @Schema(description = "Username")
     private String username;
 
-    @Schema(description = "昵称")
+    @Schema(description = "User Nickname")
     private String nickname;
 
-    @Schema(description = "头像")
-    private String avatar;
-
-    @Schema(description = "密码")
+    @Schema(description = "Password")
     private String password;
 
-    @Schema(description = "电子邮件")
+    @Schema(description = "User Avatar URL")
+    private String avatar;
+
+    @Schema(description = "User Email Address")
     private String email;
 
-    @Schema(description = "电话")
+    @Schema(description = "User Phone Number")
     private String phone;
 
-    @Schema(description = "状态(0:禁用;1:正常)")
-    private Boolean status;
+    @Schema(description = "Account Status (0: Disabled; 1: Enabled)")
+    private Boolean enabled;
 
-    @Schema(description = "删除状态(0:已删除;1:正常)")
+    @Schema(description = "Delete Flag (0: Deleted; 1: Active)")
     private Boolean delFlag;
 
-    @Schema(description = "创建人")
+    @Schema(description = "Created By (User ID)")
     private String createBy;
 
-    @Schema(description = "创建时间")
+    @Schema(description = "Creation Timestamp")
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
-    @Schema(description = "更新人")
+    @Schema(description = "Updated By (User ID)")
     private String updateBy;
 
-    @Schema(description = "更新时间")
+    @Schema(description = "Last Update Timestamp")
     private LocalDateTime updateTime;
 }

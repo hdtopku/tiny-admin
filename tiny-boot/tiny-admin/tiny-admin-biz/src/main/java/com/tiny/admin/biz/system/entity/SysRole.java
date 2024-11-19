@@ -4,52 +4,51 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * <p>
- * 角色表
+ * Role Table
  * </p>
  *
  * @author lxh
- * @since 2024-06-07
+ * @since 2024-11-18
  */
 @Getter
 @Setter
 @TableName("sys_role")
-@Schema(name = "SysRole", description = "角色表")
+@Schema(name = "SysRole", description = "Role Table")
 public class SysRole implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @Schema(description = "主键ID")
+    @Schema(description = "Primary Key ID")
     private String id;
 
-    @Schema(description = "角色名称")
+    @Schema(description = "Role Name")
     private String roleName;
 
-    @Schema(description = "描述")
+    @Schema(description = "Description")
     private String description;
 
-    @Schema(description = "状态(0:禁用;1:正常)")
-    private Boolean status;
-
-    @Schema(description = "创建人")
+    @Schema(description = "Created by")
     private String createBy;
 
-    @Schema(description = "创建时间")
+    @Schema(description = "Creation Time")
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
-    @Schema(description = "更新人")
+    @Schema(description = "Updated by")
     private String updateBy;
 
-    @Schema(description = "更新时间")
+    @Schema(description = "Update Time")
     private LocalDateTime updateTime;
+
+    @Schema(description = "Role Status (0: Disabled; 1: Enabled)")
+    private Boolean enabled;
 }

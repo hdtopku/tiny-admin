@@ -57,7 +57,7 @@ public class SmsFlashSaleController {
           .like(SmsFlashSale::getActivityName, param.getKeyword());
       param.setPageNum(1);
     } else {
-      wrapper.eq(SmsFlashSale::getStatus, param.getStatus());
+      wrapper.eq(SmsFlashSale::getEnabled, param.getEnabled());
     }
     IPage<SmsFlashSale> iPage =
         iSmsFlashSaleService.page(new Page<>(param.getPageNum(), param.getPageSize()), wrapper);

@@ -4,47 +4,48 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.io.Serial;
+import java.io.Serializable;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
-
 /**
  * <p>
- * 品牌推荐表
+ * Hot Sale Product Recommendation Table
  * </p>
  *
  * @author lxh
- * @since 2024-09-30
+ * @since 2024-11-19
  */
 @Getter
 @Setter
 @TableName("sms_hot_goods")
-@Schema(name = "SmsHotGoods", description = "品牌推荐表")
+@Schema(name = "SmsHotGoods", description = "Hot Sale Product Recommendation Table")
 public class SmsHotGoods implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
-    @Schema(description = "主键ID")
+    @Schema(description = "Primary Key ID")
     private String id;
 
-    @Schema(description = "品牌ID")
+    @Schema(description = "Goods ID")
     private String goodsId;
 
-    @Schema(description = "排序(值越大越靠后)")
+    @Schema(description = "Sorting (the larger the number, the later it appears)")
     private Integer sort;
 
-    @Schema(description = "备注")
+    @Schema(description = "Remarks")
     private String remark;
 
-    @Schema(description = "是否生效(0:未生效,1:已生效)")
-    private Boolean status;
+    @Schema(description = "Status (0: Disabled, 1: Enabled)")
+    private Boolean enabled;
 
-    @Schema(description = "创建时间")
+    @Schema(description = "Creation Time")
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
-    @Schema(description = "更新时间")
+    @Schema(description = "Update Time")
     private LocalDateTime updateTime;
 }

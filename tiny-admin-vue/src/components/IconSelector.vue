@@ -2,7 +2,7 @@
   <a-select
       v-model:value="selectValue"
       show-search
-      :placeholder="$t('选择图标')"
+      placeholder="Select Icon"
       style="width: 100px"
       :dropdownMatchSelectWidth="200"
       allow-clear

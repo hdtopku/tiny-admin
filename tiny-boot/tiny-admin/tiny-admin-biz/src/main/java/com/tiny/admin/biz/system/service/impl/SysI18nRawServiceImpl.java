@@ -61,7 +61,7 @@ public class SysI18nRawServiceImpl extends ServiceImpl<SysI18nRawMapper, SysI18n
         if(StringUtils.hasText(param.getKeyword())) {
             sysI18nRawIdWrapper.like(SysI18nRaw::getRawContent, param.getKeyword());
         } else {
-            sysI18nRawIdWrapper.eq(SysRole::getStatus, param.getStatus());
+            sysI18nRawIdWrapper.eq(SysRole::getEnabled, param.getEnabled());
         }
         Page<SysI18nRaw> page1 = new Page<>(param.getPageNum(), param.getPageSize());
         Page<SysI18nRaw> sysI18nRawPage = sysI18nRawMapper.selectPage(page1, sysI18nRawIdWrapper);

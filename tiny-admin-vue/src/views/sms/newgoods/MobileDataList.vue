@@ -1,18 +1,33 @@
 <script lang="ts" setup>
-import {Pagination} from "ant-design-vue";
+import {message, Pagination} from "ant-design-vue";
 import {EditOutlined} from '@ant-design/icons-vue'
-import ImageCarousel from "@/views/pms/goods/ImageCarousel.vue";
-import SwitchStatusConfirm from "@/components/SwitchStatusConfirm.vue";
+import ImageCarousel from "@/views/pms/product/ImageCarousel.vue";
+import SwitchStatusConfirm from "@/components/page/SwitchStatusConfirm.vue";
+import {updateRecord} from "@/api/sms/newGoods.ts";
+import DeleteRecordConfirm from "@/components/page/DeleteRecordConfirm.vue";
 
-const {dataSource, pagination, isLoading} = defineProps({
+const {dataSource, pagination, loading, queryList, deleteRecordById, openModal} = defineProps({
   dataSource: Array,
   pagination: Pagination,
-  isLoading: Boolean
+  loading: Boolean,
+  queryList: Function,
+  deleteRecordById: Function,
+  openModal: Function,
 })
-const emit = defineEmits(['openModal', 'queryList', 'changeRecordStatus', 'deleteRecordById', 'openEditModal'])
+const emit = defineEmits(['openEditModal'])
 
 const handlePageChange = (current: number, pageSize: number) => {
-  emit('queryList', {pageNum: current, pageSize})
+  queryList?.({pageNum: current, pageSize})
+}
+const changeRecordStatus = async (record: any) => {
+  record.loading = true
+  try {
+    await updateRecord({id: record.id, enabled: !record.enabled})
+    record.enabled = !record.enabled
+    message.success('Success')
+  } finally {
+    record.loading = false
+  }
 }
 </script>
 
@@ -24,10 +39,10 @@ const handlePageChange = (current: number, pageSize: number) => {
         <a-card class="w-full">
           <template #cover>
             <div class="bg-gray-100 dark:bg-gray-800 h-46">
-              <ImageCarousel :img-urls="record?.albumPics?.split(',')" class="mx-auto"/>
+              <ImageCarousel :img-urls="record?.album?.split(',')" class="mx-auto"/>
             </div>
           </template>
-          <a-card-meta :title="record.goodsName">
+          <a-card-meta :title="record.productName">
             <template #description>
               {{ record.remark }}
               <div class="mt-2">
@@ -37,10 +52,11 @@ const handlePageChange = (current: number, pageSize: number) => {
             </template>
           </a-card-meta>
           <template #actions>
-            <SwitchStatusConfirm :record="record" @change-record-status="emit('changeRecordStatus', record)"/>
-            <DeleteRecordConfirm :record-id="record.id" :record-name="record.goodsName" show-icon
-                                 @delete-record-by-id="emit('deleteRecordById', record.id)"/>
-            <a-button type="link" @click="() => emit('openEditModal', record)">
+            <SwitchStatusConfirm :record="record" @confirm="changeRecordStatus?.(record)"/>
+
+            <DeleteRecordConfirm :record-id="record.id" :record-name="record.productName" show-icon
+                                 @confirm="deleteRecordById?.(record.id)"/>
+            <a-button class="inline-flex items-center" type="link" @click="() => emit('openEditModal', record)">
               <EditOutlined/>
             </a-button>
           </template>

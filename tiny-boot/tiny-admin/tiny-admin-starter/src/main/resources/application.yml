@@ -1,6 +1,6 @@
 spring:
-  config:
-    import: classpath:.env.dev[.properties]
+  profiles:
+    active: dev  # 默认启用 dev 环境配置，开发时自动加载
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
@@ -43,11 +43,6 @@ spring:
       idle-timeout: 600000
       max-lifetime: 1800000
       connection-test-query: SELECT 1
-
-mybatis-plus:
-  configuration:
-    cache-enabled: true
-    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
 
 constant:
   redis-users-token-map-key: tiny-admin-users-token-map

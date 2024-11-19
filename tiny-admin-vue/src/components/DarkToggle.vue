@@ -9,7 +9,7 @@
   >
     <a-tooltip>
       <template #title>
-        <span>{{ isDark ? $t('切换至白天模式') : $t('切换至夜间模式') }}</span>
+        <span>{{ isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode' }}</span>
       </template>
       <a-button class="group" ghost shape="circle" type="primary">
         <transition-group

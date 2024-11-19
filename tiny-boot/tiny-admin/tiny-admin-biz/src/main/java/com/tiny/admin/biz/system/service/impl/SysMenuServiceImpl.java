@@ -51,9 +51,6 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenu> impl
         List<SysMenuTree> parents = menus.stream().filter(item -> StringUtils.isBlank(item.getParentId())).toList();
         parents.forEach(item -> {
                     item.setChildren(dfs(menus, item.getId()));
-//                    if (CollUtil.isNotEmpty(item.getChildren()) && StringUtils.isBlank(item.getComponent()) && item.getType() == 1) {
-//                        item.setComponent(item.getChildren().get(0).getComponent());
-//                    }
                 }
         );
         return parents;

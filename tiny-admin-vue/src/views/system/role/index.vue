@@ -1,47 +1,28 @@
 <template>
-  <div>
-    <Search :loading="loading" :top="84" placeholder="搜索角色或描述" @open-modal="openModal" @query-list="queryList"/>
-    <PcRoleList :data-source="dataSource" :loading="loading" :pagination="pagination" class="hidden sm:block"
-                @open-modal="openModal" @open-assign-role-modal="openAssignRoleModal" @query-list="queryList"/>
-    <MobileRoleList :data-source="dataSource" :loading="loading" :pagination="pagination" class="block sm:hidden"
-                    @open-modal="openModal" @open-assign-role-modal="openAssignRoleModal" @query-list="queryList"/>
-    <RoleModal ref="modalRef" @query-list="queryList"/>
-    <AssignRoleModal ref="assignRoleModalRef" @query-list="queryList"/>
-  </div>
+  <PageStructure>
+    <template #content="{dataAndFunc}">
+      <PcDataList class="hidden sm:block" v-bind="dataAndFunc" @open-assign-role-modal="openAssignRoleModal"/>
+      <MobileDataList class="block sm:hidden" v-bind="dataAndFunc" @open-assign-role-modal="openAssignRoleModal"/>
+      <DataModal ref="modalRef" v-bind="dataAndFunc"/>
+      <AssignRoleModal ref="assignRoleModalRef" @query-list="dataAndFunc.queryList"/>
+    </template>
+  </PageStructure>
 </template>
+
 <script lang="ts" setup>
-import {t} from '@/utils/i18n.ts'
-
-import {getRolePage} from '@/api/system/role.ts'
-import RoleModal from '@/views/system/role/RoleModal.vue'
-import {message} from 'ant-design-vue'
-import PcRoleList from "@/views/system/role/PcRoleList.vue"
-import MobileRoleList from "@/views/system/role/MobileRoleList.vue"
+import DataModal from '@/views/system/role/DataModal.vue'
+import PcDataList from "@/views/system/role/PcDataList.vue"
+import MobileDataList from "@/views/system/role/MobileDataList.vue"
 import AssignRoleModal from "@/views/system/role/AssignRoleModal.vue"
-import Search from "@/components/Search.vue";
+import {deleteById, execQuery, saveOrUpdate} from "@/api/system/role.ts";
 
-const modalRef = ref<any>(), assignRoleModalRef = ref<any>(), loading = ref(false), dataSource = ref([])
-let pagination: any = {}, searchParams: any = {keyword: '', status: true, pageNum: 1, pageSize: 10}
+const modalRef = ref<any>(), assignRoleModalRef = ref<any>()
 
-const queryList = (params = {}) => {
-  loading.value = true
-  searchParams = {...searchParams, ...params}
-  getRolePage(searchParams)
-      .then((res: any) => {
-        dataSource.value = res.records
-        pagination = {current: res.current, pageSize: res.size, total: res.total}
-      })
-      .catch((err) => {
-        message.error(t('获取角色列表失败') + err.message)
-      })
-      .finally(() => {
-        loading.value = false
-      })
-}
 const openModal = (record: any) => {
   modalRef.value.openModal(record)
 }
 const openAssignRoleModal = (record: any) => {
   assignRoleModalRef.value.openModal(record)
 }
+provide('init', {deleteById, saveOrUpdate, execQuery, openModal})
 </script>

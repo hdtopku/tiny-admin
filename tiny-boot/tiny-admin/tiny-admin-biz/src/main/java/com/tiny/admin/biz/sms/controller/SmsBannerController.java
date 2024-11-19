@@ -39,7 +39,7 @@ public class SmsBannerController {
                     .or().like(SmsBanner::getRemark, param.getKeyword());
             param.setPageNum(1);
         } else {
-            wrapper.eq(SmsBanner::getStatus, param.getStatus());
+            wrapper.eq(SmsBanner::getEnabled, param.getEnabled());
         }
         IPage<SmsBanner> iPage = iSmsBannerService.page(new Page<>(param.getPageNum(), param.getPageSize()), wrapper);
         return Result.success(iPage);

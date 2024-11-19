@@ -1,12 +1,12 @@
-import http from "@/utils/http.ts";
+import http from "@/utils/http.ts"
 
-export const saveOrUpdateBanner = async (data: any) => {
+export const saveOrUpdate = async (data: any) => {
     return http.post("/sms/banner/saveOrUpdate", data)
 }
 
-export const getBannerPage = async (data: any) => {
+export const execQuery = async (data: any) => {
     return http.post("/sms/banner/page", data)
 }
-export const deleteBannerById = async (id: any) => {
+export const deleteById = async (id: any) => {
     return http.delete("/sms/banner/" + id)
 }

@@ -48,7 +48,7 @@ public class SmsBrandController {
             wrapper.or().like(PmsBrand::getBrandName, param.getKeyword());
             param.setPageNum(1);
         } else {
-            wrapper.eq(SmsBrand::getStatus, param.getStatus());
+            wrapper.eq(SmsBrand::getEnabled, param.getEnabled());
         }
         IPage<SmsBrandDto> iPage = smsBrandMapper.selectJoinPage(new Page<>(param.getPageNum(), param.getPageSize()), SmsBrandDto.class, wrapper);
         return Result.success(iPage);

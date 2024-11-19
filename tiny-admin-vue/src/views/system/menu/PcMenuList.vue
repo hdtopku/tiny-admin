@@ -1,9 +1,7 @@
 <script setup lang="ts">
-import {QuestionCircleOutlined} from "@ant-design/icons-vue"
 import {CreateIcon} from "@/components/CustomIcon.ts"
-import {deleteMenuById, saveOrUpdateMenu} from "@/api/system/menu.ts"
+import {deleteMenuById} from "@/api/system/menu.ts"
 import {message} from "ant-design-vue"
-import {t} from "@/utils/i18n.ts"
 
 const {dataSource, loading} = defineProps({
   dataSource: Array,
@@ -12,59 +10,54 @@ const {dataSource, loading} = defineProps({
 
 const emit = defineEmits(['queryList', 'openModal'])
 const deleteMenu = (menuId: String) => {
+  console.log('menuId', menuId)
   deleteMenuById(menuId).then(() => {
     emit('queryList')
-    message.success(t('删除成功'))
-  })
-}
-const saveOrUpdate = (record: any) => {
-  saveOrUpdateMenu(record).then(() => {
-    emit('queryList')
-    message.success(t('保存成功'))
+    message.success('Delete successful')
   })
 }
 const columns: any = [
   {
-    title: t('菜单名称'),
+    title: 'Menu Name',
     dataIndex: 'name',
     key: 'name',
   },
   {
-    title: t('菜单类型'),
+    title: 'Type',
     dataIndex: 'type',
     key: 'type',
     width: 100,
   },
   {
-    title: t('排序'),
+    title: 'Order',
     dataIndex: 'sort',
     key: 'sort',
-    width: 60,
+    width: 80,
   },
   {
-    title: t('权限码'),
+    title: 'Permission',
     dataIndex: 'permission',
     key: 'permission',
     width: 120,
   },
   {
-    title: t('按钮策略'),
+    title: 'Button Strategy',
     dataIndex: 'unauthorizedStrategy',
     key: 'permission',
     width: 120,
   },
   {
-    title: t('创建时间'),
+    title: 'Creation Time',
     dataIndex: 'createTime',
     key: 'createTime',
   },
   {
-    title: t('更新时间'),
+    title: 'Update Time',
     dataIndex: 'updateTime',
     key: 'updateTime',
   },
   {
-    title: t('操作'),
+    title: 'Actions',
     key: 'operation',
     fixed: 'right',
   },
@@ -72,57 +65,45 @@ const columns: any = [
 </script>
 
 <template>
-
-<a-table
-      :columns="columns"
-      :data-source="dataSource"
-      :loading="loading"
-      :scroll="{ x: 'max-content', y: 'calc(100vh - 200px)' }"
-      row-key="id"
-      :pagination="false"
-  >
-    <template #bodyCell="{ record, column }">
-      <template v-if="column.dataIndex === 'name'">
-        <CreateIcon :icon="record.icon"/>
-        {{ record.name }}
-      </template>
-      <template v-if="column.dataIndex === 'type'">
-        <template v-if="record.type === 0">{{ $t('目录') }}</template>
-        <template v-if="record.type === 1">{{ $t('菜单') }}</template>
-        <template v-if="record.type === 2">{{ $t('按钮') }}</template>
-      </template>
-      <template v-if="column.key === 'operation'">
-        <a-button type="link" @click="emit('openModal', record)">{{
-            $t('修改')
-          }}
-        </a-button>
-        <Auth :has-permission="'system:sysmenu:deletebyids'">
-          <a-popconfirm
-              :cancel-text="$t('否')"
-              :ok-text="$t('是')"
-              :title="$t('是否删除该菜单？')"
-              ok-type="danger"
-              @confirm="() => deleteMenu(record.id)"
+  <div>
+    <div class="flex justify-end">
+      <a-button class="m-2 mr-4" type="primary" @click="emit('openModal')">Add</a-button>
+    </div>
+    <a-table
+        :columns="columns"
+        :data-source="dataSource"
+        :loading="loading"
+        :scroll="{ x: 'max-content', y: 'calc(100vh - 200px)' }"
+        row-key="id"
+        :pagination="false"
+    >
+      <template #bodyCell="{ record, column }">
+        <template v-if="column.dataIndex === 'name'">
+          <CreateIcon :icon="record.icon" />
+          {{ record.name }}
+        </template>
+        <template v-if="column.dataIndex === 'type'">
+          <a-tag color="blue" v-if="record.type === 1">Menu</a-tag>
+          <a-tag color="red" v-if="record.type === 2">Button</a-tag>
+        </template>
+        <template v-if="column.key === 'operation'">
+          <a-button type="link" @click="emit('openModal', record)">Edit</a-button>
+          <Auth :has-permission="'system:sysmenu:deletebyids'">
+            <DeleteRecordConfirm :record-id="record.id" :record-name="record.name" @confirm="deleteMenu" />
+          </Auth>
+          <a-button
+              v-show="record.type === 1"
+              link
+              type="link"
+              @click="() => emit('openModal', { parentId: record.id })"
           >
-            <template #icon>
-              <question-circle-outlined style="color: red"/>
-            </template>
-            <a-button danger type="link">{{ $t('删除') }}</a-button>
-          </a-popconfirm>
-        </Auth>
-        <a-button
-            v-show="record.type === 1"
-            link
-            type="link"
-            @click="() => saveOrUpdate({ parentId: record.id })"
-        >{{ $t('新增') }}
-        </a-button
-        >
+            Add
+          </a-button>
+        </template>
       </template>
-    </template>
-</a-table>
+    </a-table>
+  </div>
 </template>
 
 <style scoped>
-
 </style>

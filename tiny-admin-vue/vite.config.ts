@@ -26,11 +26,13 @@ export default defineConfig(({command}) => {
             cors: true,
             proxy: {
                 '/api': {
-                    target: 'http://localhost:8080/',
+                    target: 'http://localhost:8080', // Use 'localhost' instead of '0.0.0.0'
                     changeOrigin: true,
-                    rewrite: (path) => path.replace(/^\/api/, '')
+                    rewrite: (path) => {
+                        return  path.replace(/^\/api/, '');
+                    },
                 },
-            }
+            },
         },
         plugins: [
             WindiCSS(),

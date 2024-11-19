@@ -54,7 +54,7 @@ public class SysRoleController {
             idWrapper.like(SysRole::getRoleName, param.getKeyword()).or().like(SysRole::getDescription, param.getKeyword());
             param.setPageNum(1);
         } else {
-            idWrapper.eq(SysRole::getStatus, param.getStatus());
+            idWrapper.eq(SysRole::getEnabled, param.getEnabled());
         }
         IPage<SysRole> sysRoleIdPage = sysRoleMapper.selectPage(new Page<>(param.getPageNum(), param.getPageSize()), idWrapper);
         if(sysRoleIdPage.getRecords().isEmpty()) {

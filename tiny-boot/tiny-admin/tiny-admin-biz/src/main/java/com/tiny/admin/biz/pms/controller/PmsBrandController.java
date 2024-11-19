@@ -40,9 +40,8 @@ public class PmsBrandController {
             wrapper.like(PmsBrand::getBrandName, param.getKeyword())
                     .or().like(PmsBrand::getBrandDesc, param.getKeyword())
                     .or().like(PmsBrand::getBrandStory, param.getKeyword());
-            param.setPageNum(1);
         } else {
-            wrapper.eq(PmsBrand::getStatus, param.getStatus());
+            wrapper.eq(PmsBrand::getEnabled, param.getEnabled());
         }
         IPage<PmsBrand> iPage = iPmsBrandService.page(new Page<>(param.getPageNum(), param.getPageSize()), wrapper);
         return Result.success(iPage);
@@ -52,7 +51,7 @@ public class PmsBrandController {
     public Result<List<PmsBrand>> all() {
         LambdaQueryWrapper<PmsBrand> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByAsc(PmsBrand::getSort);
-        wrapper.and(w -> w.eq(PmsBrand::getStatus, 1));
+        wrapper.and(w -> w.eq(PmsBrand::getEnabled, 1));
         return Result.success(iPmsBrandService.list(wrapper));
     }
 

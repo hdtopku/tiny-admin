@@ -69,7 +69,7 @@ public class SysMenuController {
                     .or().like(SysMenu::getUrl, param.getKeyword());
             param.setPageNum(1);
         } else {
-            wrapper.eq(SysMenu::getStatus, param.getStatus());
+            wrapper.eq(SysMenu::getEnabled, param.getEnabled());
         }
         IPage<SysMenu> iPage = sysMenuService.page(new Page<>(param.getPageNum(), param.getPageSize()), wrapper);
         return Result.success(iPage);

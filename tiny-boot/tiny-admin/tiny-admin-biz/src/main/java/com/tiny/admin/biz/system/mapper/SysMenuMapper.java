@@ -2,8 +2,6 @@ package com.tiny.admin.biz.system.mapper;
 
 import com.github.yulichang.base.MPJBaseMapper;
 import com.tiny.admin.biz.system.entity.SysMenu;
-import com.tiny.core.mybatis.MybatisRedisCache;
-import org.apache.ibatis.annotations.CacheNamespace;
 
 /**
  * <p>
@@ -13,7 +11,7 @@ import org.apache.ibatis.annotations.CacheNamespace;
  * @author lxh
  * @since 2024-06-07
  */
-@CacheNamespace(implementation= MybatisRedisCache.class,eviction= MybatisRedisCache.class)
+//@CacheNamespace(implementation= MybatisRedisCache.class,eviction= MybatisRedisCache.class)
 public interface SysMenuMapper extends MPJBaseMapper<SysMenu> {
 
 }

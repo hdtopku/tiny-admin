@@ -1,28 +1,30 @@
 <script lang="ts" setup>
-import {Pagination} from "ant-design-vue";
-import {EditOutlined} from "@ant-design/icons-vue";
-import SwitchStatusConfirm from "@/components/SwitchStatusConfirm.vue";
+import { Pagination } from "ant-design-vue";
+import { EditOutlined } from "@ant-design/icons-vue";
+import SwitchStatusConfirm from "@/components/page/SwitchStatusConfirm.vue";
 
 const {
-  dataSource, pagination, loading, queryList = () => {
-  }, changeRecordStatus = () => {
-  }, deleteRecordById = () => {
-  }
+  dataSource,
+  pagination,
+  loading,
+  queryList = () => {},
+  changeRecordStatus = () => {},
+  deleteRecordById = () => {}
 } = defineProps({
   dataSource: Array,
   pagination: Pagination,
   loading: Boolean,
   queryList: Function,
   changeRecordStatus: Function,
-  deleteRecordById: Function,
-})
-const emit = defineEmits(['openModal', 'openAssignRoleModal'])
+  deleteRecordById: Function
+});
+const emit = defineEmits(["openModal", "openAssignGoodsModal"]);
 const openModal = (record: any) => {
-  emit('openModal', record)
-}
+  emit("openModal", record);
+};
 const handlePageChange = (pageNum: number, pageSize: number) => {
-  queryList({pageNum, pageSize})
-}
+  queryList({ pageNum, pageSize });
+};
 </script>
 
 <template>
@@ -31,30 +33,37 @@ const handlePageChange = (pageNum: number, pageSize: number) => {
       <a-list-item>
         <a-card class="w-full">
           <template #actions>
-            <SwitchStatusConfirm :record="record" @change-record-status="changeRecordStatus(record)"/>
-            <DeleteRecordConfirm :record-id="record.id" :record-name="record.activityName" show-icon
-                                 @delete-record-by-id="deleteRecordById(record.id)"/>
+            <SwitchStatusConfirm :record="record" @confirm="changeRecordStatus(record)" />
+            <DeleteRecordConfirm
+                :record-id="record.id"
+                :record-name="record.activityName"
+                show-icon
+                @confirm="deleteRecordById(record.id)"
+            />
             <a-button type="link" @click="() => openModal(record)">
-              <EditOutlined/>
+              <EditOutlined />
             </a-button>
           </template>
           <a-card-meta>
             <template #title>
               <div class="flex justify-between items-center">
-                <ToolTip :length="10" :text="record.activityName"/>
+                <ToolTip :length="10" :content="record.activityName" />
                 <div>
-                  <a-tag>共
+                  <a-tag>
+                    Total
                     <b class="text-red-500">{{ record?.goodsIds?.length }}</b>
-                    件商品
+                    items
                   </a-tag>
                   <a-button class="text-amber-500 -ml-1" type="link" @click="emit('openAssignGoodsModal', record)">
-                    {{ $t('分配商品') }}
+                    Assign Goods
                   </a-button>
                 </div>
               </div>
             </template>
             <template #description>
-              <a-typography-text>{{ record.remark }}</a-typography-text>
+              <a-typography-text>
+                <ToolTip :content="record.remark" :length="300" :trigger="['click']" />
+              </a-typography-text>
             </template>
           </a-card-meta>
         </a-card>

@@ -16,8 +16,8 @@
 </template>
 <script lang="ts" setup>
 import DataModal from '@/views/sms/newgoods/DataModal.vue'
-import {getAllHotGoodsIds, saveHotGoods,} from '@/api/sms/hotGoods.ts'
-import Search from "@/components/Search.vue";
+import {getAllHotGoodsIds, assignGoods,} from '@/api/sms/hotGoods.ts'
+import Search from "@/components/page/Search.vue";
 import PcDataList from "@/views/sms/newgoods/PcDataList.vue"
 import {message} from "ant-design-vue";
 import {t} from "@/utils/i18n.ts";
@@ -28,7 +28,7 @@ const loading = ref(false), dataSource = ref([]), modalRef = ref(), editModalRef
 let pagination: any = {}, searchParams: any = {keyword: '', status: true, pageNum: 1, pageSize: 10}
 
 const openModal = (record: any) => {
-  modalRef.value.openModal(record, getAllHotGoodsIds, saveHotGoods)
+  modalRef.value.openModal(record, getAllHotGoodsIds, assignGoods)
 }
 const openEditModal = (record: any) => {
   editModalRef.value.openModal(record, updateHotGoods)

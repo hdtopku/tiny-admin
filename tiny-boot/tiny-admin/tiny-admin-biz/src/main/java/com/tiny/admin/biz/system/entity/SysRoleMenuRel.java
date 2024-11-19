@@ -2,33 +2,34 @@ package com.tiny.admin.biz.system.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.io.Serial;
+import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
-
 /**
  * <p>
- * 角色菜单表
+ * Role-Menu Relationship Table
  * </p>
  *
  * @author lxh
- * @since 2024-06-07
+ * @since 2024-11-18
  */
 @Getter
 @Setter
 @TableName("sys_role_menu_rel")
-@Schema(name = "SysRoleMenuRel", description = "角色菜单表")
+@Schema(name = "SysRoleMenuRel", description = "Role-Menu Relationship Table")
 public class SysRoleMenuRel implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
-    @Schema(description = "主键ID")
+    @Schema(description = "Primary Key ID")
     private String id;
 
-    @Schema(description = "角色ID")
+    @Schema(description = "Role ID")
     private String roleId;
 
-    @Schema(description = "菜单ID")
+    @Schema(description = "Menu ID")
     private String menuId;
 }

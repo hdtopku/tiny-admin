@@ -118,7 +118,7 @@ public class AuthServiceImpl implements AuthService {
         sysUser.setPassword(null);
         sysUser.setCreateTime(null);
         sysUser.setDelFlag(null);
-        sysUser.setStatus(null);
+        sysUser.setEnabled(null);
         return iSysUserService.updateById(sysUser);
     }
 

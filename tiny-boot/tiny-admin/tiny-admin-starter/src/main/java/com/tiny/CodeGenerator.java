@@ -13,7 +13,7 @@ import java.util.List;
  * Created by lxh at 2024-06-06 20:12:08
  */
 public class CodeGenerator {
-    private static final String url = "jdbc:mysql://121.41.170.120:3306/tiny-admin?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC";
+    private static final String url = "jdbc:mysql://0.0.0.0:3306/tiny_admin?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC";
     private static final String username = "root";
     private static final String password = "wz95ctxb3hvxezu57ko";
     private static final String outputDir = "/Users/lxh/Desktop/";
@@ -24,7 +24,7 @@ public class CodeGenerator {
                 .globalConfig((scanner, builder) -> builder.enableSpringdoc().outputDir(outputDir).author("lxh"))
                 // 包配置
                 .packageConfig((scanner, builder) -> builder.parent("com.tiny.admin.biz")
-                        .moduleName("system"))
+                        .moduleName("sms"))
                 // 策略配置
                 .strategyConfig((scanner, builder) -> builder.addInclude(getTables(scanner.apply("请输入表名，多个英文逗号分隔？所有输入 all")))
 //                .strategyConfig((scanner, builder) -> builder.addInclude(getTables("all"))

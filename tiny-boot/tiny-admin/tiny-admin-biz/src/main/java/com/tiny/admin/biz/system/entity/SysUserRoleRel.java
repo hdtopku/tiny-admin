@@ -2,33 +2,34 @@ package com.tiny.admin.biz.system.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
+import java.io.Serial;
+import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
-
 /**
  * <p>
- * 用户角色关系表
+ * User-Role Relationship Table
  * </p>
  *
  * @author lxh
- * @since 2024-06-07
+ * @since 2024-11-18
  */
 @Getter
 @Setter
 @TableName("sys_user_role_rel")
-@Schema(name = "SysUserRoleRel", description = "用户角色关系表")
+@Schema(name = "SysUserRoleRel", description = "User-Role Relationship Table")
 public class SysUserRoleRel implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = 1L;
 
-    @Schema(description = "主键ID")
+    @Schema(description = "Primary Key ID")
     private String id;
 
-    @Schema(description = "用户ID")
+    @Schema(description = "User ID")
     private String userId;
 
-    @Schema(description = "角色ID")
+    @Schema(description = "Role ID")
     private String roleId;
 }

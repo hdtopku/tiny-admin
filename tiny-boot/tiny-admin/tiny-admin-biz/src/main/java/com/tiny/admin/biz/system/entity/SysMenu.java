@@ -4,25 +4,24 @@ import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * <p>
- * 菜单权限表
+ * Menu Permissions Table
  * </p>
  *
  * @author lxh
- * @since 2024-06-07
+ * @since 2024-11-16
  */
 @Getter
 @Setter
 @TableName("sys_menu")
-@Schema(name = "SysMenu", description = "菜单权限表")
+@Schema(name = "SysMenu", description = "Menu Permissions Table")
 public class SysMenu implements Serializable {
 
     @Serial
@@ -32,70 +31,70 @@ public class SysMenu implements Serializable {
     @Schema(description = "是否有该菜单的访问权限")
     private boolean unauthorized;
 
-    @Schema(description = "主键ID")
+    @Schema(description = "Primary Key ID")
     private String id;
 
-    @Schema(description = "父级ID")
+    @Schema(description = "Parent ID")
     private String parentId;
 
-    @Schema(description = "菜单标题")
+    @Schema(description = "Menu Title")
     private String name;
 
-    @Schema(description = "路径")
+    @Schema(description = "Path")
     private String url;
 
-    @Schema(description = "组件")
+    @Schema(description = "Component")
     private String component;
 
-    @Schema(description = "一级菜单跳转地址")
+    @Schema(description = "Redirect URL for Top-level Menu")
     private String redirect;
 
-    @Schema(description = "菜单类型(0:一级菜单;1:子菜单;2:按钮权限)")
+    @Schema(description = "Menu Type (1: Menu; 2: Button Permission)")
     private Integer type;
 
-    @Schema(description = "菜单权限编码")
-    private String permission;
-
-    @Schema(description = "菜单排序")
-    private Integer sort;
-
-    @Schema(description = "菜单图标")
-    private String icon;
-
-    @Schema(description = "是否缓存该页面(0:否;1:是)")
-    private Boolean keepAlive;
-
-    @Schema(description = "是否隐藏路由(0:否;1:是)")
-    private Boolean hidden;
-
-    @Schema(description = "是否隐藏 tab(0:否;1:是)")
-    private Integer hiddenTab;
-
-    @Schema(description = "未授权时：按钮(0:隐藏;1:显示但不可点击；菜单重定向至(0:404页面;1:403 页面)")
+    @Schema(description = "Unauthorized Strategy: Button (0: Hide; 1: Show but not clickable; 2: Show and clickable but submission fails); Menu Redirect (0: 404 Page; 1: 403 Page)")
     private Integer unauthorizedStrategy;
 
-    @Schema(description = "描述")
+    @Schema(description = "Menu Permission Code")
+    private String permission;
+
+    @Schema(description = "Menu Sort Order")
+    private Integer sort;
+
+    @Schema(description = "Menu Icon")
+    private String icon;
+
+    @Schema(description = "Cache Page (0: No; 1: Yes)")
+    private Boolean keepAlive;
+
+    @Schema(description = "Hide Route (0: No; 1: Yes)")
+    private Boolean hidden;
+
+    @Schema(description = "Hide Tab (0: No; 1: Yes)")
+    private Integer hiddenTab;
+
+    @Schema(description = "Description")
     private String description;
 
-    @Schema(description = "创建人")
+    @Schema(description = "Created By")
     private String createBy;
 
-    @Schema(description = "创建时间")
+    @Schema(description = "Creation Time")
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
 
-    @Schema(description = "更新人")
+    @Schema(description = "Updated By")
     private String updateBy;
 
-    @Schema(description = "更新时间")
+    @Schema(description = "Update Time")
     private LocalDateTime updateTime;
 
-    @Schema(description = "删除状态(0:正常;1:已删除)")
+    @Schema(description = "Deletion Status (0: Active; 1: Deleted)")
     private Integer delFlag;
 
-    @Schema(description = "按钮权限状态(0:有效;1:无效)")
-    private String status;
+    @Schema(description = "Enabled Status (0: Disabled, 1: Enabled)")
+    private Boolean enabled;
 
-    @Schema(description = "外链菜单打开方式(0:内部打开;1:外部打开)")
+    @Schema(description = "External Link Opening Method (0: Internal; 1: External)")
     private Boolean internalOrExternal;
 }

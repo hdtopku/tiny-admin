@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import {t} from '@/utils/i18n.ts'
 
-import Search from '@/components/Search.vue'
+import Search from '@/components/page/Search.vue'
 import {
   deleteRawContent,
   deleteTranslation,

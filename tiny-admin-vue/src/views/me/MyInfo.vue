@@ -1,9 +1,9 @@
 <template>
   <a-modal
       v-model:open="open"
-      :cancel-text="$t('取消')"
-      :ok-text="$t('提交')"
-      :title="$t('个人信息')"
+      :cancel-text="'Cancel'"
+      :ok-text="'Submit'"
+      :title="'Personal Information'"
       @ok="handleOk"
   >
     <div class="text-center">
@@ -29,24 +29,23 @@
       </a-upload>
     </div>
     <a-form :label-col="{ style: { width: '60px' } }" :model="personalInfo">
-      <a-form-item :label="$t('用户名')" name="username">
+      <a-form-item :label="'Username'" name="username">
         <a-input v-model:value="personalInfo.username" allow-clear></a-input>
       </a-form-item>
-      <a-form-item :label="$t('昵称')">
+      <a-form-item :label="'Nickname'">
         <a-input v-model:value="personalInfo.nickname" allow-clear></a-input>
       </a-form-item>
-      <a-form-item :label="$t('手机号')">
+      <a-form-item :label="'Phone'">
         <a-input v-model:value="personalInfo.phone" allow-clear></a-input>
       </a-form-item>
-      <a-form-item :label="$t('邮箱')">
+      <a-form-item :label="'Email'">
         <a-input v-model:value="personalInfo.email" allow-clear></a-input>
       </a-form-item>
     </a-form>
   </a-modal>
 </template>
-<script lang="ts" setup>
-import {t} from '@/utils/i18n.ts'
 
+<script lang="ts" setup>
 import {useUserStore} from '@/store'
 import {LoadingOutlined, PlusOutlined} from '@ant-design/icons-vue'
 import type {UploadChangeParam, UploadProps} from 'ant-design-vue'
@@ -62,7 +61,7 @@ $bus.on('show-my-info-modal', () => {
 })
 const handleOk = () => {
   updateSelfInfo(personalInfo).then(() => {
-    message.success(t('保存成功'))
+    message.success('Saved successfully')
     open.value = false
   })
 }
@@ -82,7 +81,7 @@ const handleChange = (info: UploadChangeParam) => {
   }
   if (info.file.status === 'error') {
     loading.value = false
-    message.error('upload error')
+    message.error('Upload error')
   }
 }
 
@@ -93,7 +92,7 @@ const beforeUpload = (file: UploadProps['fileList'][number]) => {
   }
   const isLt2M = file.size / 1024 / 1024 < 2
   if (!isLt2M) {
-    message.error('Image must smaller than 2MB!')
+    message.error('Image must be smaller than 2MB!')
   }
   return isJpgOrPng && isLt2M
 }
