@@ -40,29 +40,32 @@
           <ImageUpload
               v-model:image-urls="productInfo.album"
               :count="10"
-           />
+          />
+          <a-form-item-rest hidden>
+            <a-textarea v-model:value="albumText"/>
+          </a-form-item-rest>
         </a-form-item>
         <a-form-item label="Name" name="productName">
           <a-textarea
               v-model:value="productInfo.productName"
               placeholder="Please enter the name of the product"
               allowClear
-              :rows="2"
-          />
-        </a-form-item>
-        <a-form-item label="Description" name="productDesc">
-          <a-textarea
-              v-model:value="productInfo.productDesc"
-              placeholder="Please enter the description of the product"
               :rows="3"
-              allowClear
           />
         </a-form-item>
+<!--        <a-form-item label="Description" name="productDesc">-->
+<!--          <a-textarea-->
+<!--              v-model:value="productInfo.productDesc"-->
+<!--              placeholder="Please enter the description of the product"-->
+<!--              :rows="3"-->
+<!--              allowClear-->
+<!--          />-->
+<!--        </a-form-item>-->
         <div class="flex justify-around">
           <a-form-item
               label="Sale Price"
               :label-col="{ span: 14 }"
-              name="promotionPrice"
+              name="salePrice"
           >
             <a-input-number
                 v-model:value="productInfo.salePrice"
@@ -183,27 +186,13 @@ const rules: Ref<any> = ref({
     },
     {
       min: 1,
-      max: 50,
+      max: 300,
       message: 'Length should be between 1 and 50 characters',
       trigger: ['blur', 'change'],
     },
   ],
 
-  productDesc: [
-    {
-      required: true,
-      message: 'Please enter the description of the product',
-      trigger: ['blur', 'change'],
-    },
-    {
-      min: 1,
-      max: 200,
-      message: 'Length should be between 1 and 200 characters',
-      trigger: ['blur', 'change'],
-    },
-  ],
-
-  promotionPrice: [
+  salePrice: [
     {required: true, message: 'Please enter the sale price', trigger: ['blur', 'change']},
     {type: 'number', message: 'Please enter a number', trigger: ['blur', 'change']},
   ],
@@ -212,6 +201,14 @@ const rules: Ref<any> = ref({
     {required: true, message: 'Please enter the stock', trigger: ['blur', 'change']},
     {type: 'number', message: 'Please enter a number', trigger: ['blur', 'change']},
   ],
+})
+const albumText = computed({
+  get() {
+    return productInfo.value.album.join(','); // 将数组转为字符串
+  },
+  set(value: string) {
+    productInfo.value.album = value.split(',').filter((item) => item.trim() !== "").map((item) => item.trim()); // 将字符串转为数组
+  },
 })
 </script>
 <style lang="less" scoped>

@@ -22,15 +22,21 @@ const props = defineProps({
 })
 
 let imageUrl=props.imageUrl
-let imageUrls: Array<String> = props.imageUrls
-imageUrls.forEach((url, idx) => {
-  fileList.value.push({
-    uid: idx,
+
+
+// 监听 props.imageUrls 的变化，同时初始化 fileList
+watchEffect(() => {
+  // 保证响应性
+  const imageUrls = [...props.imageUrls]
+
+  // 根据 imageUrls 初始化 fileList
+  fileList.value = imageUrls.map((url, idx) => ({
+    uid: idx.toString(), // 确保 uid 为字符串
     name: url.substring(url.lastIndexOf('/') + 1),
-    status: 'done',
+    status: 'done', // 初始化状态为 'done'
     url: url,
-  })
-})
+  }));
+}, {immediate: true})
 const beforeUpload = (file: UploadProps['fileList'][number]) => {
   const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png';
   if (!isJpgOrPng) {
@@ -56,7 +62,7 @@ const handleChange = (info: UploadChangeParam) => {
       imageUrl = info.file.response.data;
       emits('update:imageUrl', imageUrl)
     } else {
-      imageUrls = []
+      const imageUrls = []
       info.fileList.map(file => {
         imageUrls.push(file.response.data)
       })

@@ -61,7 +61,7 @@ const toolbarConfig = {}
 //上传图片的地址
 // const uploadFileUrl = import.meta.env.VITE_APP_BASE_API + "/common/upload";
 const editorConfig: Partial<IEditorConfig> = {
-  placeholder: t('请输入内容...'),
+  placeholder: t('Please enter the content...'),
   MENU_CONF: {},
 }
 editorConfig.MENU_CONF!['uploadImage'] = {

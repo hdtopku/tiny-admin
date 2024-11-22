@@ -1,5 +1,5 @@
 <template>
-  <a-carousel arrows :style="carouselStyles">
+  <a-carousel arrows :style="{width, height}">
     <template #prevArrow>
       <div class="custom-slick-arrow left-arrow">
         <span class="anticon anticon-left-circle">
@@ -15,36 +15,35 @@
       </div>
     </template>
     <template #customPaging="props">
-      <img :src="(params?.imgUrls[props.i] as string) ?? ''" class="cursor-pointer" alt=""/>
+      <img :src="(imgUrls[props.i] as string) ?? ''" class="cursor-pointer custom-paging-image" alt=""/>
     </template>
-    <div v-for="url in params?.imgUrls" :key="url as string">
+    <div v-for="url in imgUrls" :key="url as string">
       <img :src="url as string" alt="" class="carousel-image"/>
     </div>
   </a-carousel>
 </template>
 
 <script lang="ts" setup>
-import {LeftOutlined, RightOutlined} from "@ant-design/icons-vue"
+import { LeftOutlined, RightOutlined } from "@ant-design/icons-vue";
 
-const params = defineProps({
+const {imgUrls, width, height} = defineProps({
   imgUrls: {
     type: Array,
     default: [],
   },
   width: {
-    type: Number,
-    default: 200,
+    type: String,
+    default: '200px',
+  },
+  height: {
+    type: String,
+    default: '200px',
   },
 });
-
-// Use computed for dynamic styling
-const carouselStyles = {
-  width: `${params.width}px`,
-  height: `${params.width}px`,
-};
 </script>
 
 <style scoped>
+
 /* Beautify Slick Dots */
 :deep(.slick-dots) {
   position: absolute;
@@ -53,19 +52,20 @@ const carouselStyles = {
   display: flex;
   justify-content: center;
   gap: 8px; /* Add spacing between dots */
+  flex-wrap: wrap; /* Allow wrapping if too many dots */
 }
 
-:deep(.slick-dots li button) {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background-color: #bbb;
-  transition: background-color 0.3s;
-  overflow: hidden;
+/* Style for custom paging images */
+:deep(.slick-dots li button img) {
+  width: 30px; /* Increase the size of the pagination image */
+  height: 30px; /* Ensure it's a square */
+  object-fit: cover; /* Ensure the image covers the area without distortion */
+  border-radius: 50%; /* Make the image circular */
 }
 
-:deep(.slick-dots li.slick-active button) {
-  background-color: #ff6347; /* Tomato red */
+/* Hover effect on the active dot */
+:deep(.slick-dots li.slick-active button img) {
+  opacity: 1;
 }
 
 /* Enhance Slick Slide */
@@ -82,9 +82,11 @@ const carouselStyles = {
 :deep(.slick-slide img:hover) {
   transform: scale(1.05); /* Slight zoom on hover */
 }
+
 :deep(.custom-slick-arrow::before) {
   display: none; /* Hide default arrow */
 }
+
 /* Style Custom Arrow */
 :deep(.slick-arrow.custom-slick-arrow) {
   position: absolute;

@@ -12,6 +12,7 @@ const { dataSource, pagination, loading, queryList, changeRecordStatus, deleteRe
   deleteRecordById: Function,
   openModal: Function,
 })
+const emit = defineEmits(['openPreview'])
 
 const handlePageChange = (pageNum: number, pageSize: number) => {
   queryList?.({ pageNum, pageSize })
@@ -33,16 +34,19 @@ const handlePageChange = (pageNum: number, pageSize: number) => {
             <SwitchStatusConfirm :record="record" @confirm="changeRecordStatus?.(record)" />
             <DeleteRecordConfirm show-icon :record-id="record.id" :record-name="record.productName"
                                  @confirm="deleteRecordById?.(record.id)" />
-            <a-button type="link">
+            <a-button type="link" @click="emit('openPreview', record)">
               <ExpandAltOutlined />
             </a-button>
             <a-button type="link" @click="openModal?.(record)">
               <EditOutlined />
             </a-button>
           </template>
-          <a-card-meta :title="record.productName">
+          <a-card-meta>
+            <template #title>
+              <ToolTip :class-name="'font-bold'" :content="record.productName" :length="50"/>
+            </template>
             <template #description>
-              <div>{{ record.productDesc }}</div>
+<!--              <div>{{ record.productDesc }}</div>-->
               <div class="mt-2">
                 <a-tag>Market Price</a-tag>
                 {{ record.marketPrice }}

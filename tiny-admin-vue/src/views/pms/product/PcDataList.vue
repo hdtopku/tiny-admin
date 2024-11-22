@@ -12,6 +12,7 @@ const {dataSource, pagination, loading, queryList, changeRecordStatus, deleteRec
   deleteRecordById: Function,
   openModal: Function,
 })
+const emit = defineEmits(['openPreview'])
 
 const handlePageChange = (current: number, pageSize: number) => {
   queryList?.({pageNum: current, pageSize})
@@ -32,14 +33,14 @@ const columns: any = [
     title: "Product Name",
     dataIndex: "productName",
     key: "productName",
-    width: 150,
-  },
-  {
-    title: "Product Desc",
-    dataIndex: "productDesc",
-    key: "productDesc",
     width: 250,
   },
+  // {
+  //   title: "Product Desc",
+  //   dataIndex: "productDesc",
+  //   key: "productDesc",
+  //   width: 250,
+  // },
   {
     title: "Market Price",
     dataIndex: "marketPrice",
@@ -84,10 +85,7 @@ const columns: any = [
         <ImageCarousel :img-urls="record?.album || []" />
       </template>
       <template v-else-if="column.dataIndex === 'productName'">
-        <ToolTip :content="record.productName" :length="50" />
-      </template>
-      <template v-else-if="column.dataIndex === 'productDesc'">
-        <ToolTip :content="record.productDesc" :length="100" />
+        <ToolTip :content="record.productName" :length="100" />
       </template>
       <template v-else-if="column.key === 'Action'">
         <div class="grid grid-cols-2 items-center justify-center">
@@ -99,6 +97,11 @@ const columns: any = [
             </a-button>
             <template #overlay>
               <a-menu class="text-center">
+                <a-menu-item>
+                  <a-button class="text-orange-500" type="link" @click="emit('openPreview', record)">
+                    Preview Product
+                  </a-button>
+                </a-menu-item>
                 <a-menu-item>
                   <a-button type="link" @click="openModal?.(record)">
                     Edit Product

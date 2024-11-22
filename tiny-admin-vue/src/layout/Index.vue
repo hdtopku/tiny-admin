@@ -74,11 +74,11 @@
           <a-dropdown>
             <template #overlay>
               <a-menu>
-                <a-menu-item>
-                  <a-button size="small" type="link" @click="showMyInfo">Personal Center</a-button>
+                <a-menu-item @click="showMyInfo">
+                  <a-button size="small" type="link">Personal Center</a-button>
                 </a-menu-item>
-                <a-menu-item>
-                  <a-button danger size="small" type="link" @click="logout">Logout</a-button>
+                <a-menu-item @click="logout">
+                  <a-button danger size="small" type="link">Logout</a-button>
                 </a-menu-item>
               </a-menu>
             </template>

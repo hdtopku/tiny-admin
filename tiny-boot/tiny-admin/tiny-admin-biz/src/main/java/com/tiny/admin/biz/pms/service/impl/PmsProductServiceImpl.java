@@ -42,17 +42,14 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
      */
     private LambdaQueryWrapper<PmsProduct> buildQueryWrapper(BaseQueryParam param) {
         LambdaQueryWrapper<PmsProduct> wrapper = new LambdaQueryWrapper<>();
-        wrapper.orderByAsc(PmsProduct::getSort);
-
         if (StringUtils.hasText(param.getKeyword())) {
             wrapper.like(PmsProduct::getProductName, param.getKeyword())
                     .or().like(PmsProduct::getProductDesc, param.getKeyword())
                     .or().eq(PmsProduct::getId, param.getKeyword());
-            param.setPageNum(1); // Reset page number if a keyword is provided
         } else {
             wrapper.eq(PmsProduct::getEnabled, param.getEnabled());
         }
-
+        wrapper.orderByAsc(PmsProduct::getSort).orderByDesc(PmsProduct::getUpdateTime);
         return wrapper;
     }
 

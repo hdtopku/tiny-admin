@@ -28,7 +28,7 @@
       >
         <template #bodyCell="{ record, column }">
           <template v-if="column.dataIndex === 'album'">
-            <ImageCarousel :img-urls="record?.album || []" :width="100"/>
+            <ImageCarousel :img-urls="record?.album || []" :width="'100px'"/>
           </template>
           <template v-else-if="column.dataIndex === 'productName'">
             <ToolTip :length="10" :content="record.productName"/>

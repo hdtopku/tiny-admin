@@ -89,7 +89,7 @@ const columns: any = [
         {{ index + 1 }}
       </template>
       <template v-else-if="column.dataIndex === 'album'">
-        <ImageCarousel :img-urls="record?.album?.split(',')" :width="120"/>
+        <ImageCarousel :img-urls="record?.album?.split(',')" :width="'120px'"/>
       </template>
       <template v-else-if="column.dataIndex === 'productName'">
         <ToolTip :content="record.productName" :length="30"/>
