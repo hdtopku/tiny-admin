@@ -22,9 +22,27 @@ Tiny Admin is a full-stack web application
 8. [Docker](https://www.docker.com/) (Docker version >= 20.10.12)
 
 ## Quick Start
+
+> More detailed deployment instructions: [AWS Deployment in Docker](https://i7u0jn0r7j0.jp.larksuite.com/wiki/FT6owCCYRiTFj0kRQBKjWJtypac)
+
 1. Clone the repository to local
 ```
 git clone https://github.com/hdtopku/tiny-admin.git
+```
+
+2. Deploy mysql, redis and nginx services on docker containers.
+```
+sh ./tiny-boot/env/deploy_environment.sh
+```
+
+3. Deploy the backend Springboot service on docker containers.
+```
+sh ./tiny-boot/deploy.sh
+```
+
+4. Compile the frontend width nodejs and pnpm in docker containers.
+```
+sh ./tiny-boot/build.sh
 ```
 
 

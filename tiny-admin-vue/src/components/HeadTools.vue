@@ -9,7 +9,7 @@
           ghost
           shape="circle"
           type="primary"
-          @click="openGithub"
+          @click="openYoutube"
       >
         <div class="inline-flex items-center">
           <VideoCameraOutlined
@@ -40,7 +40,7 @@
       <template #title>
         <span>Open Documentation</span>
       </template>
-      <a-button class="group" ghost shape="circle" type="primary">
+      <a-button @click="openDocumentation" class="group" ghost shape="circle" type="primary">
         <div class="inline-flex items-center">
           <ReadOutlined
               class="mt-[3px] text-base group-hover:scale-110 duration-300"
@@ -56,7 +56,13 @@
 <script lang="ts" setup>
 import {GithubOutlined, ReadOutlined, VideoCameraOutlined} from '@ant-design/icons-vue'
 
+const openYoutube = () => {
+  window.open('https://youtu.be/0jyElwLyxgk', '_blank')
+}
 const openGithub = () => {
   window.open('https://github.com/hdtopku/tiny-admin', '_blank')
+}
+const openDocumentation = () => {
+  window.open('https://i7u0jn0r7j0.jp.larksuite.com/wiki/FT6owCCYRiTFj0kRQBKjWJtypac', '_blank')
 }
 </script>
