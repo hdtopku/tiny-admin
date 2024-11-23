@@ -53,14 +53,6 @@
               :rows="3"
           />
         </a-form-item>
-<!--        <a-form-item label="Description" name="productDesc">-->
-<!--          <a-textarea-->
-<!--              v-model:value="productInfo.productDesc"-->
-<!--              placeholder="Please enter the description of the product"-->
-<!--              :rows="3"-->
-<!--              allowClear-->
-<!--          />-->
-<!--        </a-form-item>-->
         <div class="flex justify-around">
           <a-form-item
               label="Sale Price"

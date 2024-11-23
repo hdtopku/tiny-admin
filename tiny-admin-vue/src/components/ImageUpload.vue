@@ -57,14 +57,13 @@ const handleChange = (info: UploadChangeParam) => {
   }
   if (info.file.status === 'done') {
     // Get this url from response in real world.
-    console.log(info.file, info.fileList)
     if (props.count < 1) {
       imageUrl = info.file.response.data;
       emits('update:imageUrl', imageUrl)
     } else {
       const imageUrls = []
       info.fileList.map(file => {
-        imageUrls.push(file.response.data)
+        imageUrls.push(file.url || file?.response?.data)
       })
       emits('update:imageUrls', imageUrls)
     }
@@ -73,6 +72,9 @@ const handleChange = (info: UploadChangeParam) => {
   if (info.file.status === 'error') {
     loading.value = false;
     message.error('upload error');
+  }
+  if (info.file.status === 'removed') {
+    emits('update:imageUrls', info.fileList.map(file => file.url))
   }
 };
 

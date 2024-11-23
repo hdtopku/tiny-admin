@@ -76,7 +76,7 @@ const columns: any = [
         {{ index + 1 }}
       </template>
       <template v-else-if="column.dataIndex === 'album'">
-        <ImageCarousel :img-urls="record?.album || []" />
+        <ImageCarousel :img-urls="record?.album || []"/>
       </template>
       <template v-else-if="column.dataIndex === 'productName'">
         <ToolTip :content="record.productName" :length="100" />
