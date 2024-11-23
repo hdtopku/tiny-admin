@@ -27,7 +27,7 @@ const handleLogin = () => {
     userStore
         .login(loginForm.value)
         .then(() => {
-          router.push('/')
+          router.push('/pms')
           message.success('Login successful!')
         })
         .catch(() => {
