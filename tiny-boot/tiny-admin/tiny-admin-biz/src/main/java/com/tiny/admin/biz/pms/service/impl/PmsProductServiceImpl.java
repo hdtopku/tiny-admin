@@ -79,6 +79,8 @@ public class PmsProductServiceImpl extends ServiceImpl<PmsProductMapper, PmsProd
         PmsProductDto dto = BeanUtil.copyProperties(item, PmsProductDto.class);
         if (StringUtils.hasText(item.getAlbum())) {
             dto.setAlbum(Arrays.asList(item.getAlbum().split(",")));
+        } else {
+            dto.setAlbum(new ArrayList<>());
         }
         return dto;
     }

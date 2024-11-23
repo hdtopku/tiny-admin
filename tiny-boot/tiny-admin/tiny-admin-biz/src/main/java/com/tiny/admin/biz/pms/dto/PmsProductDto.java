@@ -2,14 +2,12 @@ package com.tiny.admin.biz.pms.dto;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * <p>
@@ -56,7 +54,7 @@ public class PmsProductDto implements Serializable {
     private Boolean enabled;
 
     @Schema(description = "Album images, including product images, limited to 10 images, separated by commas")
-    private List<String> album = new ArrayList<>();
+    private List<String> album;
 
     @Schema(description = "Product detail web content")
     private String detailHtml;

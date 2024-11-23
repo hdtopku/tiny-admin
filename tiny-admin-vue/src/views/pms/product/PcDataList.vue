@@ -35,12 +35,6 @@ const columns: any = [
     key: "productName",
     width: 250,
   },
-  // {
-  //   title: "Product Desc",
-  //   dataIndex: "productDesc",
-  //   key: "productDesc",
-  //   width: 250,
-  // },
   {
     title: "Market Price",
     dataIndex: "marketPrice",

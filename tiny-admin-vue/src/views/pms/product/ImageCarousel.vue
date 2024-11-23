@@ -46,6 +46,7 @@ const {imgUrls, width, height} = defineProps({
 
 /* Beautify Slick Dots */
 :deep(.slick-dots) {
+  z-index: 1;
   position: absolute;
   bottom: 15px;
   width: 100%;
@@ -92,7 +93,7 @@ const {imgUrls, width, height} = defineProps({
   position: absolute;
   top: 50%;
   transform: translateY(-50%) translateZ(0); /* Trigger GPU acceleration */
-  z-index: 10; /* Higher z-index to ensure arrow visibility */
+  z-index: 1; /* Higher z-index to ensure arrow visibility */
   width: 40px;
   height: 40px;
   font-size: 20px;
