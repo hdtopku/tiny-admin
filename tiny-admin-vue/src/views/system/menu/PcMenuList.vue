@@ -10,7 +10,6 @@ const {dataSource, loading} = defineProps({
 
 const emit = defineEmits(['queryList', 'openModal'])
 const deleteMenu = (menuId: String) => {
-  console.log('menuId', menuId)
   deleteMenuById(menuId).then(() => {
     emit('queryList')
     message.success('Delete successful')

@@ -5,8 +5,9 @@ import IconSelector from '@/components/IconSelector.vue';
 import { useUserStore } from '@/store';
 import { DefaultOptionType } from 'ant-design-vue/es/vc-tree-select/TreeSelect';
 import {useWindowSize} from "@vueuse/core";
-const {width} = useWindowSize()
+import { useDebounceFn } from '@vueuse/core';
 
+const {width} = useWindowSize()
 const props = defineProps({
   menuTree: Array as () => DefaultOptionType[],
 });
@@ -53,54 +54,56 @@ const form: any = ref({ ...defaultForm }),
     btnFormRef = ref();
 const emit = defineEmits(['queryList']);
 const handleOk = async () => {
-  const submitForm = () => {
+  const submitForm = async () => {
     loading.value = true;
-    if (!isUpdate.value && form.value.type === 2) {
-      form.value.component = null;
+    try {
+      if (!isUpdate.value && form.value.type === 2) {
+        form.value.component = null;
+      }
+      if (!form.value.icon?.length) {
+        form.value.icon = null;
+      }
+      await saveOrUpdateMenu(form.value);
+      message.success('Success');
+      open.value = false;
+      emit('queryList');
+      await useUserStore().refreshUserInfo();
+    } catch (error) {
+      message.error(`Error: ${error.message || 'Unknown error'}`);
+    } finally {
+      loading.value = false;
     }
-    if (!form.value.icon?.length) {
-      form.value.icon = null;
-    }
-    saveOrUpdateMenu(form.value)
-        .then(() => {
-          message.success('Success');
-          open.value = false;
-          emit('queryList');
-          useUserStore().refreshUserInfo().then(() => {});
-        })
-        .finally(() => {
-          loading.value = false;
-        });
   };
 
-  if (activeKey.value === 1) {
-    formRef.value.validate().then(() => {
-      submitForm();
-    });
-  } else {
-    btnFormRef.value.validate().then(() => {
-      submitForm();
-    });
+  try {
+    if (form.value.type === 1) {
+      await formRef.value.validate();
+    } else {
+      await btnFormRef.value.validate();
+    }
+    await submitForm();
+  } catch {
+    message.error('Validation failed, please check your input');
   }
 };
+
 
 const userInputPerm = ref(false),
-    userInputComponent = ref(false),
-    activeKey = ref(1);
+    userInputComponent = ref(false)
 
-const handleUrlChange = () => {
+
+const handleUrlChange = useDebounceFn(() => {
   if (isUpdate.value) return;
   if (!userInputPerm.value) {
-    form.value.permission = `${form.value.url.toLowerCase().replace(/\//g, ':')}`;
+    form.value.permission = form.value.url
+        ?.toLowerCase()
+        ?.replace(/\//g, ':');
   }
   if (!userInputComponent.value) {
-    form.value.component = `${form.value.url}`;
+    form.value.component = form.value.url;
   }
-};
+}, 300);
 
-watch(activeKey, () => {
-  form.value.type = activeKey.value;
-});
 
 watch(
     () => form.value.url,
@@ -172,7 +175,6 @@ defineExpose({
       keepAlive,
     };
     curName = record.name;
-    activeKey.value = record?.type || 1;
   },
 });
 
@@ -251,7 +253,7 @@ const buttonRules: any = {
         <a-button key="submit" :loading="loading" type="primary" @click="handleOk">Submit</a-button>
       </a-space>
     </template>
-    <a-tabs v-model:activeKey="activeKey" type="card">
+    <a-tabs v-model:activeKey="form.type" type="card">
       <template #rightExtra>
         <span class="text-gray-400">
           Selected <a-tag class="text-gray-400">{{ form.type === 2 ? 'Button' : 'Menu' }}</a-tag>
@@ -378,7 +380,7 @@ const buttonRules: any = {
           </div>
         </a-form>
       </a-tab-pane>
-      <a-tab-pane key="2" tab="Button">
+      <a-tab-pane :key="2" tab="Button">
         <a-form
             ref="btnFormRef"
             :label-col="{ span: 6 }"
