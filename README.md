@@ -1,7 +1,7 @@
 ## ☘️ Abstract
 Tiny Admin is a full-stack web application that allows for seamless management of users, roles, permissions, and menus.
 
-- 🍁 **Front-end framework**: [Vue3.5](https://cn.vuejs.org/), [TailwindCSS](https://tailwindcss.com/), [Pinia](https://pinia.vuejs.org/)
+- 🍁 **Front-end framework**: [Vue3.5](https://cn.vuejs.org/), [Ant Design Vue](https://antdv.com), [TailwindCSS](https://tailwindcss.com/), [Pinia](https://pinia.vuejs.org/)
 - 🍂 **Back-end framework**: [SpringBoot3.2.5](https://spring.io/), [Mysql](https://www.mysql.com/), [Mybatis](https://mybatis.org/mybatis-3/)
 - 🍃 **Username**: **admin**, **Password**: **123456**
 - [:octocat: GitHub repository](https://github.com/hdtopku/tiny-admin)
