@@ -6,12 +6,19 @@ Tiny Admin is a full-stack web application that allows for seamless management o
 - 🍃 **Username**: **admin**, **Password**: **123456**
 - [:octocat: GitHub repository](https://github.com/hdtopku/tiny-admin)
 - 🎥 [Watch the demo video here](https://youtu.be/0jyElwLyxgk)
+- 🌐 [Live Demo](tiny.taojingling.cn/login)
 
 ## System Design
 1. **User Management**: User login, logout, user information modification, user role management, user permission management
 2. **Role Management**: Role creation, role modification, role deletion, role permission management
 3. **Permission Management**: Permission creation, permission modification, permission deletion
 4. **Menu Management**: Menu creation, menu modification, menu deletion, menu permission management
+
+## Highlights & Achievements
+1. Implemented a fully functional RBAC system with dynamic permission management.
+2. Developed a modern, responsive UI using Vue 3.5, Ant Design Vue, and TailwindCSS.
+3. Ensured maintainable and scalable backend architecture with Spring Boot, MyBatis, and MySQL.
+4. Demonstrated end-to-end functionality with a live demo and recorded video.
 
 ## Environment and Deployment
 1. [pnpm](https://github.com/pnpm/pnpm/) (>= 8.7.0, recommended. It is used as the package manager)
